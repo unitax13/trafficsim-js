@@ -17,11 +17,23 @@ let color = colorEl.value;
 let x: number | undefined;
 let y: number | undefined;
 
+let fieldPressedX: number | undefined;
+let fieldPressedY: number | undefined;
+
 canvas.addEventListener("mousedown", (e) => {
   isPressed = true;
 
   x = e.offsetX;
   y = e.offsetY;
+
+  fieldPressedX = Math.floor(x/fieldWidth)
+  fieldPressedY = Math.floor(y/fieldHeight)
+
+  fieldArray[fieldPressedX][fieldPressedY] = FieldType.Road1;
+
+  drawMainGrid();
+
+  console.log("fieldPressed: ", fieldPressedX, fieldPressedY)
 });
 
 document.addEventListener("mouseup", () => {
@@ -35,9 +47,6 @@ canvas.addEventListener("mousemove", (e) => {
   if (isPressed && x !== undefined && y !== undefined) {
     const x2 = e.offsetX;
     const y2 = e.offsetY;
-
-    drawCircle(x2, y2);
-    drawLine(x, y, x2, y2);
 
     x = x2;
     y = y2;
@@ -128,6 +137,8 @@ let cameraY = 0;
 let cameraScale = 1;
 let gridOpacity = 10;
 
+console.log(13 % 5)
+
 drawMainGrid();
 drawGridOverlay();
 
@@ -159,24 +170,25 @@ function drawMainGrid() {
 function drawGridOverlay() {
   console.log("drawing grid overlay");
   ctx!.strokeStyle = "#111111";
-  for (let x = 0; x <= numRows; x++) {
-    if (x % 10 == 0) {
-      ctx!.lineWidth = (2 * gridOpacity) / 100;
-    } else {
-      ctx!.lineWidth = (0.5 * gridOpacity) / 100;
-    }
+  for (let x1 = 0; x1 <= numRows; x1++) {
+ 
 
-    ctx!.moveTo(x * fieldWidth * cameraScale - cameraX, -1 - cameraY);
+    ctx!.lineWidth = (1 * gridOpacity) / 100;
+
+ 
+
+    ctx!.moveTo(x1 * fieldWidth * cameraScale - cameraX, -1 - cameraY);
     ctx!.lineTo(
-      x * fieldWidth * cameraScale - cameraX,
+      x1 * fieldWidth * cameraScale - cameraX,
       canvasHeight * cameraScale - cameraY
     );
 
-    ctx!.moveTo(-1 - cameraX, x * fieldWidth * cameraScale - cameraY);
+    ctx!.moveTo(-1 - cameraX, x1 * fieldWidth * cameraScale - cameraY);
     ctx!.lineTo(
       canvasWidth * cameraScale - cameraX,
-      x * fieldWidth * cameraScale - cameraY
+      x1 * fieldWidth * cameraScale - cameraY
     );
+    ctx!.stroke();
   }
-  ctx!.stroke();
+
 }
