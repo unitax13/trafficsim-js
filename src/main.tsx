@@ -1,3 +1,7 @@
+import ReactDOM from "react-dom";
+import App from "./App";
+import React from "react";
+
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const increaseBtn = document.getElementById("increase") as HTMLButtonElement;
 const decreaseBtn = document.getElementById("decrease") as HTMLButtonElement;
@@ -9,6 +13,13 @@ const ctx = canvas.getContext("2d");
 
 const canvasWidth = 800;
 const canvasHeight = 700;
+
+enum FieldType {
+  Empty,
+  Road1,
+  Urban,
+  Industrial,
+}
 
 let size = 10;
 let isPressed = false;
@@ -23,6 +34,8 @@ let previousFieldPressedX: number = 0;
 let previousFieldPressedY: number = 0;
 let fieldPressedX: number = 0;
 let fieldPressedY: number = 0;
+
+let fieldTypeChosen: FieldType = FieldType.Urban;
 
 function updateCoordsOfFieldWithMouseOn(x: number, y: number) {
   fieldPressedX = Math.floor(x / fieldWidth);
@@ -45,7 +58,7 @@ canvas.addEventListener("mousedown", (e) => {
   updateCoordsOfFieldWithMousePREVIOUSLYOn(x, y);
   updateCoordsOfFieldWithMouseOn(x, y);
 
-  fieldArray[fieldPressedX][fieldPressedY] = FieldType.Road1;
+  fieldArray[fieldPressedX][fieldPressedY] = fieldTypeChosen;
 
   drawMainGrid();
 
@@ -69,7 +82,7 @@ document.addEventListener("mouseup", (e) => {
     previousFieldPressedY,
     fieldPressedX,
     fieldPressedY,
-    FieldType.Urban
+    fieldTypeChosen
   );
   redraw();
   isPressed = false;
@@ -90,22 +103,6 @@ canvas.addEventListener("mousemove", (e) => {
     y = y2;
   }
 });
-
-function drawCircle(x: number, y: number) {
-  ctx?.beginPath();
-  ctx?.arc(x, y, size, 0, Math.PI * 2);
-  ctx!.fillStyle = color;
-  ctx?.fill();
-}
-
-function drawLine(x1: number, y1: number, x2: number, y2: number) {
-  ctx?.beginPath();
-  ctx?.moveTo(x1, y1);
-  ctx?.lineTo(x2, y2);
-  ctx!.strokeStyle = color;
-  ctx!.lineWidth = size * 2;
-  ctx?.stroke();
-}
 
 function updateSizeOnScreen() {
   sizeEL.innerText = size.toString();
@@ -191,13 +188,6 @@ function placeRectangleBetween(
       }
     }
   }
-}
-
-enum FieldType {
-  Empty,
-  Road1,
-  Urban,
-  Industrial,
 }
 
 const numRows = 100;
@@ -308,3 +298,10 @@ function drawGridOverlay() {
     ctx!.stroke();
   }
 }
+
+// ReactDOM.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>,
+//   document.getElementById("rest")
+// );
