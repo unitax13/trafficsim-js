@@ -2,32 +2,11 @@ import Canvas from "./Canvas";
 import "../index.css";
 import { Button } from "@mui/material";
 import { useState } from "react";
+import FieldType from "../enums/FieldType";
 
 function MainCanvasElement() {
   const canvasWidth = 800;
   const canvasHeight = 700;
-
-  enum FieldType {
-    Empty,
-    Road1,
-    Urban,
-    Industrial,
-  }
-
-  let isPressed = false;
-
-  let color = "black";
-  let previousMouseX: number | undefined;
-  let previousMouseY: number | undefined;
-  let x: number | undefined;
-  let y: number | undefined;
-
-  let previousFieldPressedX: number = 0;
-  let previousFieldPressedY: number = 0;
-  let fieldPressedX: number = 0;
-  let fieldPressedY: number = 0;
-
-  let fieldTypeChosen: FieldType = FieldType.Urban;
 
   // canvas.addEventListener("mousedown", (e) => {
   //   isPressed = true;
@@ -90,6 +69,7 @@ function MainCanvasElement() {
     by: number,
     fieldType: FieldType
   ) {
+    console.log(`placeRectangleBetween ${ax} and ${ay} and ${bx} and ${by}`);
     let deltaX: number = bx - ax;
     let deltaY = by - ay;
     const signumDeltaX = Math.sign(deltaX);
@@ -145,10 +125,10 @@ function MainCanvasElement() {
     }
   }
 
-  const numRows = 10;
-  const numColumns = 10;
+  const numRows = 100;
+  const numColumns = 100;
   let fieldArray: FieldType[][] = [];
-  const [stateFieldArray, setStateFieldArray] = useState<FieldType[][]>();
+  // const [stateFieldArray, setStateFieldArray] = useState<FieldType[][]>();
 
   // function initPopulation() {
   // Populate the array with a certain enum value
@@ -164,7 +144,7 @@ function MainCanvasElement() {
   // dots to see if it works properly
   fieldArray[2][2] = FieldType.Road1;
   fieldArray[9][9] = FieldType.Industrial;
-  setStateFieldArray(fieldArray);
+  // setStateFieldArray(fieldArray);
   // }
 
   function setFieldValue(x: number, y: number, value: FieldType) {
@@ -172,7 +152,7 @@ function MainCanvasElement() {
     if (x >= 0 && x < numRows && y >= 0 && y < numColumns) {
       fieldArray[x][y] = value;
     }
-    setStateFieldArray(fieldArray);
+    // setStateFieldArray(fieldArray);
   }
 
   // console.log(13 % 5);
@@ -211,11 +191,9 @@ function MainCanvasElement() {
           numColumns={numColumns}
           fieldArray={fieldArray}
           setFieldValue={setFieldValue}
-          stateFieldArray={stateFieldArray}
+          placeRectangleBetween={placeRectangleBetween}
         />
       </div>
-      <Button variant="contained">Road brush</Button>
-      <Button variant="contained">Urban area brush</Button>
     </>
   );
 }

@@ -1,7 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import "../index.css";
+import { Button } from "@mui/material";
+import FieldType from "../enums/FieldType";
 
-function Canvas(props) {
+interface CanvasProps {
+  numRows: number;
+  numColumns: number;
+  fieldArray: FieldType[][];
+  setFieldValue: (x: number, y: number, value: FieldType) => void;
+  placeRectangleBetween: (
+    ax: number,
+    ay: number,
+    bx: number,
+    by: number,
+    fieldType: FieldType
+  ) => void;
+}
+
+function Canvas(props: CanvasProps) {
   let color = "black";
   const canvasWidth = 800;
   const canvasHeight = 700;
@@ -20,12 +36,14 @@ function Canvas(props) {
   let x: number | undefined;
   let y: number | undefined;
 
-  let previousFieldPressedX: number = 0;
-  let previousFieldPressedY: number = 0;
+  console.log("canvas loading");
+
+  const previousFieldPressedX = useRef(0);
+  const previousFieldPressedY = useRef(0);
   let fieldPressedX: number = 0;
   let fieldPressedY: number = 0;
 
-  let fieldTypeChosen: FieldType = FieldType.Urban;
+  const fieldTypeChosen = useRef<FieldType>(FieldType.Urban);
   const fieldWidth = 6;
   const fieldHeight = 6;
   let cameraX = 0;
@@ -47,6 +65,7 @@ function Canvas(props) {
   const [isDrawing, setIsDrawing] = useState(false);
 
   useEffect(() => {
+    console.log("Reloading");
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     contextRef.current = ctx;
@@ -57,10 +76,18 @@ function Canvas(props) {
     console.log();
   }, []);
 
+  useEffect(() => {
+    console.log("reloaded from isDrawing");
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    drawMainGrid(ctx);
+  }, [isDrawing]);
+
   function drawMainGrid(ctx) {
+    console.log("drawing");
     for (let x = 0; x < props.numRows; x++) {
       for (let y = 0; y < props.numColumns; y++) {
-        let type = props.stateFieldArray[x][y];
+        let type = props.fieldArray[x][y];
         if (type == FieldType.Urban && urbanIsOn) {
           color = "green";
         } else if (type == FieldType.Industrial && industryIsOn) {
@@ -113,18 +140,23 @@ function Canvas(props) {
     previousX: number,
     previousY: number
   ) {
-    previousFieldPressedX = Math.floor(previousX / fieldWidth);
-    previousFieldPressedY = Math.floor(previousY / fieldHeight);
+    previousFieldPressedX.current = Math.floor(previousX / fieldWidth);
+    previousFieldPressedY.current = Math.floor(previousY / fieldHeight);
+    console.log(
+      "previousFieldPressed: ",
+      previousFieldPressedX,
+      previousFieldPressedY
+    );
   }
 
   const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     isPressed = true;
     x = e.nativeEvent.offsetX;
     y = e.nativeEvent.offsetY;
-    console.log(x, y);
+    // console.log(x, y);
     updateCoordsOfFieldWithMousePREVIOUSLYOn(x, y);
     updateCoordsOfFieldWithMouseOn(x, y);
-    props.setFieldValue(fieldPressedX, fieldPressedY, fieldTypeChosen);
+    props.setFieldValue(fieldPressedX, fieldPressedY, fieldTypeChosen.current);
     setIsDrawing(!isDrawing);
 
     e.preventDefault();
@@ -132,11 +164,36 @@ function Canvas(props) {
 
   const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     // console.log("fieldPressed: ", fieldPressedX, fieldPressedY);
+    e.preventDefault();
   };
 
-  const onMouseUp = (
-    nativeEvent: React.MouseEvent<HTMLCanvasElement, MouseEvent>
-  ) => {};
+  const onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+    // console.log("up at: ", e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    e.preventDefault();
+
+    updateCoordsOfFieldWithMouseOn(
+      e.nativeEvent.offsetX,
+      e.nativeEvent.offsetY
+    );
+    console.log(
+      "fieldPressed: ",
+      previousFieldPressedX,
+      previousFieldPressedY,
+      "fieldReleased: ",
+      fieldPressedX,
+      fieldPressedY
+    );
+
+    props.placeRectangleBetween(
+      previousFieldPressedX.current,
+      previousFieldPressedY.current,
+      fieldPressedX,
+      fieldPressedY,
+      fieldTypeChosen.current
+    );
+    setIsDrawing(!isDrawing);
+    isPressed = false;
+  };
 
   const onMouseLeave = (
     nativeEvent: React.MouseEvent<HTMLCanvasElement, MouseEvent>
@@ -144,6 +201,10 @@ function Canvas(props) {
 
   const stopDrawing = () => {
     setIsDrawing(false);
+  };
+
+  const onKeyDown = (e) => {
+    console.log(e.key);
   };
 
   return (
@@ -157,10 +218,30 @@ function Canvas(props) {
           ref={canvasRef}
           onMouseDown={(e) => onMouseDown(e)}
           onMouseMove={(e) => onMouseMove(e)}
-          onMouseUp={(e) => onMouseUp}
-          onMouseLeave={(e) => onMouseLeave}
+          onMouseUp={(e) => onMouseUp(e)}
+          onMouseLeave={(e) => onMouseLeave(e)}
+          onKeyDown={(e) => onKeyDown(e)}
+          onKeyDownCapture={(e) => onKeyDown(e)}
         ></canvas>
-        hello
+        <Button variant="contained" onClick={(e) => setIsDrawing(!isDrawing)}>
+          Refresh
+        </Button>
+        <Button
+          variant="contained"
+          onClick={(e) => {
+            fieldTypeChosen.current = FieldType.Road1;
+          }}
+        >
+          Road brush
+        </Button>
+        <Button
+          variant="contained"
+          onClick={(e) => {
+            fieldTypeChosen.current = FieldType.Urban;
+          }}
+        >
+          Urban area brush
+        </Button>
       </div>
     </>
   );
