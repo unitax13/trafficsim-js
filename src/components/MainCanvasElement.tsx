@@ -5,9 +5,6 @@ import { useState } from "react";
 import FieldType from "../enums/FieldType";
 
 function MainCanvasElement() {
-  const canvasWidth = 800;
-  const canvasHeight = 700;
-
   // canvas.addEventListener("mousedown", (e) => {
   //   isPressed = true;
 
@@ -62,6 +59,44 @@ function MainCanvasElement() {
   //   }
   // });
 
+  function placePerpendicularLineBetween(
+    ax: number,
+    ay: number,
+    bx: number,
+    by: number,
+    fieldType: FieldType
+  ) {
+    if (Math.abs(bx - ax) > Math.abs(by - ay) && bx - ax >= 0) {
+      //heading east
+      for (let x = ax; x <= bx; x++) {
+        if (fieldArray[x][ay] != FieldType.Road1) {
+          fieldArray[x][ay] = fieldType;
+        }
+      }
+    } else if (Math.abs(bx - ax) > Math.abs(by - ay) && bx - ax < 0) {
+      //heading west
+      for (let x = ax; x >= bx; x--) {
+        if (fieldArray[x][ay] != FieldType.Road1) {
+          fieldArray[x][ay] = fieldType;
+        }
+      }
+    } else if (Math.abs(bx - ax) < Math.abs(by - ay) && by - ay < 0) {
+      //heading south
+      for (let y = ay; y >= by; y--) {
+        if (fieldArray[ax][y] != FieldType.Road1) {
+          fieldArray[ax][y] = fieldType;
+        }
+      }
+    } else if (Math.abs(bx - ax) < Math.abs(by - ay) && by - ay >= 0) {
+      //heading north
+      for (let y = ay; y <= by; y++) {
+        if (fieldArray[ax][y] != FieldType.Road1) {
+          fieldArray[ax][y] = fieldType;
+        }
+      }
+    }
+  }
+
   function placeRectangleBetween(
     ax: number,
     ay: number,
@@ -69,18 +104,37 @@ function MainCanvasElement() {
     by: number,
     fieldType: FieldType
   ) {
-    console.log(`placeRectangleBetween ${ax} and ${ay} and ${bx} and ${by}`);
-    let deltaX: number = bx - ax;
-    let deltaY = by - ay;
-    const signumDeltaX = Math.sign(deltaX);
-    const signumDeltaY = Math.sign(deltaY);
+    if (fieldType === FieldType.Road1) {
+      placePerpendicularLineBetween(ax, ay, bx, by, fieldType);
+    } else {
+      console.log(`placeRectangleBetween ${ax} and ${ay} and ${bx} and ${by}`);
+      let deltaX: number = bx - ax;
+      let deltaY = by - ay;
+      const signumDeltaX = Math.sign(deltaX);
+      const signumDeltaY = Math.sign(deltaY);
 
-    if (deltaX != 0 && deltaY != 0) {
-      for (
+      if (deltaX != 0 && deltaY != 0) {
+        for (
+          let y = ay - signumDeltaY;
+          y != by && y >= 0 && y <= numRows;
+          y += signumDeltaY
+        ) {
+          for (
+            let x = ax - signumDeltaX;
+            x != bx && x >= 0 && x <= numColumns;
+            x += signumDeltaX
+          ) {
+            if (
+              fieldArray[x + signumDeltaX][y + signumDeltaY] !=
+                FieldType.Road1 ||
+              fieldType == FieldType.Empty
+            ) {
+              fieldArray[x + signumDeltaX][y + signumDeltaY] = fieldType;
+            }
+          }
+        }
+      } else if (deltaY == 0) {
         let y = ay - signumDeltaY;
-        y != by && y >= 0 && y <= numRows;
-        y += signumDeltaY
-      ) {
         for (
           let x = ax - signumDeltaX;
           x != bx && x >= 0 && x <= numColumns;
@@ -93,33 +147,19 @@ function MainCanvasElement() {
             fieldArray[x + signumDeltaX][y + signumDeltaY] = fieldType;
           }
         }
-      }
-    } else if (deltaY == 0) {
-      let y = ay - signumDeltaY;
-      for (
+      } else if (deltaX == 0) {
         let x = ax - signumDeltaX;
-        x != bx && x >= 0 && x <= numColumns;
-        x += signumDeltaX
-      ) {
-        if (
-          fieldArray[x + signumDeltaX][y + signumDeltaY] != FieldType.Road1 ||
-          fieldType == FieldType.Empty
+        for (
+          let y = ay - signumDeltaY;
+          y != by && y >= 0 && y <= numRows;
+          y += signumDeltaY
         ) {
-          fieldArray[x + signumDeltaX][y + signumDeltaY] = fieldType;
-        }
-      }
-    } else if (deltaX == 0) {
-      let x = ax - signumDeltaX;
-      for (
-        let y = ay - signumDeltaY;
-        y != by && y >= 0 && y <= numRows;
-        y += signumDeltaY
-      ) {
-        if (
-          fieldArray[x + signumDeltaX][y + signumDeltaY] != FieldType.Road1 ||
-          fieldType == FieldType.Empty
-        ) {
-          fieldArray[x + signumDeltaX][y + signumDeltaY] = fieldType;
+          if (
+            fieldArray[x + signumDeltaX][y + signumDeltaY] != FieldType.Road1 ||
+            fieldType == FieldType.Empty
+          ) {
+            fieldArray[x + signumDeltaX][y + signumDeltaY] = fieldType;
+          }
         }
       }
     }

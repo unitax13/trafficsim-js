@@ -67,13 +67,12 @@ function Canvas(props: CanvasProps) {
   useEffect(() => {
     console.log("Reloading");
     const canvas = canvasRef.current;
+
     const ctx = canvas.getContext("2d");
     contextRef.current = ctx;
 
     drawMainGrid(ctx);
     // drawGridOverlay(ctx);
-
-    console.log();
   }, []);
 
   useEffect(() => {
@@ -150,6 +149,7 @@ function Canvas(props: CanvasProps) {
   }
 
   const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+    console.log(e.nativeEvent);
     isPressed = true;
     x = e.nativeEvent.offsetX;
     y = e.nativeEvent.offsetY;
@@ -158,19 +158,13 @@ function Canvas(props: CanvasProps) {
     updateCoordsOfFieldWithMouseOn(x, y);
     props.setFieldValue(fieldPressedX, fieldPressedY, fieldTypeChosen.current);
     setIsDrawing(!isDrawing);
-
-    e.preventDefault();
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     // console.log("fieldPressed: ", fieldPressedX, fieldPressedY);
-    e.preventDefault();
   };
 
   const onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    // console.log("up at: ", e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-    e.preventDefault();
-
     updateCoordsOfFieldWithMouseOn(
       e.nativeEvent.offsetX,
       e.nativeEvent.offsetY
@@ -183,14 +177,25 @@ function Canvas(props: CanvasProps) {
       fieldPressedX,
       fieldPressedY
     );
-
-    props.placeRectangleBetween(
-      previousFieldPressedX.current,
-      previousFieldPressedY.current,
-      fieldPressedX,
-      fieldPressedY,
-      fieldTypeChosen.current
-    );
+    if (e.nativeEvent.button === 0) {
+      props.placeRectangleBetween(
+        previousFieldPressedX.current,
+        previousFieldPressedY.current,
+        fieldPressedX,
+        fieldPressedY,
+        fieldTypeChosen.current
+      );
+    } else if (e.nativeEvent.button === 2) {
+      props.placeRectangleBetween(
+        previousFieldPressedX.current,
+        previousFieldPressedY.current,
+        fieldPressedX,
+        fieldPressedY,
+        FieldType.Empty
+      );
+      setIsDrawing(!isDrawing);
+      isPressed = false;
+    }
     setIsDrawing(!isDrawing);
     isPressed = false;
   };
@@ -222,6 +227,7 @@ function Canvas(props: CanvasProps) {
           onMouseLeave={(e) => onMouseLeave(e)}
           onKeyDown={(e) => onKeyDown(e)}
           onKeyDownCapture={(e) => onKeyDown(e)}
+          onContextMenu={(e) => e.preventDefault()}
         ></canvas>
         <Button variant="contained" onClick={(e) => setIsDrawing(!isDrawing)}>
           Refresh
