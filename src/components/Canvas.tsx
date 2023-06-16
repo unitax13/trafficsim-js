@@ -38,10 +38,10 @@ function Canvas(props: CanvasProps) {
 
   console.log("canvas loading");
 
-  const previousFieldPressedX = useRef(0);
-  const previousFieldPressedY = useRef(0);
-  let fieldPressedX: number = 0;
-  let fieldPressedY: number = 0;
+  const previousFieldPressedX = useRef<number>(0);
+  const previousFieldPressedY = useRef<number>(0);
+  const fieldPressedX = useRef<number>(0);
+  const fieldPressedY = useRef<number>(0);
 
   const fieldTypeChosen = useRef<FieldType>(FieldType.Urban);
   const fieldWidth = 6;
@@ -57,8 +57,6 @@ function Canvas(props: CanvasProps) {
   const nodeNumbersAreOn = false;
   const pathIsOn = false;
   const roadHeatmapIsOn = false;
-
-  let isDragging = false;
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -80,6 +78,7 @@ function Canvas(props: CanvasProps) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     drawMainGrid(ctx);
+    drawCursorSingleSelection(ctx);
   }, [isDrawing]);
 
   function drawMainGrid(ctx) {
@@ -93,12 +92,12 @@ function Canvas(props: CanvasProps) {
           color = "#666622";
         } else if (type == FieldType.Road1 && roadsIsOn) {
           color = "#111111";
-          console.log("road!");
         } else {
           // EMPTY
           color = "#ddeeee";
         }
         ctx!.fillStyle = color;
+
         ctx!.fillRect(
           fieldWidth * 1 * x - cameraX,
           fieldHeight * cameraScale * y - cameraY,
@@ -106,6 +105,39 @@ function Canvas(props: CanvasProps) {
           fieldHeight * cameraScale
         );
       }
+    }
+  }
+
+  function drawCursorSingleSelection(ctx) {
+    if (!isPressed) {
+      let type = props.fieldArray[fieldPressedX.current][fieldPressedY.current];
+      if (type == FieldType.Urban) {
+        color = "green";
+      } else if (type == FieldType.Industrial) {
+        color = "#666622";
+      } else {
+        color = "#111111";
+      }
+
+      ctx!.fillStyle = color;
+      // ctx!.globalCompositOperation = "source-over";
+      ctx.globalAlpha = 0.5;
+      console.log(
+        "Drawing sursor of  type ",
+        type,
+        " on ",
+        fieldPressedX,
+        fieldPressedY
+      );
+
+      ctx!.fillRect(
+        fieldWidth * 1 * fieldPressedX.current - cameraX,
+        fieldHeight * cameraScale * fieldPressedY.current - cameraY,
+        fieldWidth * cameraScale,
+        fieldHeight * cameraScale
+      );
+      ctx.globalAlpha = 1;
+      // ctx!.globalCompositOperation = "source-over";
     }
   }
 
@@ -131,8 +163,9 @@ function Canvas(props: CanvasProps) {
   }
 
   function updateCoordsOfFieldWithMouseOn(x: number, y: number) {
-    fieldPressedX = Math.floor(x / fieldWidth);
-    fieldPressedY = Math.floor(y / fieldHeight);
+    fieldPressedX.current = Math.floor(x / fieldWidth);
+    fieldPressedY.current = Math.floor(y / fieldHeight);
+    console.log("Mouse over ", fieldPressedX, fieldPressedY);
   }
 
   function updateCoordsOfFieldWithMousePREVIOUSLYOn(
@@ -156,12 +189,19 @@ function Canvas(props: CanvasProps) {
     // console.log(x, y);
     updateCoordsOfFieldWithMousePREVIOUSLYOn(x, y);
     updateCoordsOfFieldWithMouseOn(x, y);
-    props.setFieldValue(fieldPressedX, fieldPressedY, fieldTypeChosen.current);
+    props.setFieldValue(
+      fieldPressedX.current,
+      fieldPressedY.current,
+      fieldTypeChosen.current
+    );
     setIsDrawing(!isDrawing);
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    // console.log("fieldPressed: ", fieldPressedX, fieldPressedY);
+    setIsDrawing(!isDrawing);
+    x = e.nativeEvent.offsetX;
+    y = e.nativeEvent.offsetY;
+    updateCoordsOfFieldWithMouseOn(x, y);
   };
 
   const onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
@@ -181,16 +221,16 @@ function Canvas(props: CanvasProps) {
       props.placeRectangleBetween(
         previousFieldPressedX.current,
         previousFieldPressedY.current,
-        fieldPressedX,
-        fieldPressedY,
+        fieldPressedX.current,
+        fieldPressedY.current,
         fieldTypeChosen.current
       );
     } else if (e.nativeEvent.button === 2) {
       props.placeRectangleBetween(
         previousFieldPressedX.current,
         previousFieldPressedY.current,
-        fieldPressedX,
-        fieldPressedY,
+        fieldPressedX.current,
+        fieldPressedY.current,
         FieldType.Empty
       );
       setIsDrawing(!isDrawing);
