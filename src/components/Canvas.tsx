@@ -29,7 +29,7 @@ function Canvas(props: CanvasProps) {
     Industrial,
   }
 
-  let isPressed = false;
+  const isPressed = useRef<boolean>(false);
 
   let previousMouseX: number | undefined;
   let previousMouseY: number | undefined;
@@ -79,10 +79,19 @@ function Canvas(props: CanvasProps) {
     const ctx = canvas.getContext("2d");
     drawMainGrid(ctx);
     drawCursorSingleSelection(ctx);
+    if (isPressed.current) {
+      drawRectangularSelection(
+        ctx,
+        previousFieldPressedX.current,
+        previousFieldPressedY.current,
+        fieldPressedX.current,
+        fieldPressedY.current
+      );
+    }
   }, [isDrawing]);
 
   function drawMainGrid(ctx) {
-    console.log("drawing");
+    //console.log("drawing");
     for (let x = 0; x < props.numRows; x++) {
       for (let y = 0; y < props.numColumns; y++) {
         let type = props.fieldArray[x][y];
@@ -109,7 +118,7 @@ function Canvas(props: CanvasProps) {
   }
 
   function drawCursorSingleSelection(ctx) {
-    if (!isPressed) {
+    if (!isPressed.current) {
       let type = props.fieldArray[fieldPressedX.current][fieldPressedY.current];
       if (type == FieldType.Urban) {
         color = "green";
@@ -122,13 +131,13 @@ function Canvas(props: CanvasProps) {
       ctx!.fillStyle = color;
       // ctx!.globalCompositOperation = "source-over";
       ctx.globalAlpha = 0.5;
-      console.log(
-        "Drawing sursor of  type ",
-        type,
-        " on ",
-        fieldPressedX,
-        fieldPressedY
-      );
+      // console.log(
+      //   "Drawing sursor of  type ",
+      //   type,
+      //   " on ",
+      //   fieldPressedX,
+      //   fieldPressedY
+      // );
 
       ctx!.fillRect(
         fieldWidth * 1 * fieldPressedX.current - cameraX,
@@ -137,8 +146,111 @@ function Canvas(props: CanvasProps) {
         fieldHeight * cameraScale
       );
       ctx.globalAlpha = 1;
-      // ctx!.globalCompositOperation = "source-over";
     }
+  }
+
+  function drawRectangularSelection(
+    ctx,
+    ax: number,
+    ay: number,
+    bx: number,
+    by: number
+  ) {
+    console.log("drawing rectangular selection");
+    let deltaX = bx - ax;
+    let deltaY = by - ay;
+    let signumDeltaX = Math.sign(deltaX);
+    let signumDeltaY = Math.sign(deltaY);
+
+    if (fieldTypeChosen.current == FieldType.Urban) {
+      color = "green";
+    } else if (fieldTypeChosen.current == FieldType.Industrial) {
+      color = "#666622";
+    } else if (fieldTypeChosen.current == FieldType.Road1) {
+      color = "#111111";
+    } else {
+      color = "black";
+    }
+    ctx!.fillStyle = color;
+    ctx.globalAlpha = 0.5;
+    //if (!mainWindow.middleIsDown) {
+    if (
+      deltaX == 0 ||
+      deltaY == 0 ||
+      fieldTypeChosen.current == FieldType.Road1
+    ) {
+      if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+        if (deltaX >= 0) {
+          ctx!.fillRect(
+            fieldWidth * cameraScale * ax - cameraX,
+            fieldHeight * cameraScale * ay - cameraY,
+            fieldWidth * cameraScale * deltaX,
+            fieldHeight * cameraScale
+          );
+        } else {
+          ctx!.fillRect(
+            fieldWidth * cameraScale * bx - cameraX,
+            fieldHeight * cameraScale * ay - cameraY,
+            -fieldWidth * cameraScale * deltaX,
+            fieldHeight * cameraScale
+          );
+        }
+      } else {
+        if (deltaY >= 0) {
+          ctx!.fillRect(
+            fieldWidth * cameraScale * ax - cameraX,
+            fieldHeight * cameraScale * ay - cameraY,
+            fieldWidth * cameraScale,
+            fieldHeight * cameraScale * deltaY
+          );
+        } else {
+          ctx!.fillRect(
+            fieldWidth * cameraScale * ax - cameraX,
+            fieldHeight * cameraScale * by - cameraY,
+            fieldWidth * cameraScale,
+            -fieldHeight * cameraScale * deltaY
+          );
+        }
+      }
+    } else {
+      if (signumDeltaX >= 0 && signumDeltaY >= 0) {
+        //heading south-east
+        ctx!.fillRect(
+          fieldWidth * cameraScale * ax - cameraX,
+          fieldHeight * cameraScale * ay - cameraY,
+          fieldWidth * cameraScale * (deltaX + 1),
+          fieldHeight * cameraScale * (deltaY + 1)
+        );
+      } else if (signumDeltaX >= 0 && signumDeltaY < 0) {
+        //heading north-east
+        ctx!.fillRect(
+          fieldWidth * cameraScale * ax - cameraX,
+          fieldHeight * cameraScale * by - cameraY,
+          fieldWidth * cameraScale * (deltaX + 1),
+          -fieldHeight * cameraScale * (deltaY - 1)
+        );
+      } else if (signumDeltaX < 0 && signumDeltaY < 0) {
+        //heading north-west
+        ctx!.fillRect(
+          fieldWidth * cameraScale * bx - cameraX,
+          fieldHeight * cameraScale * by - cameraY,
+          -fieldWidth * cameraScale * (deltaX - 1),
+          -fieldHeight * cameraScale * (deltaY - 1)
+        );
+      } else if (signumDeltaX < 0 && signumDeltaY >= 0) {
+        //heading south-west
+        ctx!.fillRect(
+          fieldWidth * cameraScale * bx - cameraX,
+          fieldHeight * cameraScale * ay - cameraY,
+          -fieldWidth * cameraScale * (deltaX - 1),
+          fieldHeight * cameraScale * (deltaY + 1)
+        );
+      }
+    }
+    //}
+
+    ctx.globalAlpha = 1;
+    //ctx!.setGlobalBlendMode(BlendMode.SRC_OVER);
   }
 
   function drawGridOverlay(ctx) {
@@ -182,8 +294,8 @@ function Canvas(props: CanvasProps) {
   }
 
   const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    console.log(e.nativeEvent);
-    isPressed = true;
+    console.log("IS DOWN, IS PRESSED SET TO TRUE");
+    isPressed.current = true;
     x = e.nativeEvent.offsetX;
     y = e.nativeEvent.offsetY;
     // console.log(x, y);
@@ -233,11 +345,9 @@ function Canvas(props: CanvasProps) {
         fieldPressedY.current,
         FieldType.Empty
       );
-      setIsDrawing(!isDrawing);
-      isPressed = false;
     }
     setIsDrawing(!isDrawing);
-    isPressed = false;
+    isPressed.current = false;
   };
 
   const onMouseLeave = (
