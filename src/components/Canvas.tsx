@@ -329,11 +329,13 @@ function Canvas(props: CanvasProps) {
     // console.log(x, y);
     updateCoordsOfFieldWithMousePREVIOUSLYOn(x, y);
     updateCoordsOfFieldWithMouseOn(x, y);
-    props.setFieldValue(
-      fieldPressedX.current,
-      fieldPressedY.current,
-      fieldTypeChosen.current
-    );
+    if (e.nativeEvent.button === 0) {
+      props.setFieldValue(
+        fieldPressedX.current,
+        fieldPressedY.current,
+        fieldTypeChosen.current
+      );
+    }
     setIsDrawing(!isDrawing);
   };
 
@@ -380,13 +382,11 @@ function Canvas(props: CanvasProps) {
 
   const onMouseLeave = (
     nativeEvent: React.MouseEvent<HTMLCanvasElement, MouseEvent>
-  ) => {};
-
-  const stopDrawing = () => {
-    setIsDrawing(false);
+  ) => {
+    isPressed.current = false;
   };
 
-  const onKeyDown = (e) => {
+  const onKeyDown = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
     console.log(e.key);
   };
 
@@ -425,6 +425,14 @@ function Canvas(props: CanvasProps) {
           }}
         >
           Urban area brush
+        </Button>
+        <Button
+          variant="contained"
+          onClick={(e) => {
+            fieldTypeChosen.current = FieldType.Industrial;
+          }}
+        >
+          Industry area brush
         </Button>
       </div>
     </>

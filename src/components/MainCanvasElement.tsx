@@ -5,60 +5,6 @@ import { useState } from "react";
 import FieldType from "../enums/FieldType";
 
 function MainCanvasElement() {
-  // canvas.addEventListener("mousedown", (e) => {
-  //   isPressed = true;
-
-  //   x = e.offsetX;
-  //   y = e.offsetY;
-  //   updateCoordsOfFieldWithMousePREVIOUSLYOn(x, y);
-  //   updateCoordsOfFieldWithMouseOn(x, y);
-
-  //   fieldArray[fieldPressedX][fieldPressedY] = fieldTypeChosen;
-
-  //   drawMainGrid();
-
-  //   console.log("fieldPressed: ", fieldPressedX, fieldPressedY);
-  // });
-
-  // document.addEventListener("mouseup", (e) => {
-  //   // console.log("Is pressed set to false", e.offsetX, e.offsetY);
-  //   updateCoordsOfFieldWithMouseOn(e.offsetX, e.offsetY);
-  //   console.log(
-  //     "fieldPressed: ",
-  //     previousFieldPressedX,
-  //     previousFieldPressedY,
-  //     "fieldReleased: ",
-  //     fieldPressedX,
-  //     fieldPressedY
-  //   );
-
-  //   placeRectangleBetween(
-  //     previousFieldPressedX,
-  //     previousFieldPressedY,
-  //     fieldPressedX,
-  //     fieldPressedY,
-  //     fieldTypeChosen
-  //   );
-  //   redraw();
-  //   isPressed = false;
-
-  //   x = undefined;
-  //   y = undefined;
-  // });
-
-  // canvas.addEventListener("mousemove", (e) => {
-  //   if (isPressed && x !== undefined && y !== undefined) {
-  //     const x2 = e.offsetX;
-  //     const y2 = e.offsetY;
-
-  //     previousMouseX = x;
-  //     previousMouseY = y;
-
-  //     x = x2;
-  //     y = y2;
-  //   }
-  // });
-
   function placePerpendicularLineBetween(
     ax: number,
     ay: number,
@@ -165,8 +111,8 @@ function MainCanvasElement() {
     }
   }
 
-  const numRows = 100;
-  const numColumns = 100;
+  const numRows = 110;
+  const numColumns = 110;
   let fieldArray: FieldType[][] = [];
   // const [stateFieldArray, setStateFieldArray] = useState<FieldType[][]>();
 
@@ -193,32 +139,6 @@ function MainCanvasElement() {
       fieldArray[x][y] = value;
     }
     // setStateFieldArray(fieldArray);
-  }
-
-  // console.log(13 % 5);
-  // redraw();
-
-  function redraw() {
-    //render call
-    // draw empty grid, then draw non-empty fields on top of it
-    drawMainGrid();
-
-    //if not mouse dragging, then draw selection. if mouse dragging, then draw perpendicular selection
-    // if (!isPressed) {
-    //   drawSingleSelection();
-    // } else {
-    //   // when it IS dragging
-    //   drawPerpendicularSelection();
-    // }
-
-    // drawCoordsLabel();
-
-    //optionally draw grid overlay
-    //drawGridOverlay();
-
-    // nodeNumbersAreOn ? drawNodeNumbers() : null;
-    // pathIsOn ? drawPath() : null;
-    // roadHeatmapIsOn ? drawRoadHeatOverlay() : null;
   }
 
   //initPopulation();
