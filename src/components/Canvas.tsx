@@ -119,33 +119,41 @@ function Canvas(props: CanvasProps) {
 
   function drawCursorSingleSelection(ctx) {
     if (!isPressed.current) {
-      let type = props.fieldArray[fieldPressedX.current][fieldPressedY.current];
-      if (type == FieldType.Urban) {
-        color = "green";
-      } else if (type == FieldType.Industrial) {
-        color = "#666622";
-      } else {
-        color = "#111111";
+      if (
+        fieldPressedX.current >= 0 &&
+        fieldPressedY.current >= 0 &&
+        fieldPressedX.current < props.numColumns &&
+        props.numRows < props.numRows
+      ) {
+        let type =
+          props.fieldArray[fieldPressedX.current][fieldPressedY.current];
+        if (type == FieldType.Urban) {
+          color = "green";
+        } else if (type == FieldType.Industrial) {
+          color = "#666622";
+        } else {
+          color = "#111111";
+        }
+
+        ctx!.fillStyle = color;
+        // ctx!.globalCompositOperation = "source-over";
+        ctx.globalAlpha = 0.5;
+        // console.log(
+        //   "Drawing sursor of  type ",
+        //   type,
+        //   " on ",
+        //   fieldPressedX,
+        //   fieldPressedY
+        // );
+
+        ctx!.fillRect(
+          fieldWidth * 1 * fieldPressedX.current - cameraX,
+          fieldHeight * cameraScale * fieldPressedY.current - cameraY,
+          fieldWidth * cameraScale,
+          fieldHeight * cameraScale
+        );
+        ctx.globalAlpha = 1;
       }
-
-      ctx!.fillStyle = color;
-      // ctx!.globalCompositOperation = "source-over";
-      ctx.globalAlpha = 0.5;
-      // console.log(
-      //   "Drawing sursor of  type ",
-      //   type,
-      //   " on ",
-      //   fieldPressedX,
-      //   fieldPressedY
-      // );
-
-      ctx!.fillRect(
-        fieldWidth * 1 * fieldPressedX.current - cameraX,
-        fieldHeight * cameraScale * fieldPressedY.current - cameraY,
-        fieldWidth * cameraScale,
-        fieldHeight * cameraScale
-      );
-      ctx.globalAlpha = 1;
     }
   }
 
@@ -275,8 +283,18 @@ function Canvas(props: CanvasProps) {
   }
 
   function updateCoordsOfFieldWithMouseOn(x: number, y: number) {
-    fieldPressedX.current = Math.floor(x / fieldWidth);
-    fieldPressedY.current = Math.floor(y / fieldHeight);
+    fieldPressedX.current =
+      Math.floor(x / fieldWidth) >= props.numColumns
+        ? props.numColumns
+        : Math.floor(x / fieldWidth) < 0
+        ? 0
+        : Math.floor(x / fieldWidth);
+    fieldPressedY.current =
+      Math.floor(y / fieldHeight) >= props.numRows
+        ? props.numRows
+        : Math.floor(y / fieldHeight) < 0
+        ? 0
+        : Math.floor(y / fieldHeight);
     console.log("Mouse over ", fieldPressedX, fieldPressedY);
   }
 
@@ -284,8 +302,18 @@ function Canvas(props: CanvasProps) {
     previousX: number,
     previousY: number
   ) {
-    previousFieldPressedX.current = Math.floor(previousX / fieldWidth);
-    previousFieldPressedY.current = Math.floor(previousY / fieldHeight);
+    previousFieldPressedX.current =
+      Math.floor(previousX / fieldWidth) >= props.numColumns
+        ? props.numColumns
+        : Math.floor(previousX / fieldWidth) < 0
+        ? 0
+        : Math.floor(previousX / fieldWidth);
+    previousFieldPressedY.current =
+      Math.floor(previousY / fieldHeight) >= props.numRows
+        ? props.numRows
+        : Math.floor(previousY / fieldHeight) < 0
+        ? 0
+        : Math.floor(previousY / fieldHeight);
     console.log(
       "previousFieldPressed: ",
       previousFieldPressedX,
