@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "../index.css";
 import { Button } from "@mui/material";
 import FieldType from "../enums/FieldType";
+import PaintBrush from "../icons/PaintBrush";
 
 interface CanvasProps {
   numRows: number;
@@ -96,11 +97,11 @@ function Canvas(props: CanvasProps) {
       for (let y = 0; y < props.numColumns; y++) {
         let type = props.fieldArray[x][y];
         if (type == FieldType.Urban && urbanIsOn) {
-          color = "green";
+          color = "#65a30d";
         } else if (type == FieldType.Industrial && industryIsOn) {
-          color = "#666622";
+          color = "#854d0e";
         } else if (type == FieldType.Road1 && roadsIsOn) {
-          color = "#111111";
+          color = "#1e293b";
         } else {
           // EMPTY
           color = "#ddeeee";
@@ -128,11 +129,11 @@ function Canvas(props: CanvasProps) {
         let type =
           props.fieldArray[fieldPressedX.current][fieldPressedY.current];
         if (type == FieldType.Urban) {
-          color = "green";
+          color = "#65a30d";
         } else if (type == FieldType.Industrial) {
-          color = "#666622";
+          color = "#854d0e";
         } else {
-          color = "#111111";
+          color = "#1e293b";
         }
 
         ctx!.fillStyle = color;
@@ -171,11 +172,11 @@ function Canvas(props: CanvasProps) {
     let signumDeltaY = Math.sign(deltaY);
 
     if (fieldTypeChosen.current == FieldType.Urban) {
-      color = "green";
+      color = "#65a30d";
     } else if (fieldTypeChosen.current == FieldType.Industrial) {
-      color = "#666622";
+      color = "#854d0e";
     } else if (fieldTypeChosen.current == FieldType.Road1) {
-      color = "#111111";
+      color = "#1e293b";
     } else {
       color = "black";
     }
@@ -335,6 +336,12 @@ function Canvas(props: CanvasProps) {
         fieldPressedY.current,
         fieldTypeChosen.current
       );
+    } else if (e.nativeEvent.button === 2) {
+      props.setFieldValue(
+        fieldPressedX.current,
+        fieldPressedY.current,
+        FieldType.Empty
+      );
     }
     setIsDrawing(!isDrawing);
   };
@@ -392,48 +399,71 @@ function Canvas(props: CanvasProps) {
 
   return (
     <>
-      <div className="border-black border-top  ">
-        <canvas
-          className="border-black border"
-          id="canvas"
-          width="800"
-          height="700"
-          ref={canvasRef}
-          onMouseDown={(e) => onMouseDown(e)}
-          onMouseMove={(e) => onMouseMove(e)}
-          onMouseUp={(e) => onMouseUp(e)}
-          onMouseLeave={(e) => onMouseLeave(e)}
-          onKeyDown={(e) => onKeyDown(e)}
-          onKeyDownCapture={(e) => onKeyDown(e)}
-          onContextMenu={(e) => e.preventDefault()}
-        ></canvas>
-        <Button variant="contained" onClick={(e) => setIsDrawing(!isDrawing)}>
-          Refresh
-        </Button>
-        <Button
-          variant="contained"
-          onClick={(e) => {
-            fieldTypeChosen.current = FieldType.Road1;
-          }}
-        >
-          Road brush
-        </Button>
-        <Button
-          variant="contained"
-          onClick={(e) => {
-            fieldTypeChosen.current = FieldType.Urban;
-          }}
-        >
-          Urban area brush
-        </Button>
-        <Button
-          variant="contained"
-          onClick={(e) => {
-            fieldTypeChosen.current = FieldType.Industrial;
-          }}
-        >
-          Industry area brush
-        </Button>
+      <div className="border-black border-top border">
+        <div className="">
+          <canvas
+            className="border-black border"
+            id="canvas"
+            width="800"
+            height="700"
+            ref={canvasRef}
+            onMouseDown={(e) => onMouseDown(e)}
+            onMouseMove={(e) => onMouseMove(e)}
+            onMouseUp={(e) => onMouseUp(e)}
+            onMouseLeave={(e) => onMouseLeave(e)}
+            onKeyDown={(e) => onKeyDown(e)}
+            onKeyDownCapture={(e) => onKeyDown(e)}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        </div>
+        <div className="flex">
+          {isPressed.current ? (
+            <h3 className="font-bold">
+              [{previousFieldPressedX.current};{previousFieldPressedY.current}]
+            </h3>
+          ) : (
+            ""
+          )}
+
+          <h3 className="font-bold">
+            [{fieldPressedX.current};{fieldPressedY.current}]
+          </h3>
+        </div>
+        <div className="flex items-center">
+          {/* <Button variant="contained" onClick={(e) => setIsDrawing(!isDrawing)}>
+            Refresh
+          </Button> */}
+          <Button
+            startIcon={<PaintBrush />}
+            className="bg-slate-800 hover:bg-slate-900"
+            variant="contained"
+            onClick={(e) => {
+              fieldTypeChosen.current = FieldType.Road1;
+            }}
+          >
+            Road
+          </Button>
+          <Button
+            startIcon={<PaintBrush />}
+            className="bg-lime-600 hover:bg-lime-700"
+            variant="contained"
+            onClick={(e) => {
+              fieldTypeChosen.current = FieldType.Urban;
+            }}
+          >
+            Urban area
+          </Button>
+          <Button
+            startIcon={<PaintBrush />}
+            variant="contained"
+            className="bg-yellow-800 hover:bg-yellow-900"
+            onClick={(e) => {
+              fieldTypeChosen.current = FieldType.Industrial;
+            }}
+          >
+            Industry area
+          </Button>
+        </div>
       </div>
     </>
   );

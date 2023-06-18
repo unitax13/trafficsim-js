@@ -1,13 +1,14 @@
 import { useState } from "react";
 import MainCanvasElement from "./components/MainCanvasElement";
 import "./index.css";
+import { StyledEngineProvider } from "@mui/material";
 
 function App() {
   return (
     <>
-      <h1>Hello world</h1>
-      <div className="border-2">DSdasdas</div>
-      <MainCanvasElement />
+      <StyledEngineProvider injectFirst>
+        <MainCanvasElement />
+      </StyledEngineProvider>
     </>
   );
 }
