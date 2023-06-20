@@ -30,7 +30,14 @@ function Canvas(props: CanvasProps) {
     Industrial,
   }
 
-  const isPressed = useRef<boolean>(false);
+  const leftIsPressed = useRef<boolean>(false);
+  const middleIsPressed = useRef<boolean>(false);
+  const rightIsPressed = useRef<boolean>(false);
+  //const isPressed = useRef<boolean>(false);
+
+  function isPressed() {
+    return leftIsPressed || middleIsPressed || rightIsPressed;
+  }
 
   let previousMouseX: number | undefined;
   let previousMouseY: number | undefined;
@@ -80,7 +87,7 @@ function Canvas(props: CanvasProps) {
     const ctx = canvas.getContext("2d");
     drawMainGrid(ctx);
     drawCursorSingleSelection(ctx);
-    if (isPressed.current) {
+    if (leftIsPressed.current || rightIsPressed.current) {
       drawRectangularSelection(
         ctx,
         previousFieldPressedX.current,
@@ -119,7 +126,7 @@ function Canvas(props: CanvasProps) {
   }
 
   function drawCursorSingleSelection(ctx) {
-    if (!isPressed.current) {
+    if (!leftIsPressed.current) {
       if (
         fieldPressedX.current >= 0 &&
         fieldPressedY.current >= 0 &&
@@ -171,7 +178,9 @@ function Canvas(props: CanvasProps) {
     let signumDeltaX = Math.sign(deltaX);
     let signumDeltaY = Math.sign(deltaY);
 
-    if (fieldTypeChosen.current == FieldType.Urban) {
+    if (rightIsPressed.current) {
+      color = "black";
+    } else if (fieldTypeChosen.current == FieldType.Urban) {
       color = "#65a30d";
     } else if (fieldTypeChosen.current == FieldType.Industrial) {
       color = "#854d0e";
@@ -324,7 +333,22 @@ function Canvas(props: CanvasProps) {
 
   const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     console.log("IS DOWN, IS PRESSED SET TO TRUE");
-    isPressed.current = true;
+    switch (e.nativeEvent.button) {
+      case 0:
+        {
+          leftIsPressed.current = true;
+        }
+        break;
+      case 1:
+        {
+          middleIsPressed.current = true;
+        }
+        break;
+      case 2: {
+        rightIsPressed.current = true;
+      }
+    }
+
     x = e.nativeEvent.offsetX;
     y = e.nativeEvent.offsetY;
     // console.log(x, y);
@@ -366,7 +390,7 @@ function Canvas(props: CanvasProps) {
       fieldPressedX,
       fieldPressedY
     );
-    if (e.nativeEvent.button === 0) {
+    if (leftIsPressed.current) {
       props.placeRectangleBetween(
         previousFieldPressedX.current,
         previousFieldPressedY.current,
@@ -374,7 +398,7 @@ function Canvas(props: CanvasProps) {
         fieldPressedY.current,
         fieldTypeChosen.current
       );
-    } else if (e.nativeEvent.button === 2) {
+    } else if (rightIsPressed.current) {
       props.placeRectangleBetween(
         previousFieldPressedX.current,
         previousFieldPressedY.current,
@@ -384,13 +408,31 @@ function Canvas(props: CanvasProps) {
       );
     }
     setIsDrawing(!isDrawing);
-    isPressed.current = false;
+    //isPressed.current = false;
+
+    switch (e.nativeEvent.button) {
+      case 0:
+        {
+          leftIsPressed.current = false;
+        }
+        break;
+      case 1:
+        {
+          middleIsPressed.current = false;
+        }
+        break;
+      case 2: {
+        rightIsPressed.current = false;
+      }
+    }
   };
 
   const onMouseLeave = (
     nativeEvent: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
-    isPressed.current = false;
+    leftIsPressed.current = false;
+    middleIsPressed.current = false;
+    rightIsPressed.current = false;
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
@@ -417,7 +459,7 @@ function Canvas(props: CanvasProps) {
           />
         </div>
         <div className="flex">
-          {isPressed.current ? (
+          {leftIsPressed.current || rightIsPressed.current ? (
             <h3 className="font-bold">
               [{previousFieldPressedX.current};{previousFieldPressedY.current}]
             </h3>
