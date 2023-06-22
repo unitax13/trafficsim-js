@@ -16,9 +16,11 @@ interface CanvasProps {
     by: number,
     fieldType: FieldType
   ) => void;
+  generateGraph: () => GraphNode[] | undefined;
 }
 
 function Canvas(props: CanvasProps) {
+  const graphNodesRef = useRef<GraphNode[] | null | undefined>(null);
   let color = "black";
   const canvasWidth = 800;
   const canvasHeight = 700;
@@ -74,7 +76,7 @@ function Canvas(props: CanvasProps) {
     console.log("Reloading");
     const canvas = canvasRef.current;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas!.getContext("2d");
     contextRef.current = ctx;
 
     drawMainGrid(ctx);
@@ -84,7 +86,7 @@ function Canvas(props: CanvasProps) {
   useEffect(() => {
     console.log("reloaded from isDrawing");
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas!.getContext("2d");
     drawMainGrid(ctx);
     drawCursorSingleSelection(ctx);
     if (leftIsPressed.current || rightIsPressed.current) {
@@ -96,7 +98,23 @@ function Canvas(props: CanvasProps) {
         fieldPressedY.current
       );
     }
+    drawNodeNumbers(ctx);
   }, [isDrawing]);
+
+  function drawNodeNumbers() {
+    if (props.graphNodes) {
+      for (let i = 0; i < props.graphNodes.length; i++) {
+        let node: GraphNode = props.graphNodes.get().get(i);
+        color = "black";
+        ctx.fillText(
+          i,
+          node.x * fieldWidth * cameraScale + fieldWidth * cameraScale,
+          node.y * fieldWidth * cameraScale,
+          fieldWidth * cameraScale
+        );
+      }
+    }
+  }
 
   function drawMainGrid(ctx) {
     //console.log("drawing");
@@ -439,6 +457,18 @@ function Canvas(props: CanvasProps) {
     console.log(e.key);
   };
 
+  function generateGraphButtonPressed() {
+    graphNodesRef.current = props.generateGraph();
+    if (graphNodesRef.current !== undefined) {
+      console.log("not undefined ", graphNodesRef.current.length);
+      graphNodesRef.current.forEach((node: GraphNode) => {
+        console.log("hello");
+        console.log(node.x, node.y);
+        console.log(node.distances!.toString());
+      });
+    }
+  }
+
   return (
     <>
       <div className="border-black border-top border">
@@ -506,6 +536,16 @@ function Canvas(props: CanvasProps) {
             Industry area
           </Button>
         </div>
+        <Button
+          startIcon={"X"}
+          variant="contained"
+          className="bg-yellow-800 hover:bg-yellow-900"
+          onClick={(e) => {
+            generateGraphButtonPressed();
+          }}
+        >
+          Generate graph
+        </Button>
       </div>
     </>
   );
