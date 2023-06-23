@@ -112,8 +112,8 @@ function MainCanvasElement() {
     }
   }
 
-  const numRows = 100;
-  const numColumns = 100;
+  const numRows = 110;
+  const numColumns = 110;
   let fieldArray: FieldType[][] = [];
   // const [stateFieldArray, setStateFieldArray] = useState<FieldType[][]>();
 
@@ -275,7 +275,7 @@ function MainCanvasElement() {
           gn.distances![i] = dist;
 
           for (let j = 0; j < neighbour.neighbours!.length; j++) {
-            let n: GraphNode = neighbour.neighbours![j];
+            let n: GraphNode | null = neighbour.neighbours![j];
             if (n != null && n == gn) {
               neighbour.distances![j] = dist;
             }
@@ -283,7 +283,7 @@ function MainCanvasElement() {
         }
       }
     });
-    console.log("generated");
+    console.log("generated graph nodes");
     return graphNodes;
   }
 

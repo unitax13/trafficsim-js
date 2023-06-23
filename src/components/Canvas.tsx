@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import "../index.css";
-import { Button } from "@mui/material";
+import { Button, FormControlLabel, FormGroup, Switch } from "@mui/material";
 import FieldType from "../enums/FieldType";
 import PaintBrush from "../icons/PaintBrush";
+import GraphNode from "../classes/GraphNode";
+import GraphIcon from "../icons/GraphIcon";
+import ColoredMuiSwitch from "./ColoredMuiSwitch";
+import "../colors";
+import colors from "../colors";
 
 interface CanvasProps {
   numRows: number;
@@ -59,12 +64,12 @@ function Canvas(props: CanvasProps) {
   let cameraX = 0;
   let cameraY = 0;
   let cameraScale = 1;
-  let gridOpacity = 10;
 
-  const urbanIsOn = true;
-  const industryIsOn = true;
-  const roadsIsOn = true;
-  const nodeNumbersAreOn = false;
+  const [urbanIsOn, setUrbanIsOn] = useState<boolean>(true);
+  const [industryIsOn, setIndustryIsOn] = useState<boolean>(true);
+  const [roadsIsOn, setRoadsIsOn] = useState<boolean>(true);
+  const [nodeNumbersAreOn, setNodeNumbersAreOn] = useState<boolean>(false);
+  const [gridIsOn, setGridIsOn] = useState<boolean>(true);
   const pathIsOn = false;
   const roadHeatmapIsOn = false;
 
@@ -87,6 +92,7 @@ function Canvas(props: CanvasProps) {
     console.log("reloaded from isDrawing");
     const canvas = canvasRef.current;
     const ctx = canvas!.getContext("2d");
+
     drawMainGrid(ctx);
     drawCursorSingleSelection(ctx);
     if (leftIsPressed.current || rightIsPressed.current) {
@@ -98,14 +104,20 @@ function Canvas(props: CanvasProps) {
         fieldPressedY.current
       );
     }
-    drawNodeNumbers(ctx);
+    nodeNumbersAreOn ? drawNodeNumbers(ctx) : null;
+    gridIsOn ? drawGridOverlay(ctx) : null;
   }, [isDrawing]);
 
-  function drawNodeNumbers() {
-    if (props.graphNodes) {
-      for (let i = 0; i < props.graphNodes.length; i++) {
-        let node: GraphNode = props.graphNodes.get().get(i);
+  function redraw() {
+    setIsDrawing(!isDrawing);
+  }
+
+  function drawNodeNumbers(ctx: CanvasRenderingContext2D) {
+    if (graphNodesRef.current) {
+      for (let i = 0; i < graphNodesRef.current.length; i++) {
+        let node: GraphNode = graphNodesRef.current[i];
         color = "black";
+        ctx!.fillStyle = color;
         ctx.fillText(
           i,
           node.x * fieldWidth * cameraScale + fieldWidth * cameraScale,
@@ -116,20 +128,20 @@ function Canvas(props: CanvasProps) {
     }
   }
 
-  function drawMainGrid(ctx) {
+  function drawMainGrid(ctx: CanvasRenderingContext2D) {
     //console.log("drawing");
     for (let x = 0; x < props.numRows; x++) {
       for (let y = 0; y < props.numColumns; y++) {
         let type = props.fieldArray[x][y];
         if (type == FieldType.Urban && urbanIsOn) {
-          color = "#65a30d";
+          color = colors.urban;
         } else if (type == FieldType.Industrial && industryIsOn) {
-          color = "#854d0e";
+          color = colors.industry;
         } else if (type == FieldType.Road1 && roadsIsOn) {
-          color = "#1e293b";
+          color = colors.roads;
         } else {
           // EMPTY
-          color = "#ddeeee";
+          color = colors.empty;
         }
         ctx!.fillStyle = color;
 
@@ -143,7 +155,7 @@ function Canvas(props: CanvasProps) {
     }
   }
 
-  function drawCursorSingleSelection(ctx) {
+  function drawCursorSingleSelection(ctx: CanvasRenderingContext2D) {
     if (!leftIsPressed.current) {
       if (
         fieldPressedX.current >= 0 &&
@@ -154,11 +166,11 @@ function Canvas(props: CanvasProps) {
         let type =
           props.fieldArray[fieldPressedX.current][fieldPressedY.current];
         if (type == FieldType.Urban) {
-          color = "#65a30d";
+          color = colors.urban;
         } else if (type == FieldType.Industrial) {
-          color = "#854d0e";
+          color = colors.industry;
         } else {
-          color = "#1e293b";
+          color = colors.roads;
         }
 
         ctx!.fillStyle = color;
@@ -184,7 +196,7 @@ function Canvas(props: CanvasProps) {
   }
 
   function drawRectangularSelection(
-    ctx,
+    ctx: CanvasRenderingContext2D,
     ax: number,
     ay: number,
     bx: number,
@@ -199,11 +211,11 @@ function Canvas(props: CanvasProps) {
     if (rightIsPressed.current) {
       color = "black";
     } else if (fieldTypeChosen.current == FieldType.Urban) {
-      color = "#65a30d";
+      color = colors.urban;
     } else if (fieldTypeChosen.current == FieldType.Industrial) {
-      color = "#854d0e";
+      color = colors.industry;
     } else if (fieldTypeChosen.current == FieldType.Road1) {
-      color = "#1e293b";
+      color = colors.roads;
     } else {
       color = "black";
     }
@@ -293,7 +305,8 @@ function Canvas(props: CanvasProps) {
     console.log("drawing grid overlay");
     ctx!.strokeStyle = "#111111";
     for (let x1 = 0; x1 <= props.numRows; x1++) {
-      ctx.lineWidth = (1 * gridOpacity) / 100;
+      ctx!.strokeStyle = "#111111";
+      ctx.lineWidth = 0.01;
 
       ctx.moveTo(x1 * fieldWidth * cameraScale - cameraX, -1 - cameraY);
       ctx.lineTo(
@@ -306,8 +319,8 @@ function Canvas(props: CanvasProps) {
         canvasWidth * cameraScale - cameraX,
         x1 * fieldWidth * cameraScale - cameraY
       );
-      ctx.stroke();
     }
+    ctx.stroke();
   }
 
   function updateCoordsOfFieldWithMouseOn(x: number, y: number) {
@@ -385,11 +398,11 @@ function Canvas(props: CanvasProps) {
         FieldType.Empty
       );
     }
-    setIsDrawing(!isDrawing);
+    redraw();
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    setIsDrawing(!isDrawing);
+    redraw();
     x = e.nativeEvent.offsetX;
     y = e.nativeEvent.offsetY;
     updateCoordsOfFieldWithMouseOn(x, y);
@@ -425,7 +438,7 @@ function Canvas(props: CanvasProps) {
         FieldType.Empty
       );
     }
-    setIsDrawing(!isDrawing);
+    redraw();
     //isPressed.current = false;
 
     switch (e.nativeEvent.button) {
@@ -467,27 +480,141 @@ function Canvas(props: CanvasProps) {
         console.log(node.distances!.toString());
       });
     }
+    redraw();
   }
 
   return (
     <>
-      <div className="border-black border-top border">
-        <div className="">
-          <canvas
-            className="border-black border"
-            id="canvas"
-            width="800"
-            height="700"
-            ref={canvasRef}
-            onMouseDown={(e) => onMouseDown(e)}
-            onMouseMove={(e) => onMouseMove(e)}
-            onMouseUp={(e) => onMouseUp(e)}
-            onMouseLeave={(e) => onMouseLeave(e)}
-            onKeyDown={(e) => onKeyDown(e)}
-            onKeyDownCapture={(e) => onKeyDown(e)}
-            onContextMenu={(e) => e.preventDefault()}
-          />
+      <div className="">
+        <div className="flex gap-2 items-center">
+          <div className="flex flex-col items-center w-44">
+            <div>
+              <Button
+                fullWidth
+                startIcon={<PaintBrush />}
+                className="bg-slate-800 hover:bg-slate-900"
+                variant="contained"
+                onClick={(e) => {
+                  fieldTypeChosen.current = FieldType.Road1;
+                }}
+              >
+                Road
+              </Button>
+              <Button
+                fullWidth
+                startIcon={<PaintBrush />}
+                className="bg-lime-600 hover:bg-lime-700"
+                variant="contained"
+                onClick={(e) => {
+                  fieldTypeChosen.current = FieldType.Urban;
+                }}
+              >
+                Urban area
+              </Button>
+              <Button
+                fullWidth
+                startIcon={<PaintBrush />}
+                variant="contained"
+                className="bg-yellow-600 hover:bg-yellow-700"
+                onClick={(e) => {
+                  fieldTypeChosen.current = FieldType.Industrial;
+                }}
+              >
+                Industry area
+              </Button>
+            </div>
+            <div className="mt-4 w-full flex flex-col items-center border-2 border-slate-200 border-solid">
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <ColoredMuiSwitch
+                      colorHex={colors.roads}
+                      color="primary"
+                      checked={roadsIsOn}
+                      onChange={(e) => {
+                        setRoadsIsOn(!roadsIsOn);
+                        redraw();
+                      }}
+                    />
+                  }
+                  label="Roads"
+                />
+                <FormControlLabel
+                  control={
+                    <ColoredMuiSwitch
+                      colorHex={colors.urban}
+                      color="primary"
+                      checked={urbanIsOn}
+                      onChange={(e) => {
+                        setUrbanIsOn(!urbanIsOn);
+                        redraw();
+                      }}
+                    />
+                  }
+                  label="Urban"
+                />
+                <FormControlLabel
+                  control={
+                    <ColoredMuiSwitch
+                      colorHex={colors.industry}
+                      color="primary"
+                      checked={industryIsOn}
+                      onChange={(e) => {
+                        setIndustryIsOn(!industryIsOn);
+                        redraw();
+                      }}
+                    />
+                  }
+                  label="Industry"
+                />
+                <FormControlLabel
+                  control={
+                    <ColoredMuiSwitch
+                      colorHex={colors.graphColor}
+                      color="primary"
+                      checked={nodeNumbersAreOn}
+                      onChange={(e) => {
+                        setNodeNumbersAreOn(!nodeNumbersAreOn);
+                        redraw();
+                      }}
+                    />
+                  }
+                  label="Node numbers"
+                />
+                <FormControlLabel
+                  control={
+                    <ColoredMuiSwitch
+                      colorHex="#111111"
+                      color="primary"
+                      checked={gridIsOn}
+                      onChange={(e) => {
+                        setGridIsOn(!gridIsOn);
+                        redraw();
+                      }}
+                    />
+                  }
+                  label="Grid"
+                />
+              </FormGroup>
+            </div>
+          </div>
+          <div className="border-slate-500 border border-solid">
+            <canvas
+              id="canvas"
+              width="660"
+              height="660"
+              ref={canvasRef}
+              onMouseDown={(e) => onMouseDown(e)}
+              onMouseMove={(e) => onMouseMove(e)}
+              onMouseUp={(e) => onMouseUp(e)}
+              onMouseLeave={(e) => onMouseLeave(e)}
+              onKeyDown={(e) => onKeyDown(e)}
+              onKeyDownCapture={(e) => onKeyDown(e)}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          </div>
         </div>
+        {/* X,Y text */}
         <div className="flex">
           {leftIsPressed.current || rightIsPressed.current ? (
             <h3 className="font-bold">
@@ -501,50 +628,16 @@ function Canvas(props: CanvasProps) {
             [{fieldPressedX.current};{fieldPressedY.current}]
           </h3>
         </div>
-        <div className="flex items-center">
-          {/* <Button variant="contained" onClick={(e) => setIsDrawing(!isDrawing)}>
-            Refresh
-          </Button> */}
-          <Button
-            startIcon={<PaintBrush />}
-            className="bg-slate-800 hover:bg-slate-900"
-            variant="contained"
-            onClick={(e) => {
-              fieldTypeChosen.current = FieldType.Road1;
-            }}
-          >
-            Road
-          </Button>
-          <Button
-            startIcon={<PaintBrush />}
-            className="bg-lime-600 hover:bg-lime-700"
-            variant="contained"
-            onClick={(e) => {
-              fieldTypeChosen.current = FieldType.Urban;
-            }}
-          >
-            Urban area
-          </Button>
-          <Button
-            startIcon={<PaintBrush />}
-            variant="contained"
-            className="bg-yellow-800 hover:bg-yellow-900"
-            onClick={(e) => {
-              fieldTypeChosen.current = FieldType.Industrial;
-            }}
-          >
-            Industry area
-          </Button>
-        </div>
+
         <Button
-          startIcon={"X"}
+          startIcon={<GraphIcon />}
           variant="contained"
-          className="bg-yellow-800 hover:bg-yellow-900"
+          className="bg-slate-500 hover:bg-slate-600"
           onClick={(e) => {
             generateGraphButtonPressed();
           }}
         >
-          Generate graph
+          Make a graph
         </Button>
       </div>
     </>
