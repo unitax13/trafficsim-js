@@ -8,6 +8,11 @@ import GraphIcon from "../icons/GraphIcon";
 import ColoredMuiSwitch from "./ColoredMuiSwitch";
 import "../colors";
 import colors from "../colors";
+import {
+  drawGridOverlay,
+  drawMainGrid,
+  drawNodeNumbers,
+} from "../logic/drawingFunctions";
 
 interface CanvasProps {
   numRows: number;
@@ -84,7 +89,20 @@ function Canvas(props: CanvasProps) {
     const ctx = canvas!.getContext("2d");
     contextRef.current = ctx;
 
-    drawMainGrid(ctx);
+    drawMainGrid(
+      ctx,
+      props.numRows,
+      props.numColumns,
+      props.fieldArray,
+      urbanIsOn,
+      industryIsOn,
+      roadsIsOn,
+      fieldWidth,
+      fieldHeight,
+      cameraScale,
+      cameraX,
+      cameraY
+    );
     // drawGridOverlay(ctx);
   }, []);
 
@@ -93,7 +111,20 @@ function Canvas(props: CanvasProps) {
     const canvas = canvasRef.current;
     const ctx = canvas!.getContext("2d");
 
-    drawMainGrid(ctx);
+    drawMainGrid(
+      ctx,
+      props.numRows,
+      props.numColumns,
+      props.fieldArray,
+      urbanIsOn,
+      industryIsOn,
+      roadsIsOn,
+      fieldWidth,
+      fieldHeight,
+      cameraScale,
+      cameraX,
+      cameraY
+    );
     drawCursorSingleSelection(ctx);
     if (leftIsPressed.current || rightIsPressed.current) {
       drawRectangularSelection(
@@ -104,55 +135,27 @@ function Canvas(props: CanvasProps) {
         fieldPressedY.current
       );
     }
-    nodeNumbersAreOn ? drawNodeNumbers(ctx) : null;
-    gridIsOn ? drawGridOverlay(ctx) : null;
+    nodeNumbersAreOn
+      ? drawNodeNumbers(ctx, graphNodesRef, fieldWidth, cameraScale)
+      : null;
+    gridIsOn
+      ? drawGridOverlay(
+          ctx,
+          props.numRows,
+          props.numColumns,
+          fieldWidth,
+          fieldHeight,
+          cameraScale,
+          cameraX,
+          cameraY,
+          canvasWidth,
+          canvasHeight
+        )
+      : null;
   }, [isDrawing]);
 
   function redraw() {
     setIsDrawing(!isDrawing);
-  }
-
-  function drawNodeNumbers(ctx: CanvasRenderingContext2D) {
-    if (graphNodesRef.current) {
-      for (let i = 0; i < graphNodesRef.current.length; i++) {
-        let node: GraphNode = graphNodesRef.current[i];
-        color = "black";
-        ctx!.fillStyle = color;
-        ctx.fillText(
-          i,
-          node.x * fieldWidth * cameraScale + fieldWidth * cameraScale,
-          node.y * fieldWidth * cameraScale,
-          fieldWidth * cameraScale
-        );
-      }
-    }
-  }
-
-  function drawMainGrid(ctx: CanvasRenderingContext2D) {
-    //console.log("drawing");
-    for (let x = 0; x < props.numRows; x++) {
-      for (let y = 0; y < props.numColumns; y++) {
-        let type = props.fieldArray[x][y];
-        if (type == FieldType.Urban && urbanIsOn) {
-          color = colors.urban;
-        } else if (type == FieldType.Industrial && industryIsOn) {
-          color = colors.industry;
-        } else if (type == FieldType.Road1 && roadsIsOn) {
-          color = colors.roads;
-        } else {
-          // EMPTY
-          color = colors.empty;
-        }
-        ctx!.fillStyle = color;
-
-        ctx!.fillRect(
-          fieldWidth * 1 * x - cameraX,
-          fieldHeight * cameraScale * y - cameraY,
-          fieldWidth * cameraScale,
-          fieldHeight * cameraScale
-        );
-      }
-    }
   }
 
   function drawCursorSingleSelection(ctx: CanvasRenderingContext2D) {
@@ -299,28 +302,6 @@ function Canvas(props: CanvasProps) {
 
     ctx.globalAlpha = 1;
     //ctx!.setGlobalBlendMode(BlendMode.SRC_OVER);
-  }
-
-  function drawGridOverlay(ctx: CanvasRenderingContext2D) {
-    console.log("drawing grid overlay");
-    ctx!.strokeStyle = "#111111";
-    for (let x1 = 0; x1 <= props.numRows; x1++) {
-      ctx!.strokeStyle = "#111111";
-      ctx.lineWidth = 0.01;
-
-      ctx.moveTo(x1 * fieldWidth * cameraScale - cameraX, -1 - cameraY);
-      ctx.lineTo(
-        x1 * fieldWidth * cameraScale - cameraX,
-        canvasHeight * cameraScale - cameraY
-      );
-
-      ctx.moveTo(-1 - cameraX, x1 * fieldWidth * cameraScale - cameraY);
-      ctx.lineTo(
-        canvasWidth * cameraScale - cameraX,
-        x1 * fieldWidth * cameraScale - cameraY
-      );
-    }
-    ctx.stroke();
   }
 
   function updateCoordsOfFieldWithMouseOn(x: number, y: number) {
