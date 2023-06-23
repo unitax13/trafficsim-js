@@ -6,7 +6,7 @@ const GraphIcon = (props: SVGProps<SVGSVGElement>) => (
     width="256"
     height="256"
     viewBox="0 0 256 256"
-    className="w-7 h-7"
+    className={props.className}
   >
     <path
       fill="currentColor"

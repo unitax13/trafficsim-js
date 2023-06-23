@@ -9,10 +9,14 @@ import ColoredMuiSwitch from "./ColoredMuiSwitch";
 import "../colors";
 import colors from "../colors";
 import {
+  drawCursorSingleSelection,
   drawGridOverlay,
   drawMainGrid,
   drawNodeNumbers,
+  drawRectangularSelection,
 } from "../logic/drawingFunctions";
+import ViewIcon from "../icons/ViewIcon";
+import DijkstraIcon from "../icons/DijkstraIcon";
 
 interface CanvasProps {
   numRows: number;
@@ -73,7 +77,7 @@ function Canvas(props: CanvasProps) {
   const [urbanIsOn, setUrbanIsOn] = useState<boolean>(true);
   const [industryIsOn, setIndustryIsOn] = useState<boolean>(true);
   const [roadsIsOn, setRoadsIsOn] = useState<boolean>(true);
-  const [nodeNumbersAreOn, setNodeNumbersAreOn] = useState<boolean>(false);
+  const [nodeNumbersAreOn, setNodeNumbersAreOn] = useState<boolean>(true);
   const [gridIsOn, setGridIsOn] = useState<boolean>(true);
   const pathIsOn = false;
   const roadHeatmapIsOn = false;
@@ -125,14 +129,34 @@ function Canvas(props: CanvasProps) {
       cameraX,
       cameraY
     );
-    drawCursorSingleSelection(ctx);
+    drawCursorSingleSelection(
+      ctx,
+      leftIsPressed,
+      fieldPressedX,
+      fieldPressedY,
+      props.numRows,
+      props.numColumns,
+      props.fieldArray,
+      fieldWidth,
+      fieldHeight,
+      cameraX,
+      cameraY,
+      cameraScale
+    );
     if (leftIsPressed.current || rightIsPressed.current) {
       drawRectangularSelection(
         ctx,
         previousFieldPressedX.current,
         previousFieldPressedY.current,
         fieldPressedX.current,
-        fieldPressedY.current
+        fieldPressedY.current,
+        fieldTypeChosen,
+        rightIsPressed,
+        fieldWidth,
+        fieldHeight,
+        cameraScale,
+        cameraX,
+        cameraY
       );
     }
     nodeNumbersAreOn
@@ -156,152 +180,6 @@ function Canvas(props: CanvasProps) {
 
   function redraw() {
     setIsDrawing(!isDrawing);
-  }
-
-  function drawCursorSingleSelection(ctx: CanvasRenderingContext2D) {
-    if (!leftIsPressed.current) {
-      if (
-        fieldPressedX.current >= 0 &&
-        fieldPressedY.current >= 0 &&
-        fieldPressedX.current < props.numColumns &&
-        props.numRows < props.numRows
-      ) {
-        let type =
-          props.fieldArray[fieldPressedX.current][fieldPressedY.current];
-        if (type == FieldType.Urban) {
-          color = colors.urban;
-        } else if (type == FieldType.Industrial) {
-          color = colors.industry;
-        } else {
-          color = colors.roads;
-        }
-
-        ctx!.fillStyle = color;
-        // ctx!.globalCompositOperation = "source-over";
-        ctx.globalAlpha = 0.5;
-        // console.log(
-        //   "Drawing sursor of  type ",
-        //   type,
-        //   " on ",
-        //   fieldPressedX,
-        //   fieldPressedY
-        // );
-
-        ctx!.fillRect(
-          fieldWidth * 1 * fieldPressedX.current - cameraX,
-          fieldHeight * cameraScale * fieldPressedY.current - cameraY,
-          fieldWidth * cameraScale,
-          fieldHeight * cameraScale
-        );
-        ctx.globalAlpha = 1;
-      }
-    }
-  }
-
-  function drawRectangularSelection(
-    ctx: CanvasRenderingContext2D,
-    ax: number,
-    ay: number,
-    bx: number,
-    by: number
-  ) {
-    console.log("drawing rectangular selection");
-    let deltaX = bx - ax;
-    let deltaY = by - ay;
-    let signumDeltaX = Math.sign(deltaX);
-    let signumDeltaY = Math.sign(deltaY);
-
-    if (rightIsPressed.current) {
-      color = "black";
-    } else if (fieldTypeChosen.current == FieldType.Urban) {
-      color = colors.urban;
-    } else if (fieldTypeChosen.current == FieldType.Industrial) {
-      color = colors.industry;
-    } else if (fieldTypeChosen.current == FieldType.Road1) {
-      color = colors.roads;
-    } else {
-      color = "black";
-    }
-    ctx!.fillStyle = color;
-    ctx.globalAlpha = 0.5;
-    //if (!mainWindow.middleIsDown) {
-    if (
-      deltaX == 0 ||
-      deltaY == 0 ||
-      fieldTypeChosen.current == FieldType.Road1
-    ) {
-      if (Math.abs(deltaX) >= Math.abs(deltaY)) {
-        if (deltaX >= 0) {
-          ctx!.fillRect(
-            fieldWidth * cameraScale * ax - cameraX,
-            fieldHeight * cameraScale * ay - cameraY,
-            fieldWidth * cameraScale * deltaX,
-            fieldHeight * cameraScale
-          );
-        } else {
-          ctx!.fillRect(
-            fieldWidth * cameraScale * bx - cameraX,
-            fieldHeight * cameraScale * ay - cameraY,
-            -fieldWidth * cameraScale * deltaX,
-            fieldHeight * cameraScale
-          );
-        }
-      } else {
-        if (deltaY >= 0) {
-          ctx!.fillRect(
-            fieldWidth * cameraScale * ax - cameraX,
-            fieldHeight * cameraScale * ay - cameraY,
-            fieldWidth * cameraScale,
-            fieldHeight * cameraScale * deltaY
-          );
-        } else {
-          ctx!.fillRect(
-            fieldWidth * cameraScale * ax - cameraX,
-            fieldHeight * cameraScale * by - cameraY,
-            fieldWidth * cameraScale,
-            -fieldHeight * cameraScale * deltaY
-          );
-        }
-      }
-    } else {
-      if (signumDeltaX >= 0 && signumDeltaY >= 0) {
-        //heading south-east
-        ctx!.fillRect(
-          fieldWidth * cameraScale * ax - cameraX,
-          fieldHeight * cameraScale * ay - cameraY,
-          fieldWidth * cameraScale * (deltaX + 1),
-          fieldHeight * cameraScale * (deltaY + 1)
-        );
-      } else if (signumDeltaX >= 0 && signumDeltaY < 0) {
-        //heading north-east
-        ctx!.fillRect(
-          fieldWidth * cameraScale * ax - cameraX,
-          fieldHeight * cameraScale * by - cameraY,
-          fieldWidth * cameraScale * (deltaX + 1),
-          -fieldHeight * cameraScale * (deltaY - 1)
-        );
-      } else if (signumDeltaX < 0 && signumDeltaY < 0) {
-        //heading north-west
-        ctx!.fillRect(
-          fieldWidth * cameraScale * bx - cameraX,
-          fieldHeight * cameraScale * by - cameraY,
-          -fieldWidth * cameraScale * (deltaX - 1),
-          -fieldHeight * cameraScale * (deltaY - 1)
-        );
-      } else if (signumDeltaX < 0 && signumDeltaY >= 0) {
-        //heading south-west
-        ctx!.fillRect(
-          fieldWidth * cameraScale * bx - cameraX,
-          fieldHeight * cameraScale * ay - cameraY,
-          -fieldWidth * cameraScale * (deltaX - 1),
-          fieldHeight * cameraScale * (deltaY + 1)
-        );
-      }
-    }
-    //}
-
-    ctx.globalAlpha = 1;
-    //ctx!.setGlobalBlendMode(BlendMode.SRC_OVER);
   }
 
   function updateCoordsOfFieldWithMouseOn(x: number, y: number) {
@@ -505,6 +383,10 @@ function Canvas(props: CanvasProps) {
               </Button>
             </div>
             <div className="mt-4 w-full flex flex-col items-center border-2 border-slate-200 border-solid">
+              <div className="flex gap-1 justify-around items-center">
+                <p className="text-xs font-roboto text-slate-500">VIEW</p>
+                <ViewIcon className="w-5 text-slate-500" />
+              </div>
               <FormGroup>
                 <FormControlLabel
                   control={
@@ -610,16 +492,30 @@ function Canvas(props: CanvasProps) {
           </h3>
         </div>
 
-        <Button
-          startIcon={<GraphIcon />}
-          variant="contained"
-          className="bg-slate-500 hover:bg-slate-600"
-          onClick={(e) => {
-            generateGraphButtonPressed();
-          }}
-        >
-          Make a graph
-        </Button>
+        <div className="flex gap-4">
+          <div className="w-44">
+            <Button
+              fullWidth
+              startIcon={<GraphIcon className="w-7 h-7" />}
+              variant="contained"
+              className="bg-slate-500 hover:bg-slate-600"
+              onClick={(e) => {
+                generateGraphButtonPressed();
+              }}
+            >
+              Make a graph
+            </Button>
+          </div>
+
+          <Button
+            startIcon={<DijkstraIcon className="w-7 h-7" />}
+            variant="contained"
+            className="bg-fuchsia-700 hover:bg-fuchsia-800"
+            onClick={(e) => {}}
+          >
+            Shortest pathing tool
+          </Button>
+        </div>
       </div>
     </>
   );

@@ -17,24 +17,27 @@ export function drawGridOverlay(
 ) {
   console.log("drawing grid overlay");
   ctx!.strokeStyle = "#111111";
-  for (let x1 = 0; x1 <= numRows; x1++) {
-    ctx!.strokeStyle = "#111111";
-    ctx.lineWidth = 0.01;
+  ctx.globalAlpha = 0.1;
+  ctx.beginPath();
+  for (let i = 0; i <= numRows; i++) {
+    //ctx!.strokeStyle = "#111111";
+    ctx.lineWidth = 1;
 
-    ctx.moveTo(x1 * fieldWidth * cameraScale - cameraX, -1 - cameraY);
+    ctx.moveTo(i * fieldWidth * cameraScale - cameraX, -1 - cameraY);
     ctx.lineTo(
-      x1 * fieldWidth * cameraScale - cameraX,
+      i * fieldWidth * cameraScale - cameraX,
       canvasHeight * cameraScale - cameraY
     );
 
-    ctx.moveTo(-1 - cameraX, x1 * fieldWidth * cameraScale - cameraY);
+    ctx.moveTo(-1 - cameraX, i * fieldWidth * cameraScale - cameraY);
     ctx.lineTo(
       canvasWidth * cameraScale - cameraX,
-      x1 * fieldWidth * cameraScale - cameraY
+      i * fieldWidth * cameraScale - cameraY
     );
   }
   ctx.stroke();
-  ctx.lineWidth = 1;
+  //ctx.stroke();
+  ctx.globalAlpha = 1;
 }
 
 export function drawNodeNumbers(
@@ -95,6 +98,167 @@ export function drawMainGrid(
         fieldWidth * cameraScale,
         fieldHeight * cameraScale
       );
+    }
+  }
+}
+
+export function drawRectangularSelection(
+  ctx: CanvasRenderingContext2D,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+  fieldTypeChosen: React.MutableRefObject<FieldType>,
+  rightIsPressed: React.MutableRefObject<boolean>,
+  fieldWidth: number,
+  fieldHeight: number,
+  cameraScale: number,
+  cameraX: number,
+  cameraY: number
+) {
+  console.log("drawing rectangular selection");
+  let deltaX = bx - ax;
+  let deltaY = by - ay;
+  let signumDeltaX = Math.sign(deltaX);
+  let signumDeltaY = Math.sign(deltaY);
+
+  let color = "";
+
+  if (rightIsPressed.current) {
+    color = "black";
+  } else if (fieldTypeChosen.current == FieldType.Urban) {
+    color = colors.urban;
+  } else if (fieldTypeChosen.current == FieldType.Industrial) {
+    color = colors.industry;
+  } else if (fieldTypeChosen.current == FieldType.Road1) {
+    color = colors.roads;
+  } else {
+    color = "black";
+  }
+  ctx!.fillStyle = color;
+  ctx.globalAlpha = 0.5;
+  //if (!mainWindow.middleIsDown) {
+  if (
+    deltaX == 0 ||
+    deltaY == 0 ||
+    fieldTypeChosen.current == FieldType.Road1
+  ) {
+    if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+      if (deltaX >= 0) {
+        ctx!.fillRect(
+          fieldWidth * cameraScale * ax - cameraX,
+          fieldHeight * cameraScale * ay - cameraY,
+          fieldWidth * cameraScale * deltaX,
+          fieldHeight * cameraScale
+        );
+      } else {
+        ctx!.fillRect(
+          fieldWidth * cameraScale * bx - cameraX,
+          fieldHeight * cameraScale * ay - cameraY,
+          -fieldWidth * cameraScale * deltaX,
+          fieldHeight * cameraScale
+        );
+      }
+    } else {
+      if (deltaY >= 0) {
+        ctx!.fillRect(
+          fieldWidth * cameraScale * ax - cameraX,
+          fieldHeight * cameraScale * ay - cameraY,
+          fieldWidth * cameraScale,
+          fieldHeight * cameraScale * deltaY
+        );
+      } else {
+        ctx!.fillRect(
+          fieldWidth * cameraScale * ax - cameraX,
+          fieldHeight * cameraScale * by - cameraY,
+          fieldWidth * cameraScale,
+          -fieldHeight * cameraScale * deltaY
+        );
+      }
+    }
+  } else {
+    if (signumDeltaX >= 0 && signumDeltaY >= 0) {
+      //heading south-east
+      ctx!.fillRect(
+        fieldWidth * cameraScale * ax - cameraX,
+        fieldHeight * cameraScale * ay - cameraY,
+        fieldWidth * cameraScale * (deltaX + 1),
+        fieldHeight * cameraScale * (deltaY + 1)
+      );
+    } else if (signumDeltaX >= 0 && signumDeltaY < 0) {
+      //heading north-east
+      ctx!.fillRect(
+        fieldWidth * cameraScale * ax - cameraX,
+        fieldHeight * cameraScale * by - cameraY,
+        fieldWidth * cameraScale * (deltaX + 1),
+        -fieldHeight * cameraScale * (deltaY - 1)
+      );
+    } else if (signumDeltaX < 0 && signumDeltaY < 0) {
+      //heading north-west
+      ctx!.fillRect(
+        fieldWidth * cameraScale * bx - cameraX,
+        fieldHeight * cameraScale * by - cameraY,
+        -fieldWidth * cameraScale * (deltaX - 1),
+        -fieldHeight * cameraScale * (deltaY - 1)
+      );
+    } else if (signumDeltaX < 0 && signumDeltaY >= 0) {
+      //heading south-west
+      ctx!.fillRect(
+        fieldWidth * cameraScale * bx - cameraX,
+        fieldHeight * cameraScale * ay - cameraY,
+        -fieldWidth * cameraScale * (deltaX - 1),
+        fieldHeight * cameraScale * (deltaY + 1)
+      );
+    }
+  }
+  //}
+
+  ctx.globalAlpha = 1;
+  //ctx!.setGlobalBlendMode(BlendMode.SRC_OVER);
+}
+
+export function drawCursorSingleSelection(
+  ctx: CanvasRenderingContext2D,
+  leftIsPressed: React.MutableRefObject<boolean>,
+  fieldPressedX: React.MutableRefObject<number>,
+  fieldPressedY: React.MutableRefObject<number>,
+  numRows: number,
+  numColumns: number,
+  fieldArray: FieldType[][],
+  fieldWidth: number,
+  fieldHeight: number,
+  cameraX: number,
+  cameraY: number,
+  cameraScale: number
+) {
+  let color = "";
+  if (!leftIsPressed.current) {
+    if (
+      fieldPressedX.current >= 0 &&
+      fieldPressedY.current >= 0 &&
+      fieldPressedX.current < numColumns &&
+      numRows < numRows
+    ) {
+      let type = fieldArray[fieldPressedX.current][fieldPressedY.current];
+      if (type == FieldType.Urban) {
+        color = colors.urban;
+      } else if (type == FieldType.Industrial) {
+        color = colors.industry;
+      } else {
+        color = colors.roads;
+      }
+
+      ctx!.fillStyle = color;
+      // ctx!.globalCompositOperation = "source-over";
+      ctx.globalAlpha = 0.5;
+
+      ctx!.fillRect(
+        fieldWidth * 1 * fieldPressedX.current - cameraX,
+        fieldHeight * cameraScale * fieldPressedY.current - cameraY,
+        fieldWidth * cameraScale,
+        fieldHeight * cameraScale
+      );
+      ctx.globalAlpha = 1;
     }
   }
 }
