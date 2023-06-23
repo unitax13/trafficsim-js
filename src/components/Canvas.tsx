@@ -301,7 +301,7 @@ function Canvas(props: CanvasProps) {
     //ctx!.setGlobalBlendMode(BlendMode.SRC_OVER);
   }
 
-  function drawGridOverlay(ctx) {
+  function drawGridOverlay(ctx: CanvasRenderingContext2D) {
     console.log("drawing grid overlay");
     ctx!.strokeStyle = "#111111";
     for (let x1 = 0; x1 <= props.numRows; x1++) {
