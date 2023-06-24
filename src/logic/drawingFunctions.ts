@@ -6,9 +6,7 @@ export function drawGridOverlay(
   /// change that to use the alpha rather than line width
   ctx: CanvasRenderingContext2D,
   numRows: number,
-  numColumns: number,
-  fieldWidth: number,
-  fieldHeight: number,
+  fieldSize: number,
   cameraScale: number,
   cameraX: number,
   cameraY: number,
@@ -23,16 +21,16 @@ export function drawGridOverlay(
     //ctx!.strokeStyle = "#111111";
     ctx.lineWidth = 1;
 
-    ctx.moveTo(i * fieldWidth * cameraScale - cameraX, -1 - cameraY);
+    ctx.moveTo(i * fieldSize * cameraScale - cameraX, -1 - cameraY);
     ctx.lineTo(
-      i * fieldWidth * cameraScale - cameraX,
+      i * fieldSize * cameraScale - cameraX,
       canvasHeight * cameraScale - cameraY
     );
 
-    ctx.moveTo(-1 - cameraX, i * fieldWidth * cameraScale - cameraY);
+    ctx.moveTo(-1 - cameraX, i * fieldSize * cameraScale - cameraY);
     ctx.lineTo(
       canvasWidth * cameraScale - cameraX,
-      i * fieldWidth * cameraScale - cameraY
+      i * fieldSize * cameraScale - cameraY
     );
   }
   ctx.stroke();
@@ -43,7 +41,7 @@ export function drawGridOverlay(
 export function drawNodeNumbers(
   ctx: CanvasRenderingContext2D,
   graphNodesRef: React.MutableRefObject<GraphNode[] | null | undefined>,
-  fieldWidth: number,
+  fieldSize: number,
   cameraScale: number
 ) {
   if (graphNodesRef.current) {
@@ -53,9 +51,9 @@ export function drawNodeNumbers(
       ctx!.fillStyle = color;
       ctx.fillText(
         i.toString(),
-        node.x * fieldWidth * cameraScale + fieldWidth * cameraScale,
-        node.y * fieldWidth * cameraScale,
-        fieldWidth * cameraScale
+        node.x * fieldSize * cameraScale + fieldSize * cameraScale,
+        node.y * fieldSize * cameraScale,
+        fieldSize * cameraScale
       );
     }
   }
@@ -69,8 +67,8 @@ export function drawMainGrid(
   urbanIsOn: boolean,
   industryIsOn: boolean,
   roadsIsOn: boolean,
-  fieldWidth: number,
-  fieldHeight: number,
+  fieldSize: number,
+
   cameraScale: number,
   cameraX: number,
   cameraY: number
@@ -93,10 +91,10 @@ export function drawMainGrid(
       ctx!.fillStyle = color;
 
       ctx!.fillRect(
-        fieldWidth * 1 * x - cameraX,
-        fieldHeight * cameraScale * y - cameraY,
-        fieldWidth * cameraScale,
-        fieldHeight * cameraScale
+        fieldSize * 1 * x - cameraX,
+        fieldSize * cameraScale * y - cameraY,
+        fieldSize * cameraScale,
+        fieldSize * cameraScale
       );
     }
   }
@@ -110,8 +108,7 @@ export function drawRectangularSelection(
   by: number,
   fieldTypeChosen: React.MutableRefObject<FieldType>,
   rightIsPressed: React.MutableRefObject<boolean>,
-  fieldWidth: number,
-  fieldHeight: number,
+  fieldSize: number,
   cameraScale: number,
   cameraX: number,
   cameraY: number
@@ -146,33 +143,33 @@ export function drawRectangularSelection(
     if (Math.abs(deltaX) >= Math.abs(deltaY)) {
       if (deltaX >= 0) {
         ctx!.fillRect(
-          fieldWidth * cameraScale * ax - cameraX,
-          fieldHeight * cameraScale * ay - cameraY,
-          fieldWidth * cameraScale * deltaX,
-          fieldHeight * cameraScale
+          fieldSize * cameraScale * ax - cameraX,
+          fieldSize * cameraScale * ay - cameraY,
+          fieldSize * cameraScale * deltaX,
+          fieldSize * cameraScale
         );
       } else {
         ctx!.fillRect(
-          fieldWidth * cameraScale * bx - cameraX,
-          fieldHeight * cameraScale * ay - cameraY,
-          -fieldWidth * cameraScale * deltaX,
-          fieldHeight * cameraScale
+          fieldSize * cameraScale * bx - cameraX,
+          fieldSize * cameraScale * ay - cameraY,
+          -fieldSize * cameraScale * deltaX,
+          fieldSize * cameraScale
         );
       }
     } else {
       if (deltaY >= 0) {
         ctx!.fillRect(
-          fieldWidth * cameraScale * ax - cameraX,
-          fieldHeight * cameraScale * ay - cameraY,
-          fieldWidth * cameraScale,
-          fieldHeight * cameraScale * deltaY
+          fieldSize * cameraScale * ax - cameraX,
+          fieldSize * cameraScale * ay - cameraY,
+          fieldSize * cameraScale,
+          fieldSize * cameraScale * deltaY
         );
       } else {
         ctx!.fillRect(
-          fieldWidth * cameraScale * ax - cameraX,
-          fieldHeight * cameraScale * by - cameraY,
-          fieldWidth * cameraScale,
-          -fieldHeight * cameraScale * deltaY
+          fieldSize * cameraScale * ax - cameraX,
+          fieldSize * cameraScale * by - cameraY,
+          fieldSize * cameraScale,
+          -fieldSize * cameraScale * deltaY
         );
       }
     }
@@ -180,34 +177,34 @@ export function drawRectangularSelection(
     if (signumDeltaX >= 0 && signumDeltaY >= 0) {
       //heading south-east
       ctx!.fillRect(
-        fieldWidth * cameraScale * ax - cameraX,
-        fieldHeight * cameraScale * ay - cameraY,
-        fieldWidth * cameraScale * (deltaX + 1),
-        fieldHeight * cameraScale * (deltaY + 1)
+        fieldSize * cameraScale * ax - cameraX,
+        fieldSize * cameraScale * ay - cameraY,
+        fieldSize * cameraScale * (deltaX + 1),
+        fieldSize * cameraScale * (deltaY + 1)
       );
     } else if (signumDeltaX >= 0 && signumDeltaY < 0) {
       //heading north-east
       ctx!.fillRect(
-        fieldWidth * cameraScale * ax - cameraX,
-        fieldHeight * cameraScale * by - cameraY,
-        fieldWidth * cameraScale * (deltaX + 1),
-        -fieldHeight * cameraScale * (deltaY - 1)
+        fieldSize * cameraScale * ax - cameraX,
+        fieldSize * cameraScale * by - cameraY,
+        fieldSize * cameraScale * (deltaX + 1),
+        -fieldSize * cameraScale * (deltaY - 1)
       );
     } else if (signumDeltaX < 0 && signumDeltaY < 0) {
       //heading north-west
       ctx!.fillRect(
-        fieldWidth * cameraScale * bx - cameraX,
-        fieldHeight * cameraScale * by - cameraY,
-        -fieldWidth * cameraScale * (deltaX - 1),
-        -fieldHeight * cameraScale * (deltaY - 1)
+        fieldSize * cameraScale * bx - cameraX,
+        fieldSize * cameraScale * by - cameraY,
+        -fieldSize * cameraScale * (deltaX - 1),
+        -fieldSize * cameraScale * (deltaY - 1)
       );
     } else if (signumDeltaX < 0 && signumDeltaY >= 0) {
       //heading south-west
       ctx!.fillRect(
-        fieldWidth * cameraScale * bx - cameraX,
-        fieldHeight * cameraScale * ay - cameraY,
-        -fieldWidth * cameraScale * (deltaX - 1),
-        fieldHeight * cameraScale * (deltaY + 1)
+        fieldSize * cameraScale * bx - cameraX,
+        fieldSize * cameraScale * ay - cameraY,
+        -fieldSize * cameraScale * (deltaX - 1),
+        fieldSize * cameraScale * (deltaY + 1)
       );
     }
   }
@@ -225,8 +222,7 @@ export function drawCursorSingleSelection(
   numRows: number,
   numColumns: number,
   fieldArray: FieldType[][],
-  fieldWidth: number,
-  fieldHeight: number,
+  fieldSize: number,
   cameraX: number,
   cameraY: number,
   cameraScale: number
@@ -253,10 +249,10 @@ export function drawCursorSingleSelection(
       ctx.globalAlpha = 0.5;
 
       ctx!.fillRect(
-        fieldWidth * 1 * fieldPressedX.current - cameraX,
-        fieldHeight * cameraScale * fieldPressedY.current - cameraY,
-        fieldWidth * cameraScale,
-        fieldHeight * cameraScale
+        fieldSize * 1 * fieldPressedX.current - cameraX,
+        fieldSize * cameraScale * fieldPressedY.current - cameraY,
+        fieldSize * cameraScale,
+        fieldSize * cameraScale
       );
       ctx.globalAlpha = 1;
     }

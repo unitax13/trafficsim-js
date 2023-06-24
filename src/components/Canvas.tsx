@@ -68,8 +68,7 @@ function Canvas(props: CanvasProps) {
   const fieldPressedY = useRef<number>(0);
 
   const fieldTypeChosen = useRef<FieldType>(FieldType.Urban);
-  const fieldWidth = 6;
-  const fieldHeight = 6;
+  const fieldSize = 6;
   let cameraX = 0;
   let cameraY = 0;
   let cameraScale = 1;
@@ -101,8 +100,7 @@ function Canvas(props: CanvasProps) {
       urbanIsOn,
       industryIsOn,
       roadsIsOn,
-      fieldWidth,
-      fieldHeight,
+      fieldSize,
       cameraScale,
       cameraX,
       cameraY
@@ -123,8 +121,7 @@ function Canvas(props: CanvasProps) {
       urbanIsOn,
       industryIsOn,
       roadsIsOn,
-      fieldWidth,
-      fieldHeight,
+      fieldSize,
       cameraScale,
       cameraX,
       cameraY
@@ -137,8 +134,7 @@ function Canvas(props: CanvasProps) {
       props.numRows,
       props.numColumns,
       props.fieldArray,
-      fieldWidth,
-      fieldHeight,
+      fieldSize,
       cameraX,
       cameraY,
       cameraScale
@@ -152,23 +148,20 @@ function Canvas(props: CanvasProps) {
         fieldPressedY.current,
         fieldTypeChosen,
         rightIsPressed,
-        fieldWidth,
-        fieldHeight,
+        fieldSize,
         cameraScale,
         cameraX,
         cameraY
       );
     }
     nodeNumbersAreOn
-      ? drawNodeNumbers(ctx, graphNodesRef, fieldWidth, cameraScale)
+      ? drawNodeNumbers(ctx, graphNodesRef, fieldSize, cameraScale)
       : null;
     gridIsOn
       ? drawGridOverlay(
           ctx,
           props.numRows,
-          props.numColumns,
-          fieldWidth,
-          fieldHeight,
+          fieldSize,
           cameraScale,
           cameraX,
           cameraY,
@@ -184,17 +177,17 @@ function Canvas(props: CanvasProps) {
 
   function updateCoordsOfFieldWithMouseOn(x: number, y: number) {
     fieldPressedX.current =
-      Math.floor(x / fieldWidth) >= props.numColumns
+      Math.floor(x / fieldSize) >= props.numColumns
         ? props.numColumns
-        : Math.floor(x / fieldWidth) < 0
+        : Math.floor(x / fieldSize) < 0
         ? 0
-        : Math.floor(x / fieldWidth);
+        : Math.floor(x / fieldSize);
     fieldPressedY.current =
-      Math.floor(y / fieldHeight) >= props.numRows
+      Math.floor(y / fieldSize) >= props.numRows
         ? props.numRows
-        : Math.floor(y / fieldHeight) < 0
+        : Math.floor(y / fieldSize) < 0
         ? 0
-        : Math.floor(y / fieldHeight);
+        : Math.floor(y / fieldSize);
     console.log("Mouse over ", fieldPressedX, fieldPressedY);
   }
 
@@ -203,17 +196,17 @@ function Canvas(props: CanvasProps) {
     previousY: number
   ) {
     previousFieldPressedX.current =
-      Math.floor(previousX / fieldWidth) >= props.numColumns
+      Math.floor(previousX / fieldSize) >= props.numColumns
         ? props.numColumns
-        : Math.floor(previousX / fieldWidth) < 0
+        : Math.floor(previousX / fieldSize) < 0
         ? 0
-        : Math.floor(previousX / fieldWidth);
+        : Math.floor(previousX / fieldSize);
     previousFieldPressedY.current =
-      Math.floor(previousY / fieldHeight) >= props.numRows
+      Math.floor(previousY / fieldSize) >= props.numRows
         ? props.numRows
-        : Math.floor(previousY / fieldHeight) < 0
+        : Math.floor(previousY / fieldSize) < 0
         ? 0
-        : Math.floor(previousY / fieldHeight);
+        : Math.floor(previousY / fieldSize);
     console.log(
       "previousFieldPressed: ",
       previousFieldPressedX,
@@ -478,16 +471,16 @@ function Canvas(props: CanvasProps) {
           </div>
         </div>
         {/* X,Y text */}
-        <div className="flex">
+        <div className="flex font-bold font-roboto">
           {leftIsPressed.current || rightIsPressed.current ? (
-            <h3 className="font-bold">
+            <h3 className="">
               [{previousFieldPressedX.current};{previousFieldPressedY.current}]
             </h3>
           ) : (
             ""
           )}
 
-          <h3 className="font-bold">
+          <h3 className="">
             [{fieldPressedX.current};{fieldPressedY.current}]
           </h3>
         </div>
@@ -499,7 +492,7 @@ function Canvas(props: CanvasProps) {
               startIcon={<GraphIcon className="w-7 h-7" />}
               variant="contained"
               className="bg-slate-500 hover:bg-slate-600"
-              onClick={(e) => {
+              onClick={() => {
                 generateGraphButtonPressed();
               }}
             >
@@ -511,7 +504,7 @@ function Canvas(props: CanvasProps) {
             startIcon={<DijkstraIcon className="w-7 h-7" />}
             variant="contained"
             className="bg-fuchsia-700 hover:bg-fuchsia-800"
-            onClick={(e) => {}}
+            onClick={() => {}}
           >
             Shortest pathing tool
           </Button>
