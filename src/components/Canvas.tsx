@@ -39,12 +39,13 @@ function Canvas(props: CanvasProps) {
   const canvasWidth = 800;
   const canvasHeight = 700;
 
-  enum FieldType {
-    Empty,
-    Road1,
-    Urban,
-    Industrial,
+  enum viewModes {
+    NORMAL,
+    SHORTEST_PATHING,
+    HEATMAP,
   }
+
+  const viewMode = useRef<viewModes>(viewModes.NORMAL);
 
   const leftIsPressed = useRef<boolean>(false);
   const middleIsPressed = useRef<boolean>(false);
@@ -338,9 +339,16 @@ function Canvas(props: CanvasProps) {
   return (
     <>
       <div className="">
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center font-roboto">
           <div className="flex flex-col items-center w-44">
             <div>
+              <div>
+                {viewMode.current === viewModes.SHORTEST_PATHING ? (
+                  <div>Shortest pathing mode </div>
+                ) : (
+                  ""
+                )}
+              </div>
               <Button
                 fullWidth
                 startIcon={<PaintBrush />}
@@ -504,7 +512,12 @@ function Canvas(props: CanvasProps) {
             startIcon={<DijkstraIcon className="w-7 h-7" />}
             variant="contained"
             className="bg-fuchsia-700 hover:bg-fuchsia-800"
-            onClick={() => {}}
+            onClick={() => {
+              if (viewMode.current !== viewModes.SHORTEST_PATHING) {
+                viewMode.current = viewModes.SHORTEST_PATHING;
+                redraw();
+              }
+            }}
           >
             Shortest pathing tool
           </Button>

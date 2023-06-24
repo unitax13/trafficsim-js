@@ -1,7 +1,5 @@
 import Canvas from "./Canvas";
 import "../index.css";
-import { Button } from "@mui/material";
-import { useRef, useState } from "react";
 import FieldType from "../enums/FieldType";
 import GraphNode from "../classes/GraphNode";
 
