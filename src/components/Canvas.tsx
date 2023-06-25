@@ -351,7 +351,7 @@ function Canvas(props: CanvasProps) {
               </div>
               <Button
                 fullWidth
-                startIcon={<PaintBrush />}
+                startIcon={<PaintBrush className="w-6 h-6" />}
                 className="bg-slate-800 hover:bg-slate-900"
                 variant="contained"
                 onClick={(e) => {
@@ -362,7 +362,7 @@ function Canvas(props: CanvasProps) {
               </Button>
               <Button
                 fullWidth
-                startIcon={<PaintBrush />}
+                startIcon={<PaintBrush className="w-6 h-6" />}
                 className="bg-lime-600 hover:bg-lime-700"
                 variant="contained"
                 onClick={(e) => {
@@ -373,7 +373,7 @@ function Canvas(props: CanvasProps) {
               </Button>
               <Button
                 fullWidth
-                startIcon={<PaintBrush />}
+                startIcon={<PaintBrush className="w-6 h-6" />}
                 variant="contained"
                 className="bg-yellow-600 hover:bg-yellow-700"
                 onClick={(e) => {
