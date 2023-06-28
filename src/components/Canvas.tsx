@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import "../index.css";
-import { Button, FormControlLabel, FormGroup, Switch } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  ListItemIcon,
+  MenuItem,
+  Select,
+  Switch,
+} from "@mui/material";
 import FieldType from "../enums/FieldType";
 import PaintBrush from "../icons/PaintBrush";
 import GraphNode from "../classes/GraphNode";
@@ -17,6 +26,9 @@ import {
 } from "../logic/drawingFunctions";
 import ViewIcon from "../icons/ViewIcon";
 import DijkstraIcon from "../icons/DijkstraIcon";
+import viewModes from "../enums/ViewModes";
+import ModeSelect from "./ModeSelect";
+import TrafficFlowIcon from "../icons/TrafficFlowIcon";
 
 interface CanvasProps {
   numRows: number;
@@ -38,12 +50,6 @@ function Canvas(props: CanvasProps) {
   let color = "black";
   const canvasWidth = 800;
   const canvasHeight = 700;
-
-  enum viewModes {
-    NORMAL,
-    SHORTEST_PATHING,
-    HEATMAP,
-  }
 
   const viewMode = useRef<viewModes>(viewModes.NORMAL);
 
@@ -274,25 +280,27 @@ function Canvas(props: CanvasProps) {
       fieldPressedX,
       fieldPressedY
     );
-    if (leftIsPressed.current) {
-      props.placeRectangleBetween(
-        previousFieldPressedX.current,
-        previousFieldPressedY.current,
-        fieldPressedX.current,
-        fieldPressedY.current,
-        fieldTypeChosen.current
-      );
-    } else if (rightIsPressed.current) {
-      props.placeRectangleBetween(
-        previousFieldPressedX.current,
-        previousFieldPressedY.current,
-        fieldPressedX.current,
-        fieldPressedY.current,
-        FieldType.Empty
-      );
+    if (viewMode.current === viewModes.NORMAL) {
+      if (leftIsPressed.current) {
+        props.placeRectangleBetween(
+          previousFieldPressedX.current,
+          previousFieldPressedY.current,
+          fieldPressedX.current,
+          fieldPressedY.current,
+          fieldTypeChosen.current
+        );
+      } else if (rightIsPressed.current) {
+        props.placeRectangleBetween(
+          previousFieldPressedX.current,
+          previousFieldPressedY.current,
+          fieldPressedX.current,
+          fieldPressedY.current,
+          FieldType.Empty
+        );
+      }
+      redraw();
+      //isPressed.current = false;
     }
-    redraw();
-    //isPressed.current = false;
 
     switch (e.nativeEvent.button) {
       case 0:
@@ -336,54 +344,110 @@ function Canvas(props: CanvasProps) {
     redraw();
   }
 
+  const handleModeChange = (e) => {
+    viewMode.current = e.target.value;
+    console.log(e.target);
+    redraw();
+  };
+
   return (
     <>
-      <div className="">
-        <div className="flex gap-2 items-center font-roboto">
-          <div className="flex flex-col items-center w-44">
-            <div>
+      <div className=" font-roboto">
+        <div className="flex gap-2 items-center">
+          {/* <div className="flex flex-col items-center w-44"> */}
+          <div className="h-[666px] grid grid-rows-[12] gap-4 w-44">
+            <div className="border-2 border-slate-200 border-solid">
               <div>
-                {viewMode.current === viewModes.SHORTEST_PATHING ? (
-                  <div>Shortest pathing mode </div>
-                ) : (
-                  ""
-                )}
+                <>
+                  <FormControl>
+                    <Select
+                      className="w-44 h-9 font-roboto text-xs"
+                      // disableUnderline
+
+                      IconComponent={""}
+                      value={viewMode.current}
+                      onChange={(e) => handleModeChange(e)}
+                    >
+                      <MenuItem
+                        value={viewModes.NORMAL}
+                        className="focus:border focus:border-solid "
+                      >
+                        <span className="flex items-center text-xs ">
+                          <ListItemIcon sx={{ minWidth: 32 }}>
+                            <PaintBrush className="w-6 h-6" />
+                          </ListItemIcon>
+                          <span>NORMAL MODE</span>
+                        </span>
+                      </MenuItem>
+                      <MenuItem
+                        value={viewModes.SHORTEST_PATHING}
+                        className="focus:border focus:border-solid "
+                        sx={{}}
+                      >
+                        <span className="flex items-center text-xs  ">
+                          <ListItemIcon sx={{ minWidth: 32 }}>
+                            <DijkstraIcon className="w-6 h-6" />
+                          </ListItemIcon>
+                          <span className="text-left">
+                            SHORTEST-PATHING MODE
+                          </span>
+                        </span>
+                      </MenuItem>
+                      <MenuItem
+                        value={viewModes.HEATMAP}
+                        disabled={true}
+                        className="focus:border focus:border-solid "
+                      >
+                        <span className="flex items-center text-xs">
+                          <ListItemIcon sx={{ minWidth: 32 }}>
+                            <TrafficFlowIcon className="w-6 h-6" />
+                          </ListItemIcon>
+                          <span className="text-left">HEATMAP MODE</span>
+                        </span>
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </>
               </div>
-              <Button
-                fullWidth
-                startIcon={<PaintBrush />}
-                className="bg-slate-800 hover:bg-slate-900"
-                variant="contained"
-                onClick={(e) => {
-                  fieldTypeChosen.current = FieldType.Road1;
-                }}
-              >
-                Road
-              </Button>
-              <Button
-                fullWidth
-                startIcon={<PaintBrush />}
-                className="bg-lime-600 hover:bg-lime-700"
-                variant="contained"
-                onClick={(e) => {
-                  fieldTypeChosen.current = FieldType.Urban;
-                }}
-              >
-                Urban area
-              </Button>
-              <Button
-                fullWidth
-                startIcon={<PaintBrush />}
-                variant="contained"
-                className="bg-yellow-600 hover:bg-yellow-700"
-                onClick={(e) => {
-                  fieldTypeChosen.current = FieldType.Industrial;
-                }}
-              >
-                Industry area
-              </Button>
             </div>
-            <div className="mt-4 w-full flex flex-col items-center border-2 border-slate-200 border-solid">
+            <div className="row-span-1 flex flex-col justify-around">
+              <div>
+                <Button
+                  fullWidth
+                  startIcon={<PaintBrush />}
+                  className="bg-slate-800 hover:bg-slate-900"
+                  variant="contained"
+                  onClick={(e) => {
+                    fieldTypeChosen.current = FieldType.Road1;
+                  }}
+                >
+                  Road
+                </Button>
+                <Button
+                  fullWidth
+                  startIcon={<PaintBrush />}
+                  className="bg-lime-600 hover:bg-lime-700"
+                  variant="contained"
+                  onClick={(e) => {
+                    fieldTypeChosen.current = FieldType.Urban;
+                  }}
+                >
+                  Urban area
+                </Button>
+                <Button
+                  fullWidth
+                  startIcon={<PaintBrush />}
+                  variant="contained"
+                  className="bg-yellow-600 hover:bg-yellow-700"
+                  onClick={(e) => {
+                    fieldTypeChosen.current = FieldType.Industrial;
+                  }}
+                >
+                  Industry area
+                </Button>
+              </div>
+            </div>
+            <div className="mt-4 w-full row-span-2 flex flex-col items-center border-2 border-slate-200 border-solid">
               <div className="flex gap-1 justify-around items-center">
                 <p className="text-xs font-roboto text-slate-500">VIEW</p>
                 <ViewIcon className="w-5 text-slate-500" />
@@ -461,6 +525,7 @@ function Canvas(props: CanvasProps) {
                 />
               </FormGroup>
             </div>
+            <div className="row-span-2"></div>
           </div>
           <div className="border-slate-500 border border-solid">
             <canvas

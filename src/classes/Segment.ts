@@ -19,9 +19,6 @@ class Segment {
     let startX = this.position.x;
     let startY = this.position.y;
 
-    let presentX;
-    let presentY;
-
     let pos: Position | null;
 
     for (let i = 1; i < radius; i++) {
@@ -51,7 +48,21 @@ class Segment {
     return null;
   }
 
-  public spiralSearchAtRange(
+  public printSegmentStats(): void {
+    console.log({
+      segmentAt: "[" + this.position.x + "," + this.position.y + "]",
+      nearestRoadSegment:
+        "[" +
+        this.nearestRoadSegmentPosition?.x +
+        "," +
+        this.nearestRoadSegmentPosition?.y +
+        "]",
+      isANode: this.closestRoadSegmentIsNode,
+      closestRoadNodes: this.closestRoadNodes.toString(),
+    });
+  }
+
+  private spiralSearchAtRange(
     matrix: FieldType[][],
     targetType: number,
     startX: number,
@@ -107,7 +118,7 @@ class Segment {
     return null; // The target value was not found within the specified radius
   }
 
-  public crossSearchAtRange(
+  private crossSearchAtRange(
     fieldArray: FieldType[][],
     type: FieldType,
     startX: number,
@@ -150,19 +161,5 @@ class Segment {
     }
 
     return null;
-  }
-
-  public printSegmentStats(): void {
-    console.log({
-      segmentAt: "[" + this.position.x + "," + this.position.y + "]",
-      nearestRoadSegment:
-        "[" +
-        this.nearestRoadSegmentPosition?.x +
-        "," +
-        this.nearestRoadSegmentPosition?.y +
-        "]",
-      isANode: this.closestRoadSegmentIsNode,
-      closestRoadNodes: this.closestRoadNodes.toString(),
-    });
   }
 }
