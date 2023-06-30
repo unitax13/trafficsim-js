@@ -146,7 +146,10 @@ function Canvas(props: CanvasProps) {
       cameraY,
       cameraScale
     );
-    if (leftIsPressed.current || rightIsPressed.current) {
+    if (
+      viewMode.current === viewModes.NORMAL &&
+      (leftIsPressed.current || rightIsPressed.current)
+    ) {
       drawRectangularSelection(
         ctx,
         previousFieldPressedX.current,
@@ -414,7 +417,7 @@ function Canvas(props: CanvasProps) {
               <div>
                 <Button
                   fullWidth
-                  startIcon={<PaintBrush />}
+                  startIcon={<PaintBrush className="w-6 h-6" />}
                   className="bg-slate-800 hover:bg-slate-900"
                   variant="contained"
                   onClick={(e) => {
@@ -425,7 +428,7 @@ function Canvas(props: CanvasProps) {
                 </Button>
                 <Button
                   fullWidth
-                  startIcon={<PaintBrush />}
+                  startIcon={<PaintBrush className="w-6 h-6" />}
                   className="bg-lime-600 hover:bg-lime-700"
                   variant="contained"
                   onClick={(e) => {
@@ -436,7 +439,7 @@ function Canvas(props: CanvasProps) {
                 </Button>
                 <Button
                   fullWidth
-                  startIcon={<PaintBrush />}
+                  startIcon={<PaintBrush className="w-6 h-6" />}
                   variant="contained"
                   className="bg-yellow-600 hover:bg-yellow-700"
                   onClick={(e) => {
@@ -456,7 +459,7 @@ function Canvas(props: CanvasProps) {
                 <FormControlLabel
                   control={
                     <ColoredMuiSwitch
-                      colorHex={colors.roads}
+                      colorhex={colors.roads}
                       color="primary"
                       checked={roadsIsOn}
                       onChange={(e) => {
@@ -470,7 +473,7 @@ function Canvas(props: CanvasProps) {
                 <FormControlLabel
                   control={
                     <ColoredMuiSwitch
-                      colorHex={colors.urban}
+                      colorhex={colors.urban}
                       color="primary"
                       checked={urbanIsOn}
                       onChange={(e) => {
@@ -484,7 +487,7 @@ function Canvas(props: CanvasProps) {
                 <FormControlLabel
                   control={
                     <ColoredMuiSwitch
-                      colorHex={colors.industry}
+                      colorhex={colors.industry}
                       color="primary"
                       checked={industryIsOn}
                       onChange={(e) => {
@@ -498,7 +501,7 @@ function Canvas(props: CanvasProps) {
                 <FormControlLabel
                   control={
                     <ColoredMuiSwitch
-                      colorHex={colors.graphColor}
+                      colorhex={colors.graphColor}
                       color="primary"
                       checked={nodeNumbersAreOn}
                       onChange={(e) => {
@@ -512,7 +515,7 @@ function Canvas(props: CanvasProps) {
                 <FormControlLabel
                   control={
                     <ColoredMuiSwitch
-                      colorHex="#111111"
+                      colorhex="#111111"
                       color="primary"
                       checked={gridIsOn}
                       onChange={(e) => {

@@ -3,18 +3,18 @@ import Switch from "@mui/material/Switch";
 import { SwitchProps } from "@mui/material/Switch";
 
 interface ColorProps extends SwitchProps {
-  colorHex: string;
+  colorhex: string;
 }
 
-const ColoredMuiSwitch = styled(Switch)<ColorProps>(({ theme, colorHex }) => ({
+const ColoredMuiSwitch = styled(Switch)<ColorProps>(({ theme, colorhex }) => ({
   "& .MuiSwitch-switchBase.Mui-checked": {
-    color: colorHex,
+    color: colorhex,
     "&:hover": {
-      backgroundColor: alpha(colorHex, theme.palette.action.hoverOpacity),
+      backgroundColor: alpha(colorhex, theme.palette.action.hoverOpacity),
     },
   },
   "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-    backgroundColor: colorHex,
+    backgroundColor: colorhex,
   },
 }));
 

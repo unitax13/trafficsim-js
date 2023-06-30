@@ -13,7 +13,6 @@ export function drawGridOverlay(
   canvasWidth: number,
   canvasHeight: number
 ) {
-  console.log("drawing grid overlay");
   ctx!.strokeStyle = "#111111";
   ctx.globalAlpha = 0.1;
   ctx.beginPath();
@@ -113,7 +112,6 @@ export function drawRectangularSelection(
   cameraX: number,
   cameraY: number
 ) {
-  console.log("drawing rectangular selection");
   let deltaX = bx - ax;
   let deltaY = by - ay;
   let signumDeltaX = Math.sign(deltaX);
@@ -227,23 +225,15 @@ export function drawCursorSingleSelection(
   cameraY: number,
   cameraScale: number
 ) {
-  let color = "";
-  if (!leftIsPressed.current) {
+  let color = "black";
+
+  if (leftIsPressed.current === false) {
     if (
       fieldPressedX.current >= 0 &&
       fieldPressedY.current >= 0 &&
       fieldPressedX.current < numColumns &&
-      numRows < numRows
+      fieldPressedY.current < numRows
     ) {
-      let type = fieldArray[fieldPressedX.current][fieldPressedY.current];
-      if (type == FieldType.Urban) {
-        color = colors.urban;
-      } else if (type == FieldType.Industrial) {
-        color = colors.industry;
-      } else {
-        color = colors.roads;
-      }
-
       ctx!.fillStyle = color;
       // ctx!.globalCompositOperation = "source-over";
       ctx.globalAlpha = 0.5;
