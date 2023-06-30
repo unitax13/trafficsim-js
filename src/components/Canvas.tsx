@@ -528,7 +528,23 @@ function Canvas(props: CanvasProps) {
                 />
               </FormGroup>
             </div>
-            <div className="row-span-2"></div>
+            <div className="row-span-2 flex flex-col">
+              {/* X,Y text */}
+              <div className="flex font-bold font-roboto">
+                {leftIsPressed.current || rightIsPressed.current ? (
+                  <h3 className="">
+                    [{previousFieldPressedX.current};
+                    {previousFieldPressedY.current}]
+                  </h3>
+                ) : (
+                  ""
+                )}
+
+                <h3 className="">
+                  [{fieldPressedX.current};{fieldPressedY.current}]
+                </h3>
+              </div>
+            </div>
           </div>
           <div className="border-slate-500 border border-solid">
             <canvas
@@ -546,22 +562,8 @@ function Canvas(props: CanvasProps) {
             />
           </div>
         </div>
-        {/* X,Y text */}
-        <div className="flex font-bold font-roboto">
-          {leftIsPressed.current || rightIsPressed.current ? (
-            <h3 className="">
-              [{previousFieldPressedX.current};{previousFieldPressedY.current}]
-            </h3>
-          ) : (
-            ""
-          )}
 
-          <h3 className="">
-            [{fieldPressedX.current};{fieldPressedY.current}]
-          </h3>
-        </div>
-
-        <div className="flex gap-4">
+        <div className="pt-2 flex gap-4">
           <div className="w-44">
             <Button
               fullWidth
