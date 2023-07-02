@@ -163,3 +163,5 @@ class Segment {
     return null;
   }
 }
+
+export default Segment;

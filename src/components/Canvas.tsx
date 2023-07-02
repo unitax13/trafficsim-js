@@ -347,10 +347,17 @@ function Canvas(props: CanvasProps) {
     redraw();
   }
 
-  const handleModeChange = (e) => {
+  const handleModeChange = (e: any) => {
     viewMode.current = e.target.value;
     console.log(e.target);
     redraw();
+  };
+
+  const shortestPathingToolButtonPressed = (e: any) => {
+    if (viewMode.current !== viewModes.SHORTEST_PATHING) {
+      viewMode.current = viewModes.SHORTEST_PATHING;
+      redraw();
+    }
   };
 
   return (
@@ -582,11 +589,8 @@ function Canvas(props: CanvasProps) {
             startIcon={<DijkstraIcon className="w-7 h-7" />}
             variant="contained"
             className="bg-fuchsia-700 hover:bg-fuchsia-800"
-            onClick={() => {
-              if (viewMode.current !== viewModes.SHORTEST_PATHING) {
-                viewMode.current = viewModes.SHORTEST_PATHING;
-                redraw();
-              }
+            onClick={(e) => {
+              shortestPathingToolButtonPressed(e);
             }}
           >
             Shortest pathing tool
