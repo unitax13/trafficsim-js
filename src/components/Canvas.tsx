@@ -204,7 +204,7 @@ function Canvas(props: CanvasProps) {
         : Math.floor(y / fieldSize) < 0
         ? 0
         : Math.floor(y / fieldSize);
-    console.log("Mouse over ", fieldPressedX, fieldPressedY);
+    //console.log("Mouse over ", fieldPressedX, fieldPressedY);
   }
 
   function updateCoordsOfFieldWithMousePREVIOUSLYOn(

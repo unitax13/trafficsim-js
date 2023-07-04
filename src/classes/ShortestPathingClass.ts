@@ -40,10 +40,13 @@ class ShortestPathingClass {
       );
       us.boundIndustrySegment = is;
 
-      // us.calculateClosestRoadSegment(simulation, 10);
-      // us.findClosestRoadNodes(simulation, graphNodes);
-      // is.calculateClosestRoadSegment(simulation, 10);
-      // is.findClosestRoadNodes(simulation, graphNodes);
+      us.calculateClosestRoadSegment(this.fieldArray, 10);
+      us.findClosestRoadNodes(this.fieldArray, this.graphNodes);
+      is.calculateClosestRoadSegment(this.fieldArray, 10);
+      is.findClosestRoadNodes(this.fieldArray, this.graphNodes);
+
+      console.log("Closest road nodes of us: ", us.closestRoadNodesPositions);
+      console.log("Closest road nodes of is: ", is.closestRoadNodesPositions);
 
       // us.findPathToCorrespondingSegment(graphNodes, -1, true);
 
