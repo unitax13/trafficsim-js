@@ -1,14 +1,11 @@
 import FieldType from "../enums/FieldType";
 import GraphNode from "./GraphNode";
 import IndustrySegment from "./IndustrySegment";
+import Position from "./Position";
 import UrbanSegment from "./UrbanSegment";
 
 class ShortestPathingClass {
-  public segment1: UrbanSegment;
-  public segment2: IndustrySegment;
-
   positionArrayList: Position[];
-
   fieldArray: FieldType[][];
   graphNodes: GraphNode[];
 

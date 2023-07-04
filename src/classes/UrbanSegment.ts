@@ -1,5 +1,6 @@
 import GraphNode from "./GraphNode";
 import IndustrySegment from "./IndustrySegment";
+import Position from "./Position";
 import Segment from "./Segment";
 
 class UrbanSegment extends Segment {

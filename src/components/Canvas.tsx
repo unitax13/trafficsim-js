@@ -13,6 +13,7 @@ import {
 import FieldType from "../enums/FieldType";
 import PaintBrush from "../icons/PaintBrush";
 import GraphNode from "../classes/GraphNode";
+import Position from "../classes/Position";
 import GraphIcon from "../icons/GraphIcon";
 import ColoredMuiSwitch from "./ColoredMuiSwitch";
 import "../colors";
@@ -29,6 +30,7 @@ import DijkstraIcon from "../icons/DijkstraIcon";
 import viewModes from "../enums/ViewModes";
 import ModeSelect from "./ModeSelect";
 import TrafficFlowIcon from "../icons/TrafficFlowIcon";
+import ShortestPathingClass from "../classes/ShortestPathingClass";
 
 interface CanvasProps {
   numRows: number;
@@ -50,6 +52,10 @@ function Canvas(props: CanvasProps) {
   let color = "black";
   const canvasWidth = 800;
   const canvasHeight = 700;
+
+  const shortestPathingClassInstance = useRef<ShortestPathingClass | null>(
+    null
+  );
 
   const viewMode = useRef<viewModes>(viewModes.NORMAL);
 
@@ -247,20 +253,28 @@ function Canvas(props: CanvasProps) {
     // console.log(x, y);
     updateCoordsOfFieldWithMousePREVIOUSLYOn(x, y);
     updateCoordsOfFieldWithMouseOn(x, y);
-    if (e.nativeEvent.button === 0) {
-      props.setFieldValue(
-        fieldPressedX.current,
-        fieldPressedY.current,
-        fieldTypeChosen.current
-      );
-    } else if (e.nativeEvent.button === 2) {
-      props.setFieldValue(
-        fieldPressedX.current,
-        fieldPressedY.current,
-        FieldType.Empty
-      );
+    if (viewMode.current === viewModes.NORMAL) {
+      if (e.nativeEvent.button === 0) {
+        props.setFieldValue(
+          fieldPressedX.current,
+          fieldPressedY.current,
+          fieldTypeChosen.current
+        );
+      } else if (e.nativeEvent.button === 2) {
+        props.setFieldValue(
+          fieldPressedX.current,
+          fieldPressedY.current,
+          FieldType.Empty
+        );
+      }
+      redraw();
+    } else if (viewMode.current === viewModes.SHORTEST_PATHING) {
+      if (shortestPathingClassInstance.current != null) {
+        shortestPathingClassInstance.current.add(
+          new Position(fieldPressedX.current, fieldPressedY.current)
+        );
+      }
     }
-    redraw();
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
@@ -356,6 +370,16 @@ function Canvas(props: CanvasProps) {
   const shortestPathingToolButtonPressed = (e: any) => {
     if (viewMode.current !== viewModes.SHORTEST_PATHING) {
       viewMode.current = viewModes.SHORTEST_PATHING;
+
+      if (graphNodesRef.current != null) {
+        shortestPathingClassInstance.current = new ShortestPathingClass(
+          props.fieldArray,
+          graphNodesRef.current
+        );
+      } else {
+        console.log("Graph not yet generated. Generate it!");
+      }
+
       redraw();
     }
   };

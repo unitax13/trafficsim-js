@@ -1,3 +1,4 @@
+import Position from "./Position";
 import Segment from "./Segment";
 import UrbanSegment from "./UrbanSegment";
 
