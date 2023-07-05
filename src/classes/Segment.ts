@@ -1,4 +1,6 @@
 import FieldType from "../enums/FieldType";
+import getNodeAt from "../utils/getNodeAt";
+import getNodeIndex from "../utils/getNodeIndex";
 import GraphNode from "./GraphNode";
 import Position from "./Position";
 
@@ -167,25 +169,6 @@ class Segment {
     return null;
   }
 
-  public getNodeAt(
-    x: number,
-    y: number,
-    graphNodes: GraphNode[]
-  ): GraphNode | null {
-    let node: GraphNode | null = null;
-
-    graphNodes.every((gn) => {
-      if (gn.x == x && gn.y == y) {
-        console.log("FOund");
-        node = gn;
-        return false;
-      }
-      return true;
-    });
-    console.log("Returning ", node);
-    return node;
-  }
-
   public findClosestRoadNodes(
     fieldArray: FieldType[][],
     graphNodes: GraphNode[]
@@ -198,7 +181,7 @@ class Segment {
       let y = this.closestRoadSegmentPosition.y;
 
       //  if it's a node, set it as closest road node and return
-      let gn: GraphNode | null = this.getNodeAt(x, y, graphNodes);
+      let gn: GraphNode | null = getNodeAt(x, y, graphNodes);
 
       if (gn) {
         this.closestRoadSegmentIsNode = true;
@@ -217,7 +200,7 @@ class Segment {
       ) {
         //W PRAWO
         for (let i = x; fieldArray[i][y] == FieldType.Road1; i++) {
-          let gn: GraphNode | null = this.getNodeAt(i, y, graphNodes);
+          let gn: GraphNode | null = getNodeAt(i, y, graphNodes);
           if (gn) {
             this.closestRoadNodesPositions.push(new Position(i, y));
             this.closestRoadNodes.push(gn);
@@ -227,7 +210,7 @@ class Segment {
         }
         //W LEWO
         for (let i = x; fieldArray[i][y] == FieldType.Road1; i--) {
-          let gn: GraphNode | null = this.getNodeAt(i, y, graphNodes);
+          let gn: GraphNode | null = getNodeAt(i, y, graphNodes);
           if (gn) {
             this.closestRoadNodesPositions.push(new Position(i, y));
             this.closestRoadNodes.push(gn);
@@ -243,7 +226,7 @@ class Segment {
       ) {
         // W GÓRĘ
         for (let i = y; fieldArray[x][i] == FieldType.Road1; i++) {
-          let gn: GraphNode | null = this.getNodeAt(x, i, graphNodes);
+          let gn: GraphNode | null = getNodeAt(x, i, graphNodes);
           if (gn) {
             this.closestRoadNodesPositions.push(new Position(x, i));
             this.closestRoadNodes.push(gn);
@@ -253,7 +236,7 @@ class Segment {
         }
         //W DÓł
         for (let i = y; fieldArray[x][i] == FieldType.Road1; i--) {
-          let gn: GraphNode | null = this.getNodeAt(x, i, graphNodes);
+          let gn: GraphNode | null = getNodeAt(x, i, graphNodes);
           if (gn) {
             this.closestRoadNodesPositions.push(new Position(x, i));
             this.closestRoadNodes.push(gn);
@@ -265,6 +248,30 @@ class Segment {
     } else {
       console.log("Closest road segment is null.");
     }
+  }
+
+  public getDistanceToClosestRoadNodesByNodeId(
+    nodeId: number,
+    graphNodes: GraphNode[]
+  ): number {
+    for (let i = 0; i < this.closestRoadNodes.length; i++) {
+      if (
+        nodeId ===
+        getNodeIndex(
+          this.closestRoadNodesPositions[i].x,
+          this.closestRoadNodesPositions[i].y,
+          graphNodes
+        )
+      ) {
+        return this.distancesToClosestRoadNodes[i];
+      }
+    }
+
+    console.log(
+      "Did not find any ClosestRoadNodesByNodeId nodes matching id ",
+      nodeId
+    );
+    return -1;
   }
 }
 

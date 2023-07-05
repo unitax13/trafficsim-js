@@ -73,8 +73,6 @@ function Canvas(props: CanvasProps) {
   let x: number | undefined;
   let y: number | undefined;
 
-  console.log("canvas loading");
-
   const previousFieldPressedX = useRef<number>(0);
   const previousFieldPressedY = useRef<number>(0);
   const fieldPressedX = useRef<number>(0);
@@ -91,8 +89,10 @@ function Canvas(props: CanvasProps) {
   const [roadsIsOn, setRoadsIsOn] = useState<boolean>(true);
   const [nodeNumbersAreOn, setNodeNumbersAreOn] = useState<boolean>(true);
   const [gridIsOn, setGridIsOn] = useState<boolean>(true);
-  const pathIsOn = false;
+  const [pathIsOn, setPathIsOn] = useState<boolean>(true);
   const roadHeatmapIsOn = false;
+
+  const positionPathToDrawRef = useRef<Position[]>([]);
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -374,7 +374,8 @@ function Canvas(props: CanvasProps) {
       if (graphNodesRef.current != null) {
         shortestPathingClassInstance.current = new ShortestPathingClass(
           props.fieldArray,
-          graphNodesRef.current
+          graphNodesRef.current,
+          positionPathToDrawRef
         );
       } else {
         console.log("Graph not yet generated. Generate it!");
