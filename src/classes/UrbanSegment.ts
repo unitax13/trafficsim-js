@@ -63,6 +63,8 @@ class UrbanSegment extends Segment {
           : undefined;
       }
 
+      console.log("StartIDs:" + stardIds);
+
       //take the closest nodes of the industry segment and add them as destinationIds
       let closestNodesDoExist: boolean = false;
       if (this.boundIndustrySegment.closestRoadNodes[0]) {
@@ -88,6 +90,8 @@ class UrbanSegment extends Segment {
       !closestNodesDoExist
         ? console.log("no closest road nodes found at destination")
         : undefined;
+
+      console.log("destination ids:" + destinationIds);
 
       for (let a = 0; a < stardIds.length; a++) {
         let path1 = new ShortestPath();
@@ -156,6 +160,22 @@ class UrbanSegment extends Segment {
           }
         }
       }
+      let minDistance = distances[0];
+      let whichOne = 0;
+
+      for (let i = 1; i < distances.length; i++) {
+        if (minDistance > distances[i]) {
+          minDistance = distances[i];
+          whichOne = i;
+        }
+      }
+
+      if (doUpdateSegment) {
+        this.positionPathToIndustry = positionPathsToIndustry[whichOne];
+        this.nodePathToIndustry = nodePaths[whichOne];
+        this.distanceToIndustry = minDistance;
+      }
+      console.log(positionPathsToIndustry[whichOne]);
     }
   }
 }

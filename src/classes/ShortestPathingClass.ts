@@ -4,21 +4,26 @@ import IndustrySegment from "./IndustrySegment";
 import Position from "./Position";
 import UrbanSegment from "./UrbanSegment";
 
+type StateSetter<T> = (value: T) => void;
+
 class ShortestPathingClass {
   positionArrayList: Position[];
   fieldArray: FieldType[][];
   graphNodes: GraphNode[];
   positionPathToDrawRef: React.MutableRefObject<Position[]>;
+  //redraw: (value: React.SetStateAction<boolean>) => void;
 
   public constructor(
     fieldArray: FieldType[][],
     graphNodes: GraphNode[],
     positionPathToDrawRef: React.MutableRefObject<Position[]>
+    //redraw: (value: React.SetStateAction<boolean>) => void
   ) {
     this.fieldArray = fieldArray;
     this.graphNodes = graphNodes;
     this.positionArrayList = new Array<Position>();
     this.positionPathToDrawRef = positionPathToDrawRef;
+    //this.redraw = redraw;
   }
 
   public add(position: Position) {
@@ -68,14 +73,20 @@ class ShortestPathingClass {
 
       this.positionPathToDrawRef.current = us.positionPathToIndustry;
 
-      let string = "Path = ";
-      us.positionPathToIndustry.forEach((position) => {
-        console.log(position);
-        //string += position + " --> ";
-      });
+      if (us.positionPathToIndustry) {
+        let string = "Path = ";
+        us.positionPathToIndustry.forEach((position) => {
+          //console.log(position);
+          string += JSON.stringify(position) + " --> ";
+        });
+        string += " with distance of " + us.distanceToIndustry;
 
-      console.log(string);
+        console.log(string);
+      } else {
+        console.log("No path found...");
+      }
 
+      //this.redraw(true);
       // simulationGrid.positionPath = us.pathToIndustry;
       // simulationGrid.positionPathToDrawIsOn = true;
     }

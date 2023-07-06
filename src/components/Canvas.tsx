@@ -23,6 +23,7 @@ import {
   drawGridOverlay,
   drawMainGrid,
   drawNodeNumbers,
+  drawPositionPath,
   drawRectangularSelection,
 } from "../logic/drawingFunctions";
 import ViewIcon from "../icons/ViewIcon";
@@ -170,6 +171,20 @@ function Canvas(props: CanvasProps) {
         cameraY
       );
     }
+
+    if (pathIsOn && positionPathToDrawRef.current) {
+      drawPositionPath(
+        ctx,
+        positionPathToDrawRef,
+        props.numRows,
+        props.numColumns,
+        fieldSize,
+        cameraScale,
+        cameraX,
+        cameraY
+      );
+    }
+
     nodeNumbersAreOn
       ? drawNodeNumbers(ctx, graphNodesRef, fieldSize, cameraScale)
       : null;
@@ -351,11 +366,11 @@ function Canvas(props: CanvasProps) {
   function generateGraphButtonPressed() {
     graphNodesRef.current = props.generateGraph();
     if (graphNodesRef.current !== undefined) {
-      console.log("not undefined ", graphNodesRef.current.length);
+      // console.log("not undefined ", graphNodesRef.current.length);
       graphNodesRef.current.forEach((node: GraphNode) => {
-        console.log("hello");
-        console.log(node.x, node.y);
-        console.log(node.distances!.toString());
+        // console.log("hello");
+        // console.log(node.x, node.y);
+        // console.log(node.distances!.toString());
       });
     }
     redraw();
@@ -376,6 +391,7 @@ function Canvas(props: CanvasProps) {
           props.fieldArray,
           graphNodesRef.current,
           positionPathToDrawRef
+          //setIsDrawing
         );
       } else {
         console.log("Graph not yet generated. Generate it!");
