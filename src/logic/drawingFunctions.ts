@@ -1,4 +1,5 @@
 import GraphNode from "../classes/GraphNode";
+import Position from "../classes/Position";
 import colors from "../colors";
 import FieldType from "../enums/FieldType";
 
@@ -13,7 +14,6 @@ export function drawGridOverlay(
   canvasWidth: number,
   canvasHeight: number
 ) {
-  console.log("drawing grid overlay");
   ctx!.strokeStyle = "#111111";
   ctx.globalAlpha = 0.1;
   ctx.beginPath();
@@ -56,6 +56,39 @@ export function drawNodeNumbers(
         fieldSize * cameraScale
       );
     }
+  }
+}
+
+export function drawPositionPath(
+  ctx: CanvasRenderingContext2D,
+  positionPathToDrawRef: React.MutableRefObject<Position[]>,
+  numRows: number,
+  numColumns: number,
+  fieldSize: number,
+  cameraScale: number,
+  cameraX: number,
+  cameraY: number
+) {
+  let color = "#d946ef";
+  ctx!.fillStyle = color;
+
+  for (let i = 1; i < positionPathToDrawRef.current.length; i++) {
+    let posFrom = positionPathToDrawRef.current[i - 1];
+    let posTo = positionPathToDrawRef.current[i];
+
+    if (posFrom.x === posTo.x) {
+    }
+
+    ctx.fillRect(
+      posFrom.x * fieldSize * cameraScale,
+      posFrom.y * fieldSize * cameraScale,
+      posTo.x * fieldSize * cameraScale +
+        fieldSize -
+        posFrom.x * fieldSize * cameraScale,
+      posTo.y * fieldSize * cameraScale +
+        fieldSize -
+        posFrom.y * fieldSize * cameraScale
+    );
   }
 }
 
@@ -113,7 +146,6 @@ export function drawRectangularSelection(
   cameraX: number,
   cameraY: number
 ) {
-  console.log("drawing rectangular selection");
   let deltaX = bx - ax;
   let deltaY = by - ay;
   let signumDeltaX = Math.sign(deltaX);
@@ -227,23 +259,15 @@ export function drawCursorSingleSelection(
   cameraY: number,
   cameraScale: number
 ) {
-  let color = "";
-  if (!leftIsPressed.current) {
+  let color = "black";
+
+  if (leftIsPressed.current === false) {
     if (
       fieldPressedX.current >= 0 &&
       fieldPressedY.current >= 0 &&
       fieldPressedX.current < numColumns &&
-      numRows < numRows
+      fieldPressedY.current < numRows
     ) {
-      let type = fieldArray[fieldPressedX.current][fieldPressedY.current];
-      if (type == FieldType.Urban) {
-        color = colors.urban;
-      } else if (type == FieldType.Industrial) {
-        color = colors.industry;
-      } else {
-        color = colors.roads;
-      }
-
       ctx!.fillStyle = color;
       // ctx!.globalCompositOperation = "source-over";
       ctx.globalAlpha = 0.5;
