@@ -13,6 +13,9 @@ const colors = {
 
   //bg-slate-500
   graphColor: "#64748b",
+
+  //fuchsia-600
+  pathColor: "#d946ef",
 };
 
 export default colors;

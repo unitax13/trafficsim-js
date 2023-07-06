@@ -510,7 +510,7 @@ function Canvas(props: CanvasProps) {
                       colorhex={colors.roads}
                       color="primary"
                       checked={roadsIsOn}
-                      onChange={(e) => {
+                      onChange={() => {
                         setRoadsIsOn(!roadsIsOn);
                         redraw();
                       }}
@@ -524,7 +524,7 @@ function Canvas(props: CanvasProps) {
                       colorhex={colors.urban}
                       color="primary"
                       checked={urbanIsOn}
-                      onChange={(e) => {
+                      onChange={() => {
                         setUrbanIsOn(!urbanIsOn);
                         redraw();
                       }}
@@ -538,7 +538,7 @@ function Canvas(props: CanvasProps) {
                       colorhex={colors.industry}
                       color="primary"
                       checked={industryIsOn}
-                      onChange={(e) => {
+                      onChange={() => {
                         setIndustryIsOn(!industryIsOn);
                         redraw();
                       }}
@@ -552,7 +552,7 @@ function Canvas(props: CanvasProps) {
                       colorhex={colors.graphColor}
                       color="primary"
                       checked={nodeNumbersAreOn}
-                      onChange={(e) => {
+                      onChange={() => {
                         setNodeNumbersAreOn(!nodeNumbersAreOn);
                         redraw();
                       }}
@@ -566,13 +566,27 @@ function Canvas(props: CanvasProps) {
                       colorhex="#111111"
                       color="primary"
                       checked={gridIsOn}
-                      onChange={(e) => {
+                      onChange={() => {
                         setGridIsOn(!gridIsOn);
                         redraw();
                       }}
                     />
                   }
                   label="Grid"
+                />
+                <FormControlLabel
+                  control={
+                    <ColoredMuiSwitch
+                      colorhex={colors.pathColor}
+                      color="primary"
+                      checked={pathIsOn}
+                      onChange={() => {
+                        setPathIsOn(!pathIsOn);
+                        redraw();
+                      }}
+                    />
+                  }
+                  label="Path"
                 />
               </FormGroup>
             </div>
