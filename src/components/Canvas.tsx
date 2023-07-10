@@ -204,6 +204,7 @@ function Canvas(props: CanvasProps) {
 
   function redraw() {
     setIsDrawing(!isDrawing);
+    console.log("redraw is called");
   }
 
   function updateCoordsOfFieldWithMouseOn(x: number, y: number) {
@@ -390,8 +391,8 @@ function Canvas(props: CanvasProps) {
         shortestPathingClassInstance.current = new ShortestPathingClass(
           props.fieldArray,
           graphNodesRef.current,
-          positionPathToDrawRef
-          //setIsDrawing
+          positionPathToDrawRef,
+          redraw
         );
       } else {
         console.log("Graph not yet generated. Generate it!");

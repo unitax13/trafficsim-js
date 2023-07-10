@@ -11,19 +11,19 @@ class ShortestPathingClass {
   fieldArray: FieldType[][];
   graphNodes: GraphNode[];
   positionPathToDrawRef: React.MutableRefObject<Position[]>;
-  //redraw: (value: React.SetStateAction<boolean>) => void;
+  redraw: () => void;
 
   public constructor(
     fieldArray: FieldType[][],
     graphNodes: GraphNode[],
-    positionPathToDrawRef: React.MutableRefObject<Position[]>
-    //redraw: (value: React.SetStateAction<boolean>) => void
+    positionPathToDrawRef: React.MutableRefObject<Position[]>,
+    redraw: () => void
   ) {
     this.fieldArray = fieldArray;
     this.graphNodes = graphNodes;
     this.positionArrayList = new Array<Position>();
     this.positionPathToDrawRef = positionPathToDrawRef;
-    //this.redraw = redraw;
+    this.redraw = redraw;
   }
 
   public add(position: Position) {
@@ -86,7 +86,8 @@ class ShortestPathingClass {
         console.log("No path found...");
       }
 
-      //this.redraw(true);
+      console.log("Calling redraw...");
+      this.redraw();
       // simulationGrid.positionPath = us.pathToIndustry;
       // simulationGrid.positionPathToDrawIsOn = true;
     }
