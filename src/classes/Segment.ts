@@ -21,11 +21,11 @@ class Segment {
   public calculateClosestRoadSegment(
     fieldArray: FieldType[][],
     radius: number
-  ): Position | null {
+  ): void {
     let startX = this.position.x;
     let startY = this.position.y;
 
-    let pos: Position | null;
+    let pos: Position | null = null;
 
     for (let i = 1; i < radius; i++) {
       pos = this.crossSearchAtRange(
@@ -35,8 +35,9 @@ class Segment {
         startY,
         i
       );
-      if (pos !== null) {
-        return pos;
+      if (pos) {
+        this.closestRoadSegmentPosition = pos;
+        return;
       }
 
       pos = this.spiralSearchAtRange(
@@ -46,12 +47,13 @@ class Segment {
         startY,
         i
       );
-      if (pos !== null) {
-        return pos;
+      if (pos) {
+        this.closestRoadSegmentPosition = pos;
+        return;
       }
     }
-
-    return null;
+    this.closestRoadSegmentPosition = null;
+    return;
   }
 
   public printSegmentStats(): void {
@@ -70,20 +72,20 @@ class Segment {
 
   private spiralSearchAtRange(
     matrix: FieldType[][],
-    targetType: number,
+    targetType: FieldType,
     startX: number,
     startY: number,
     radius: number
   ): Position | null {
     const directions = [
-      [-1, 1], // Diagonal up-right
-      [0, 1], // Right
+      [1, 0], // Right
       [1, 1], // Diagonal down-right
-      [1, 0], // Down
-      [1, -1], // Diagonal down-left
-      [0, -1], // Left
+      [0, 1], // Down
+      [-1, 1], // Diagonal down-left
+      [-1, 0], // Left
       [-1, -1], // Diagonal up-left
-      [-1, 0], // Up
+      [0, -1], // Up
+      [1, -1], // Diagonal up-right
     ];
 
     let x = startX;
@@ -92,8 +94,11 @@ class Segment {
     let stepsCount = 0;
     let directionIndex = 0;
 
+    console.log("okay so starting with position ", startX, startY);
+
     while (step <= radius) {
       for (let i = 0; i < step; i++) {
+        console.log("Checkiong position ", x, ",", y);
         if (
           x >= 0 &&
           x < matrix.length &&
@@ -101,15 +106,27 @@ class Segment {
           y < matrix[0].length &&
           matrix[x][y] === targetType
         ) {
+          console.log("FOUND IT");
           return new Position(x, y);
         }
 
         x += directions[directionIndex][0];
         y += directions[directionIndex][1];
+        // console.log(
+        //   "now position is " +
+        //     x +
+        //     ", " +
+        //     y +
+        //     " with directions " +
+        //     directions[directionIndex]
+        // );
         stepsCount++;
 
         if (stepsCount === matrix.length * matrix[0].length) {
           // The search has covered the entire matrix without finding the target value
+          console.log(
+            "The search has covered the entire matrix without finding the target value"
+          );
           return null;
         }
       }
@@ -120,7 +137,7 @@ class Segment {
         step++;
       }
     }
-
+    console.log("The target value was not found within the specified radius");
     return null; // The target value was not found within the specified radius
   }
 
@@ -131,10 +148,10 @@ class Segment {
     startY: number,
     range: number
   ) {
-    let presentX = startX;
-    let presentY = startY + range;
     //UP
-    if (fieldArray[presentX][presentY] == type) {
+    let presentX = startX;
+    let presentY = startY - range;
+    if (fieldArray[presentX][presentY] === type) {
       //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
       this.closestRoadSegmentPosition = new Position(presentX, presentY);
       return this.closestRoadSegmentPosition;
@@ -142,7 +159,7 @@ class Segment {
     //RIGHT
     presentX = startX + range;
     presentY = startY;
-    if (fieldArray[presentX][presentY] == type) {
+    if (fieldArray[presentX][presentY] === type) {
       //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
       this.closestRoadSegmentPosition = new Position(presentX, presentY);
       return this.closestRoadSegmentPosition;
@@ -150,8 +167,8 @@ class Segment {
 
     //DOWN
     presentX = startX;
-    presentY = startY - range;
-    if (fieldArray[presentX][presentY] == type) {
+    presentY = startY + range;
+    if (fieldArray[presentX][presentY] === type) {
       //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
       this.closestRoadSegmentPosition = new Position(presentX, presentY);
       return this.closestRoadSegmentPosition;
@@ -160,7 +177,7 @@ class Segment {
     //LEFT
     presentX = startX - range;
     presentY = startY;
-    if (fieldArray[presentX][presentY] == type) {
+    if (fieldArray[presentX][presentY] === type) {
       //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
       this.closestRoadSegmentPosition = new Position(presentX, presentY);
       return this.closestRoadSegmentPosition;
