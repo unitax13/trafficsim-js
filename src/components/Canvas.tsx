@@ -32,6 +32,7 @@ import viewModes from "../enums/ViewModes";
 import ModeSelect from "./ModeSelect";
 import TrafficFlowIcon from "../icons/TrafficFlowIcon";
 import ShortestPathingClass from "../classes/ShortestPathingClass";
+import StepperComponent from "./StepperComponent";
 
 interface CanvasProps {
   numRows: number;
@@ -652,6 +653,11 @@ function Canvas(props: CanvasProps) {
             Shortest pathing tool
           </Button>
         </div>
+        {positionPathToDrawRef.current ? (
+          <StepperComponent positionPath={positionPathToDrawRef.current} />
+        ) : (
+          ""
+        )}
       </div>
     </>
   );
