@@ -625,6 +625,11 @@ function Canvas(props: CanvasProps) {
               onContextMenu={(e) => e.preventDefault()}
             />
           </div>
+          {positionPathToDrawRef.current ? (
+            <StepperComponent positionPath={positionPathToDrawRef.current} />
+          ) : (
+            ""
+          )}
         </div>
 
         <div className="pt-2 flex gap-4">
@@ -653,11 +658,6 @@ function Canvas(props: CanvasProps) {
             Shortest pathing tool
           </Button>
         </div>
-        {positionPathToDrawRef.current ? (
-          <StepperComponent positionPath={positionPathToDrawRef.current} />
-        ) : (
-          ""
-        )}
       </div>
     </>
   );

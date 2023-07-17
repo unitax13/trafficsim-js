@@ -46,7 +46,12 @@ export default function StepperComponent({ positionPath }) {
 
   return (
     <>
-      <Stepper nonLinear activeStep={activeStep} orientation="vertical">
+      <Stepper
+        nonLinear
+        activeStep={activeStep}
+        orientation="vertical"
+        className="object-top align-top"
+      >
         {steps.map((step, index) => (
           <Step key={step.label}>
             <StepLabel
