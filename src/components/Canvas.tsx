@@ -33,6 +33,7 @@ import ModeSelect from "./ModeSelect";
 import TrafficFlowIcon from "../icons/TrafficFlowIcon";
 import ShortestPathingClass from "../classes/ShortestPathingClass";
 import StepperComponent from "./StepperComponent";
+import ModeSelector from "./ModeSelector";
 
 interface CanvasProps {
   numRows: number;
@@ -409,60 +410,10 @@ function Canvas(props: CanvasProps) {
         <div className="flex gap-2 items-center">
           {/* <div className="flex flex-col items-center w-44"> */}
           <div className="h-[666px] grid grid-rows-[12] gap-4 w-44">
-            <div className="border-2 border-slate-200 border-solid">
-              <div>
-                <>
-                  <FormControl>
-                    <Select
-                      className="w-44 h-9 font-roboto text-xs"
-                      // disableUnderline
-
-                      IconComponent={""}
-                      value={viewMode.current}
-                      onChange={(e) => handleModeChange(e)}
-                    >
-                      <MenuItem
-                        value={viewModes.NORMAL}
-                        className="focus:border focus:border-solid "
-                      >
-                        <span className="flex items-center text-xs ">
-                          <ListItemIcon sx={{ minWidth: 32 }}>
-                            <PaintBrush className="w-6 h-6" />
-                          </ListItemIcon>
-                          <span>NORMAL MODE</span>
-                        </span>
-                      </MenuItem>
-                      <MenuItem
-                        value={viewModes.SHORTEST_PATHING}
-                        className="focus:border focus:border-solid "
-                        sx={{}}
-                      >
-                        <span className="flex items-center text-xs  ">
-                          <ListItemIcon sx={{ minWidth: 32 }}>
-                            <DijkstraIcon className="w-6 h-6" />
-                          </ListItemIcon>
-                          <span className="text-left">
-                            SHORTEST-PATHING MODE
-                          </span>
-                        </span>
-                      </MenuItem>
-                      <MenuItem
-                        value={viewModes.HEATMAP}
-                        disabled={true}
-                        className="focus:border focus:border-solid "
-                      >
-                        <span className="flex items-center text-xs">
-                          <ListItemIcon sx={{ minWidth: 32 }}>
-                            <TrafficFlowIcon className="w-6 h-6" />
-                          </ListItemIcon>
-                          <span className="text-left">HEATMAP MODE</span>
-                        </span>
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </>
-              </div>
-            </div>
+            <ModeSelector
+              viewMode={viewMode}
+              handleModeChange={handleModeChange}
+            />
             <div className="row-span-1 flex flex-col justify-around">
               <div>
                 <Button
@@ -625,8 +576,11 @@ function Canvas(props: CanvasProps) {
               onContextMenu={(e) => e.preventDefault()}
             />
           </div>
+          {/* stepper section */}
           {positionPathToDrawRef.current ? (
-            <StepperComponent positionPath={positionPathToDrawRef.current} />
+            <div className="">
+              <StepperComponent positionPath={positionPathToDrawRef.current} />
+            </div>
           ) : (
             ""
           )}

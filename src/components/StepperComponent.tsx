@@ -6,10 +6,15 @@ import {
   Stepper,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Position from "../classes/Position";
 
-export default function StepperComponent({ positionPath }) {
-  const steps = [
+interface StepperComponentProps {
+  positionPath: Position[];
+}
+
+export default function StepperComponent(props: StepperComponentProps) {
+  const steps2 = [
     {
       label: "Select campaign settings",
       description: `For each ad campaign that you create, you can control how much
@@ -29,6 +34,26 @@ export default function StepperComponent({ positionPath }) {
               they're running and how to resolve approval issues.`,
     },
   ];
+
+  useEffect(() => {
+    setSteps(
+      props.positionPath.map((pos) => {
+        return {
+          label: "Go to [" + pos.x + ";" + pos.y + "]",
+          description: "well, go!",
+        };
+      })
+    );
+  }, [props.positionPath]);
+
+  const [steps, setSteps] = useState(
+    props.positionPath.map((pos) => {
+      return {
+        label: "Go to [" + pos.x + ";" + pos.y + "]",
+        description: "well, go!",
+      };
+    })
+  );
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -50,14 +75,15 @@ export default function StepperComponent({ positionPath }) {
         nonLinear
         activeStep={activeStep}
         orientation="vertical"
-        className="object-top align-top"
+        className=" pt-0"
+        sx={{ maxHeight: 666 }}
       >
         {steps.map((step, index) => (
           <Step key={step.label}>
             <StepLabel
               onClick={() => setActiveStep(index)}
               optional={
-                index === 2 ? (
+                index === steps.length - 1 ? (
                   <Typography variant="caption">Last step</Typography>
                 ) : null
               }
@@ -69,18 +95,18 @@ export default function StepperComponent({ positionPath }) {
 
               <div>
                 <Button
-                  variant="contained"
-                  onClick={handleNext}
-                  sx={{ mt: 1, mr: 1 }}
-                >
-                  {index === steps.length - 1 ? "Finish" : "Continue"}
-                </Button>
-                <Button
                   disabled={index === 0}
                   onClick={handleBack}
                   sx={{ mt: 1, mr: 1 }}
                 >
-                  Back
+                  Previous
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                  sx={{ mt: 1, mr: 1 }}
+                >
+                  {index === steps.length - 1 ? "Finish" : "Next"}
                 </Button>
               </div>
             </StepContent>
