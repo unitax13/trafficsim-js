@@ -77,16 +77,16 @@ export function drawPositionPath(
     let posTo = positionPathToDrawRef.current[i];
 
     if (posFrom.x < posTo.x) {
-      console.log(
-        "drawin from left to right from ",
-        posFrom.x,
-        ";",
-        posFrom.y,
-        " to ",
-        posTo.x,
-        ";",
-        posTo.y
-      );
+      // console.log(
+      //   "drawin from left to right from ",
+      //   posFrom.x,
+      //   ";",
+      //   posFrom.y,
+      //   " to ",
+      //   posTo.x,
+      //   ";",
+      //   posTo.y
+      // );
       ctx.fillRect(
         posFrom.x * fieldSize * cameraScale,
         posFrom.y * fieldSize * cameraScale,
@@ -98,16 +98,16 @@ export function drawPositionPath(
           posFrom.y * fieldSize * cameraScale
       );
     } else if (posFrom.x > posTo.x) {
-      console.log(
-        "from right to left from ",
-        posFrom.x,
-        ";",
-        posFrom.y,
-        " to ",
-        posTo.x,
-        ";",
-        posTo.y
-      );
+      // console.log(
+      //   "from right to left from ",
+      //   posFrom.x,
+      //   ";",
+      //   posFrom.y,
+      //   " to ",
+      //   posTo.x,
+      //   ";",
+      //   posTo.y
+      // );
       ctx.fillRect(
         posFrom.x * fieldSize * cameraScale + fieldSize,
         posFrom.y * fieldSize * cameraScale,
@@ -118,16 +118,16 @@ export function drawPositionPath(
       );
     } else if (posFrom.y < posTo.y) {
       // going down
-      console.log(
-        "down from ",
-        posFrom.x,
-        ";",
-        posFrom.y,
-        " to ",
-        posTo.x,
-        ";",
-        posTo.y
-      );
+      // console.log(
+      //   "down from ",
+      //   posFrom.x,
+      //   ";",
+      //   posFrom.y,
+      //   " to ",
+      //   posTo.x,
+      //   ";",
+      //   posTo.y
+      // );
       ctx.fillRect(
         posFrom.x * fieldSize * cameraScale,
         posFrom.y * fieldSize * cameraScale,
@@ -140,16 +140,16 @@ export function drawPositionPath(
       );
     } else if (posFrom.y > posTo.y) {
       // going up
-      console.log(
-        "up from ",
-        posFrom.x,
-        ";",
-        posFrom.y,
-        " to ",
-        posTo.x,
-        ";",
-        posTo.y
-      );
+      // console.log(
+      //   "up from ",
+      //   posFrom.x,
+      //   ";",
+      //   posFrom.y,
+      //   " to ",
+      //   posTo.x,
+      //   ";",
+      //   posTo.y
+      // );
       ctx.fillRect(
         posFrom.x * fieldSize * cameraScale,
         posFrom.y * fieldSize * cameraScale + fieldSize,

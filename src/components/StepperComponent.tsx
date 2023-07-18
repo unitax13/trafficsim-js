@@ -11,30 +11,11 @@ import Position from "../classes/Position";
 
 interface StepperComponentProps {
   positionPath: Position[];
+  distanceToTarget: number;
 }
 
 export default function StepperComponent(props: StepperComponentProps) {
-  const steps2 = [
-    {
-      label: "Select campaign settings",
-      description: `For each ad campaign that you create, you can control how much
-              you're willing to spend on clicks and conversions, which networks
-              and geographical locations you want your ads to show on, and more.`,
-    },
-    {
-      label: "Create an ad group",
-      description:
-        "An ad group contains one or more ads which target a shared set of keywords.",
-    },
-    {
-      label: "Create an ad",
-      description: `Try out different ad text to see what brings in the most customers,
-              and learn how to enhance your ads using features like ad extensions.
-              If you run into any problems with your ads, find out how to tell if
-              they're running and how to resolve approval issues.`,
-    },
-  ];
-
+  // there's a weird bug
   useEffect(() => {
     setSteps(
       props.positionPath.map((pos) => {
@@ -79,7 +60,7 @@ export default function StepperComponent(props: StepperComponentProps) {
         sx={{ maxHeight: 666 }}
       >
         {steps.map((step, index) => (
-          <Step key={step.label}>
+          <Step key={index}>
             <StepLabel
               onClick={() => setActiveStep(index)}
               optional={
@@ -91,7 +72,7 @@ export default function StepperComponent(props: StepperComponentProps) {
               {step.label}
             </StepLabel>
             <StepContent>
-              <Typography>{step.description}</Typography>
+              {/* <Typography>{step.description}</Typography> */}
 
               <div>
                 <Button
@@ -101,24 +82,26 @@ export default function StepperComponent(props: StepperComponentProps) {
                 >
                   Previous
                 </Button>
+
                 <Button
                   variant="contained"
+                  disabled={index >= steps.length - 1}
                   onClick={handleNext}
                   sx={{ mt: 1, mr: 1 }}
                 >
-                  {index === steps.length - 1 ? "Finish" : "Next"}
+                  Next
                 </Button>
               </div>
             </StepContent>
           </Step>
         ))}
+        <Typography className="pt-2 font-bold">
+          Total distance: <span>{props.distanceToTarget}</span>
+        </Typography>
       </Stepper>
       {activeStep === steps.length && (
         <>
           <Typography>All steps completed - you&apos;re finished</Typography>
-          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-            Reset
-          </Button>
         </>
       )}
     </>

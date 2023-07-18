@@ -21,12 +21,12 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
   handleModeChange,
 }) => {
   return (
-    <div className="border-2 border-slate-200 border-solid">
+    <div className=" ">
       <div>
         <>
           <FormControl>
             <Select
-              className="w-44 h-9 font-roboto text-xs"
+              className="w-44 h-9 font-roboto text-xs outline-slate-200 outline-solid outline-2 outline"
               value={viewMode.current}
               onChange={handleModeChange}
             >

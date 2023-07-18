@@ -34,6 +34,8 @@ import TrafficFlowIcon from "../icons/TrafficFlowIcon";
 import ShortestPathingClass from "../classes/ShortestPathingClass";
 import StepperComponent from "./StepperComponent";
 import ModeSelector from "./ModeSelector";
+import BrushSection from "./BrushSection";
+import ViewSettings from "./ViewSettings";
 
 interface CanvasProps {
   numRows: number;
@@ -59,6 +61,8 @@ function Canvas(props: CanvasProps) {
   const shortestPathingClassInstance = useRef<ShortestPathingClass | null>(
     null
   );
+  const positionPathToDrawRef = useRef<Position[]>([]);
+  const distanceToTargetRef = useRef<number>(0);
 
   const viewMode = useRef<viewModes>(viewModes.NORMAL);
 
@@ -94,8 +98,6 @@ function Canvas(props: CanvasProps) {
   const [gridIsOn, setGridIsOn] = useState<boolean>(true);
   const [pathIsOn, setPathIsOn] = useState<boolean>(true);
   const roadHeatmapIsOn = false;
-
-  const positionPathToDrawRef = useRef<Position[]>([]);
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -388,20 +390,26 @@ function Canvas(props: CanvasProps) {
   const shortestPathingToolButtonPressed = (e: any) => {
     if (viewMode.current !== viewModes.SHORTEST_PATHING) {
       viewMode.current = viewModes.SHORTEST_PATHING;
-
-      if (graphNodesRef.current != null) {
-        shortestPathingClassInstance.current = new ShortestPathingClass(
-          props.fieldArray,
-          graphNodesRef.current,
-          positionPathToDrawRef,
-          redraw
-        );
-      } else {
-        console.log("Graph not yet generated. Generate it!");
-      }
-
-      redraw();
     }
+
+    if (graphNodesRef.current != null) {
+      shortestPathingClassInstance.current = new ShortestPathingClass(
+        props.fieldArray,
+        graphNodesRef.current,
+        positionPathToDrawRef,
+        distanceToTargetRef,
+        redraw
+      );
+    } else {
+      console.log("Graph not yet generated. Generate it!");
+    }
+
+    redraw();
+  };
+
+  const handleFieldTypeChosen = (e: FieldType) => {
+    fieldTypeChosen.current = e;
+    viewMode.current = viewModes.NORMAL;
   };
 
   return (
@@ -410,138 +418,31 @@ function Canvas(props: CanvasProps) {
         <div className="flex gap-2 items-center">
           {/* <div className="flex flex-col items-center w-44"> */}
           <div className="h-[666px] grid grid-rows-[12] gap-4 w-44">
-            <ModeSelector
-              viewMode={viewMode}
-              handleModeChange={handleModeChange}
-            />
-            <div className="row-span-1 flex flex-col justify-around">
-              <div>
-                <Button
-                  fullWidth
-                  startIcon={<PaintBrush className="w-6 h-6" />}
-                  className="bg-slate-800 hover:bg-slate-900"
-                  variant="contained"
-                  onClick={(e) => {
-                    fieldTypeChosen.current = FieldType.Road1;
-                  }}
-                >
-                  Road
-                </Button>
-                <Button
-                  fullWidth
-                  startIcon={<PaintBrush className="w-6 h-6" />}
-                  className="bg-lime-600 hover:bg-lime-700"
-                  variant="contained"
-                  onClick={(e) => {
-                    fieldTypeChosen.current = FieldType.Urban;
-                  }}
-                >
-                  Urban area
-                </Button>
-                <Button
-                  fullWidth
-                  startIcon={<PaintBrush className="w-6 h-6" />}
-                  variant="contained"
-                  className="bg-yellow-600 hover:bg-yellow-700"
-                  onClick={(e) => {
-                    fieldTypeChosen.current = FieldType.Industrial;
-                  }}
-                >
-                  Industry area
-                </Button>
-              </div>
+            <div className="">
+              <ModeSelector
+                viewMode={viewMode}
+                handleModeChange={handleModeChange}
+              />
             </div>
-            <div className="mt-4 w-full row-span-2 flex flex-col items-center border-2 border-slate-200 border-solid">
-              <div className="flex gap-1 justify-around items-center">
-                <p className="text-xs font-roboto text-slate-500">VIEW</p>
-                <ViewIcon className="w-5 text-slate-500" />
-              </div>
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <ColoredMuiSwitch
-                      colorhex={colors.roads}
-                      color="primary"
-                      checked={roadsIsOn}
-                      onChange={() => {
-                        setRoadsIsOn(!roadsIsOn);
-                        redraw();
-                      }}
-                    />
-                  }
-                  label="Roads"
-                />
-                <FormControlLabel
-                  control={
-                    <ColoredMuiSwitch
-                      colorhex={colors.urban}
-                      color="primary"
-                      checked={urbanIsOn}
-                      onChange={() => {
-                        setUrbanIsOn(!urbanIsOn);
-                        redraw();
-                      }}
-                    />
-                  }
-                  label="Urban"
-                />
-                <FormControlLabel
-                  control={
-                    <ColoredMuiSwitch
-                      colorhex={colors.industry}
-                      color="primary"
-                      checked={industryIsOn}
-                      onChange={() => {
-                        setIndustryIsOn(!industryIsOn);
-                        redraw();
-                      }}
-                    />
-                  }
-                  label="Industry"
-                />
-                <FormControlLabel
-                  control={
-                    <ColoredMuiSwitch
-                      colorhex={colors.graphColor}
-                      color="primary"
-                      checked={nodeNumbersAreOn}
-                      onChange={() => {
-                        setNodeNumbersAreOn(!nodeNumbersAreOn);
-                        redraw();
-                      }}
-                    />
-                  }
-                  label="Node numbers"
-                />
-                <FormControlLabel
-                  control={
-                    <ColoredMuiSwitch
-                      colorhex="#111111"
-                      color="primary"
-                      checked={gridIsOn}
-                      onChange={() => {
-                        setGridIsOn(!gridIsOn);
-                        redraw();
-                      }}
-                    />
-                  }
-                  label="Grid"
-                />
-                <FormControlLabel
-                  control={
-                    <ColoredMuiSwitch
-                      colorhex={colors.pathColor}
-                      color="primary"
-                      checked={pathIsOn}
-                      onChange={() => {
-                        setPathIsOn(!pathIsOn);
-                        redraw();
-                      }}
-                    />
-                  }
-                  label="Path"
-                />
-              </FormGroup>
+            <div className="outline outline-slate-50 outline-solid outline-2 row-span-1 flex flex-col justify-around w-full">
+              <BrushSection onFieldChosen={handleFieldTypeChosen} />
+            </div>
+            <div className="mt-4 w-full row-span-2 flex flex-col items-center ">
+              <ViewSettings
+                roadsIsOn={roadsIsOn}
+                setRoadsIsOn={setRoadsIsOn}
+                urbanIsOn={urbanIsOn}
+                setUrbanIsOn={setUrbanIsOn}
+                industryIsOn={industryIsOn}
+                setIndustryIsOn={setIndustryIsOn}
+                nodeNumbersAreOn={nodeNumbersAreOn}
+                setNodeNumbersAreOn={setNodeNumbersAreOn}
+                gridIsOn={gridIsOn}
+                setGridIsOn={setGridIsOn}
+                pathIsOn={pathIsOn}
+                setPathIsOn={setPathIsOn}
+                redraw={redraw}
+              />
             </div>
             <div className="row-span-2 flex flex-col">
               {/* X,Y text */}
@@ -561,7 +462,7 @@ function Canvas(props: CanvasProps) {
               </div>
             </div>
           </div>
-          <div className="border-slate-500 border border-solid">
+          <div className="border-slate-500 border border-solid mx-2">
             <canvas
               id="canvas"
               width="660"
@@ -576,14 +477,19 @@ function Canvas(props: CanvasProps) {
               onContextMenu={(e) => e.preventDefault()}
             />
           </div>
-          {/* stepper section */}
-          {positionPathToDrawRef.current ? (
+          {/* start of stepper section */}
+          {positionPathToDrawRef.current &&
+          positionPathToDrawRef.current.length > 0 ? (
             <div className="">
-              <StepperComponent positionPath={positionPathToDrawRef.current} />
+              <StepperComponent
+                positionPath={positionPathToDrawRef.current}
+                distanceToTarget={distanceToTargetRef.current}
+              />
             </div>
           ) : (
             ""
           )}
+          {/* end of stepper section */}
         </div>
 
         <div className="pt-2 flex gap-4">

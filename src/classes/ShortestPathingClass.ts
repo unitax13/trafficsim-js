@@ -11,18 +11,21 @@ class ShortestPathingClass {
   fieldArray: FieldType[][];
   graphNodes: GraphNode[];
   positionPathToDrawRef: React.MutableRefObject<Position[]>;
+  distanceToTargetRef: React.MutableRefObject<number>;
   redraw: () => void;
 
   public constructor(
     fieldArray: FieldType[][],
     graphNodes: GraphNode[],
     positionPathToDrawRef: React.MutableRefObject<Position[]>,
+    distanceToTargetRef: React.MutableRefObject<number>,
     redraw: () => void
   ) {
     this.fieldArray = fieldArray;
     this.graphNodes = graphNodes;
     this.positionArrayList = new Array<Position>();
     this.positionPathToDrawRef = positionPathToDrawRef;
+    this.distanceToTargetRef = distanceToTargetRef;
     this.redraw = redraw;
   }
 
@@ -72,6 +75,7 @@ class ShortestPathingClass {
       us.findPathToBoundSegment(this.graphNodes, -1, true);
 
       this.positionPathToDrawRef.current = us.positionPathToIndustry;
+      this.distanceToTargetRef.current = us.distanceToIndustry;
 
       if (us.positionPathToIndustry) {
         let string = "Path = ";
