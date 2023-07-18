@@ -36,6 +36,8 @@ import StepperComponent from "./StepperComponent";
 import ModeSelector from "./ModeSelector";
 import BrushSection from "./BrushSection";
 import ViewSettings from "./ViewSettings";
+import LoadIcon from "../icons/LoadIcon";
+import SaveIcon from "../icons/SaveIcon";
 
 interface CanvasProps {
   numRows: number;
@@ -362,6 +364,8 @@ function Canvas(props: CanvasProps) {
     leftIsPressed.current = false;
     middleIsPressed.current = false;
     rightIsPressed.current = false;
+    fieldPressedX.current = -1;
+    fieldPressedY.current = -1;
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
@@ -379,6 +383,14 @@ function Canvas(props: CanvasProps) {
       });
     }
     redraw();
+  }
+
+  function onLoadButtonPressed(e) {
+    console.log("onLoadButtonPressed");
+  }
+
+  function onSaveButtonPressed(e) {
+    console.log("onSaveButtonPressed");
   }
 
   const handleModeChange = (e: any) => {
@@ -418,6 +430,26 @@ function Canvas(props: CanvasProps) {
         <div className="flex gap-2 items-center">
           {/* <div className="flex flex-col items-center w-44"> */}
           <div className="h-[666px] grid grid-rows-[12] gap-4 w-44">
+            <div className="row-span-1 flex w-full">
+              <Button
+                fullWidth
+                variant="outlined"
+                className="h-3/4"
+                startIcon={<LoadIcon className=" w-3.5 h-4" />}
+                onClick={onLoadButtonPressed}
+              >
+                LOAD
+              </Button>
+              <Button
+                fullWidth
+                variant="outlined"
+                className="h-3/4"
+                endIcon={<SaveIcon className="w-4 h-4" />}
+                onClick={onSaveButtonPressed}
+              >
+                Save
+              </Button>
+            </div>
             <div className="">
               <ModeSelector
                 viewMode={viewMode}
@@ -462,7 +494,7 @@ function Canvas(props: CanvasProps) {
               </div>
             </div>
           </div>
-          <div className="border-slate-500 border border-solid mx-2">
+          <div className="border-slate-500 border border-solid">
             <canvas
               id="canvas"
               width="660"
