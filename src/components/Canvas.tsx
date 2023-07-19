@@ -504,12 +504,10 @@ function Canvas(props: CanvasProps) {
 
       console.log("Finding paths...");
 
+      // make each find its way to the corresponding segment
       segmentsContainerClassInstance.current.urbanSegments.forEach((us) => {
         us.findPathToBoundSegment(graphNodesRef.current!, -1, true);
       });
-
-      // make each find its way to the corresponding segment
-      //
     }
   };
 
