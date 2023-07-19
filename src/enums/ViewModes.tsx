@@ -1,7 +1,7 @@
 enum viewModes {
   NORMAL,
   SHORTEST_PATHING,
-  HEATMAP,
+  EXAMINATION,
 }
 
 export default viewModes;

@@ -137,7 +137,7 @@ class Segment {
     //UP
     let presentX = startX;
     let presentY = startY - range;
-    if (fieldArray[presentX][presentY] === type) {
+    if (presentY >= 0 && fieldArray[presentX][presentY] === type) {
       //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
       this.closestRoadSegmentPosition = new Position(presentX, presentY);
       return this.closestRoadSegmentPosition;
@@ -145,7 +145,10 @@ class Segment {
     //RIGHT
     presentX = startX + range;
     presentY = startY;
-    if (fieldArray[presentX][presentY] === type) {
+    if (
+      presentX < fieldArray.length &&
+      fieldArray[presentX][presentY] === type
+    ) {
       //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
       this.closestRoadSegmentPosition = new Position(presentX, presentY);
       return this.closestRoadSegmentPosition;
@@ -154,7 +157,10 @@ class Segment {
     //DOWN
     presentX = startX;
     presentY = startY + range;
-    if (fieldArray[presentX][presentY] === type) {
+    if (
+      presentY < fieldArray[0].length &&
+      fieldArray[presentX][presentY] === type
+    ) {
       //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
       this.closestRoadSegmentPosition = new Position(presentX, presentY);
       return this.closestRoadSegmentPosition;
@@ -163,7 +169,7 @@ class Segment {
     //LEFT
     presentX = startX - range;
     presentY = startY;
-    if (fieldArray[presentX][presentY] === type) {
+    if (presentX >= 0 && fieldArray[presentX][presentY] === type) {
       //System.out.println("Found road segment at [" + presentX + "," + presentY + "].");
       this.closestRoadSegmentPosition = new Position(presentX, presentY);
       return this.closestRoadSegmentPosition;

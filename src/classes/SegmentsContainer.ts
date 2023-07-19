@@ -29,9 +29,43 @@ class SegmentsContainer {
     }
   }
 
+  public printUrbanSegments(): void {
+    this.urbanSegments.forEach((element) => {
+      console.log(
+        "Urban segment at " +
+          element.position.x +
+          ";" +
+          element.position.y +
+          " bound to industrial segment at " +
+          element.boundIndustrySegment?.position.x +
+          ";" +
+          element.boundIndustrySegment?.position.y
+      );
+    });
+  }
+
+  public printIndustrySegments(): void {
+    this.industrySegments.forEach((element) => {
+      console.log(
+        "Industry segment at " +
+          element.position.x +
+          ";" +
+          element.position.y +
+          " bound to industrial segment at " +
+          element.boundUrbanSegment?.position.x +
+          ";" +
+          element.boundUrbanSegment?.position.y
+      );
+    });
+  }
+
   public bindRandomly(onlyNotBoundYet: boolean) {
     let ises = this.industrySegments.slice();
-    for (let i = 0; i < this.urbanSegments.length; i++) {
+    for (
+      let i = 0;
+      i < this.urbanSegments.length && i < this.industrySegments.length;
+      i++
+    ) {
       if (
         onlyNotBoundYet &&
         this.urbanSegments[i].boundIndustrySegment === null
@@ -48,6 +82,29 @@ class SegmentsContainer {
 
       ises.splice(pickedOne, 1);
     }
+  }
+
+  public getSegmentAt(
+    x: number,
+    y: number
+  ): UrbanSegment | IndustrySegment | null {
+    let segment: UrbanSegment | IndustrySegment | null = null;
+
+    for (const us_element of this.urbanSegments) {
+      if (us_element.position.x === x && us_element.position.y === y) {
+        segment = us_element;
+        break;
+      }
+    }
+
+    for (const is_element of this.industrySegments) {
+      if (is_element.position.x === x && is_element.position.y === y) {
+        segment = is_element;
+        break;
+      }
+    }
+
+    return segment;
   }
 }
 

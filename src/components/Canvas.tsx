@@ -29,7 +29,9 @@ import BrushSection from "./BrushSection";
 import ViewSettings from "./ViewSettings";
 import LoadIcon from "../icons/LoadIcon";
 import SaveIcon from "../icons/SaveIcon";
-import SegmentsContainer from "../classes/SegmetsContainer";
+import SegmentsContainer from "../classes/SegmentsContainer";
+import ConnectionIcon from "../icons/ConnectionIcon";
+import ExaminationClass from "../classes/ExaminationClass";
 
 interface CanvasProps {
   numRows: number;
@@ -56,6 +58,8 @@ function Canvas(props: CanvasProps) {
   const shortestPathingClassInstance = useRef<ShortestPathingClass | null>(
     null
   );
+
+  const examinationInstance = useRef<ExaminationClass | null>(null);
 
   const positionPathToDrawRef = useRef<Position[]>([]);
   const distanceToTargetRef = useRef<number>(0);
@@ -291,6 +295,14 @@ function Canvas(props: CanvasProps) {
           new Position(fieldPressedX.current, fieldPressedY.current)
         );
       }
+    } else if (viewMode.current === viewModes.EXAMINATION) {
+      if (examinationInstance.current) {
+        console.log("showing path");
+        examinationInstance.current.showPath(
+          fieldPressedX.current,
+          fieldPressedY.current
+        );
+      }
     }
   };
 
@@ -441,6 +453,31 @@ function Canvas(props: CanvasProps) {
 
   const handleModeChange = (e: any) => {
     viewMode.current = e.target.value;
+
+    if (viewMode.current === viewModes.SHORTEST_PATHING) {
+      if (graphNodesRef.current != null) {
+        shortestPathingClassInstance.current = new ShortestPathingClass(
+          props.fieldArray,
+          graphNodesRef.current,
+          positionPathToDrawRef,
+          distanceToTargetRef,
+          redraw
+        );
+      } else {
+        console.log("Graph not yet generated. Generate it!");
+      }
+    }
+
+    if (viewMode.current === viewModes.EXAMINATION) {
+      if (graphNodesRef.current && segmentsContainerClassInstance.current) {
+        examinationInstance.current = new ExaminationClass(
+          props.fieldArray,
+          segmentsContainerClassInstance,
+          positionPathToDrawRef,
+          redraw
+        );
+      }
+    }
     console.log(e.target);
     redraw();
   };
@@ -508,6 +545,8 @@ function Canvas(props: CanvasProps) {
       segmentsContainerClassInstance.current.urbanSegments.forEach((us) => {
         us.findPathToBoundSegment(graphNodesRef.current!, -1, true);
       });
+
+      segmentsContainerClassInstance.current.printUrbanSegments();
     }
   };
 
@@ -644,10 +683,12 @@ function Canvas(props: CanvasProps) {
           >
             Shortest pathing tool
           </Button>
+
           <div>
             <Button
-              className="h-full w-44 bg-blue-600 hover:bg-blue-700"
+              className="h-full bg-blue-600 hover:bg-blue-700"
               variant="contained"
+              startIcon={<ConnectionIcon className="w-6 h-6" />}
               onClick={bindButtonPressed}
             >
               Bind randomly

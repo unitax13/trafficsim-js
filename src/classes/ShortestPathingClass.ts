@@ -4,8 +4,6 @@ import IndustrySegment from "./IndustrySegment";
 import Position from "./Position";
 import UrbanSegment from "./UrbanSegment";
 
-type StateSetter<T> = (value: T) => void;
-
 class ShortestPathingClass {
   positionArrayList: Position[];
   fieldArray: FieldType[][];

@@ -10,6 +10,7 @@ import DijkstraIcon from "../icons/DijkstraIcon";
 import TrafficFlowIcon from "../icons/TrafficFlowIcon";
 import viewModes from "../enums/ViewModes";
 import PaintBrush from "../icons/PaintBrush";
+import QuestionMark from "../icons/QuestionMark";
 
 interface ModeSelectorProps {
   viewMode: MutableRefObject<viewModes>;
@@ -53,6 +54,17 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                 </span>
               </MenuItem>
               <MenuItem
+                value={viewModes.EXAMINATION}
+                className="focus:border focus:border-solid"
+              >
+                <span className="flex items-center text-xs">
+                  <ListItemIcon sx={{ minWidth: 32 }}>
+                    <QuestionMark className="w-6 h-6" />
+                  </ListItemIcon>
+                  <span className="text-left">EXAMINE MODE</span>
+                </span>
+              </MenuItem>
+              {/* <MenuItem
                 value={viewModes.HEATMAP}
                 disabled={true}
                 className="focus:border focus:border-solid"
@@ -63,7 +75,7 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                   </ListItemIcon>
                   <span className="text-left">HEATMAP MODE</span>
                 </span>
-              </MenuItem>
+              </MenuItem> */}
             </Select>
           </FormControl>
         </>
