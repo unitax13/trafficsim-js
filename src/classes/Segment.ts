@@ -56,20 +56,6 @@ class Segment {
     return;
   }
 
-  public printSegmentStats(): void {
-    console.log({
-      segmentAt: "[" + this.position.x + "," + this.position.y + "]",
-      nearestRoadSegment:
-        "[" +
-        this.closestRoadSegmentPosition?.x +
-        "," +
-        this.closestRoadSegmentPosition?.y +
-        "]",
-      isANode: this.closestRoadSegmentIsNode,
-      closestRoadNodesPositions: this.closestRoadNodesPositions.toString(),
-    });
-  }
-
   private spiralSearchAtRange(
     matrix: FieldType[][],
     targetType: FieldType,
@@ -94,11 +80,11 @@ class Segment {
     let stepsCount = 0;
     let directionIndex = 0;
 
-    console.log("okay so starting with position ", startX, startY);
+    //console.log("okay so starting with position ", startX, startY);
 
     while (step <= radius) {
       for (let i = 0; i < step; i++) {
-        console.log("Checkiong position ", x, ",", y);
+        //console.log("Checkiong position ", x, ",", y);
         if (
           x >= 0 &&
           x < matrix.length &&
@@ -106,7 +92,7 @@ class Segment {
           y < matrix[0].length &&
           matrix[x][y] === targetType
         ) {
-          console.log("FOUND IT");
+          // console.log("FOUND IT");
           return new Position(x, y);
         }
 
@@ -289,6 +275,48 @@ class Segment {
       nodeId
     );
     return -1;
+  }
+
+  public printSegmentStats(): void {
+    console.log({
+      segmentAt: "[" + this.position.x + "," + this.position.y + "]",
+      nearestRoadSegment:
+        "[" +
+        this.closestRoadSegmentPosition?.x +
+        "," +
+        this.closestRoadSegmentPosition?.y +
+        "]",
+      isANode: this.closestRoadSegmentIsNode,
+      closestRoadNodesPositions: this.closestRoadNodesPositions.toString(),
+    });
+  }
+
+  public printSegmentStats2(): void {
+    console.log(`Segment at [${this.position.x}, ${this.position.y}].`);
+    if (this.closestRoadSegmentPosition !== null) {
+      console.log(
+        `Closest road segment is at [${this.closestRoadSegmentPosition.x}, ${this.closestRoadSegmentPosition.y}] `
+      );
+
+      if (this.closestRoadSegmentIsNode) {
+        console.log("and IS a node.\n");
+      } else {
+        console.log("and IS NOT a node.\n");
+      }
+    } else {
+      console.log("No closest road segment\n");
+    }
+
+    const n = this.closestRoadNodes.length;
+    if (n > 0) {
+      console.log(`Closest road nodes (${n}):`);
+    }
+
+    for (let i = 0; i < n; i++) {
+      console.log(
+        `[${this.closestRoadNodes[i].x}, ${this.closestRoadNodes[i].y}] and ${this.distancesToClosestRoadNodes[i]} from closest road segment\n`
+      );
+    }
   }
 }
 

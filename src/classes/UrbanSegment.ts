@@ -63,7 +63,7 @@ class UrbanSegment extends Segment {
           : undefined;
       }
 
-      console.log("StartIDs:" + stardIds);
+      //console.log("StartIDs:" + stardIds);
 
       //take the closest nodes of the industry segment and add them as destinationIds
       let closestNodesDoExist: boolean = false;

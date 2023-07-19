@@ -1,4 +1,10 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  MouseEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import "../index.css";
 import { Button } from "@mui/material";
 import FieldType from "../enums/FieldType";
@@ -23,6 +29,7 @@ import BrushSection from "./BrushSection";
 import ViewSettings from "./ViewSettings";
 import LoadIcon from "../icons/LoadIcon";
 import SaveIcon from "../icons/SaveIcon";
+import SegmentsContainer from "../classes/SegmetsContainer";
 
 interface CanvasProps {
   numRows: number;
@@ -49,8 +56,10 @@ function Canvas(props: CanvasProps) {
   const shortestPathingClassInstance = useRef<ShortestPathingClass | null>(
     null
   );
+
   const positionPathToDrawRef = useRef<Position[]>([]);
   const distanceToTargetRef = useRef<number>(0);
+  const segmentsContainerClassInstance = useRef<SegmentsContainer | null>(null);
 
   const viewMode = useRef<viewModes>(viewModes.NORMAL);
 
@@ -461,6 +470,49 @@ function Canvas(props: CanvasProps) {
     viewMode.current = viewModes.NORMAL;
   };
 
+  const bindButtonPressed = () => {
+    if (graphNodesRef.current != null) {
+      console.log("Binding");
+
+      // make a new segments container
+      // add all urban and industry segments to it
+      segmentsContainerClassInstance.current = new SegmentsContainer(
+        props.fieldArray,
+        graphNodesRef.current
+      );
+      // bind them
+      segmentsContainerClassInstance.current.bindRandomly(false);
+
+      segmentsContainerClassInstance.current.urbanSegments.forEach((us) => {
+        us.calculateClosestRoadSegment(props.fieldArray, 10);
+        us.findClosestRoadNodes(props.fieldArray, graphNodesRef.current!);
+      });
+
+      segmentsContainerClassInstance.current.industrySegments.forEach((is) => {
+        is.calculateClosestRoadSegment(props.fieldArray, 10);
+        is.findClosestRoadNodes(props.fieldArray, graphNodesRef.current!);
+      });
+
+      console.log("Urban segments stats:");
+      segmentsContainerClassInstance.current.urbanSegments.forEach((us) => {
+        us.printSegmentStats2();
+      });
+      console.log("industry segments stats:");
+      segmentsContainerClassInstance.current.industrySegments.forEach((is) => {
+        is.printSegmentStats2();
+      });
+
+      console.log("Finding paths...");
+
+      segmentsContainerClassInstance.current.urbanSegments.forEach((us) => {
+        us.findPathToBoundSegment(graphNodesRef.current!, -1, true);
+      });
+
+      // make each find its way to the corresponding segment
+      //
+    }
+  };
+
   return (
     <>
       <div className=" font-roboto">
@@ -569,13 +621,13 @@ function Canvas(props: CanvasProps) {
           {/* end of stepper section */}
         </div>
 
-        <div className="pt-2 flex gap-4">
+        <div className="pt-2 flex gap-4 h-10">
           <div className="w-44">
             <Button
               fullWidth
               startIcon={<GraphIcon className="w-7 h-7" />}
               variant="contained"
-              className="bg-slate-500 hover:bg-slate-600"
+              className="bg-slate-500 hover:bg-slate-600 h-full"
               onClick={() => {
                 generateGraphButtonPressed();
               }}
@@ -594,6 +646,15 @@ function Canvas(props: CanvasProps) {
           >
             Shortest pathing tool
           </Button>
+          <div>
+            <Button
+              className="h-full w-44 bg-blue-600 hover:bg-blue-700"
+              variant="contained"
+              onClick={bindButtonPressed}
+            >
+              Bind randomly
+            </Button>
+          </div>
         </div>
       </div>
     </>
