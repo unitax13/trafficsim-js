@@ -1,23 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import "../index.css";
-import {
-  Button,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  ListItemIcon,
-  MenuItem,
-  Select,
-  Switch,
-} from "@mui/material";
+import { Button } from "@mui/material";
 import FieldType from "../enums/FieldType";
-import PaintBrush from "../icons/PaintBrush";
 import GraphNode from "../classes/GraphNode";
 import Position from "../classes/Position";
 import GraphIcon from "../icons/GraphIcon";
-import ColoredMuiSwitch from "./ColoredMuiSwitch";
 import "../colors";
-import colors from "../colors";
 import {
   drawCursorSingleSelection,
   drawGridOverlay,
@@ -26,11 +14,8 @@ import {
   drawPositionPath,
   drawRectangularSelection,
 } from "../logic/drawingFunctions";
-import ViewIcon from "../icons/ViewIcon";
 import DijkstraIcon from "../icons/DijkstraIcon";
 import viewModes from "../enums/ViewModes";
-import ModeSelect from "./ModeSelect";
-import TrafficFlowIcon from "../icons/TrafficFlowIcon";
 import ShortestPathingClass from "../classes/ShortestPathingClass";
 import StepperComponent from "./StepperComponent";
 import ModeSelector from "./ModeSelector";
@@ -52,6 +37,7 @@ interface CanvasProps {
     fieldType: FieldType
   ) => void;
   generateGraph: () => GraphNode[] | undefined;
+  setFieldArray: (array: FieldType[][]) => void;
 }
 
 function Canvas(props: CanvasProps) {
@@ -385,12 +371,63 @@ function Canvas(props: CanvasProps) {
     redraw();
   }
 
-  function onLoadButtonPressed(e) {
-    console.log("onLoadButtonPressed");
+  function onLoadButtonPressed(e: ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files) {
+      return;
+    }
+    console.log("Loaded file...");
+
+    const file = e.target.files[0];
+    const { name } = file;
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        try {
+          const fileContent = e.target?.result;
+          const parsedData = JSON.parse(fileContent as string);
+
+          // Access the data and version from the uploaded file
+          const { data, version } = parsedData;
+
+          // Perform any necessary processing with the data
+          // Set the uploadedData variable based on the contents of the file
+          props.setFieldArray(data);
+
+          console.log("File version:", version);
+
+          // Upload the file to the server or perform further actions
+          // Here, you can invoke an API endpoint to send the file content
+          // Example: uploadFileToServer(parsedData);
+        } catch (error) {
+          console.error("Error reading file:", error);
+        }
+      };
+
+      reader.readAsText(file);
+    }
   }
 
   function onSaveButtonPressed(e) {
     console.log("onSaveButtonPressed");
+
+    const fileContent = JSON.stringify({
+      version: "1.0",
+      data: props.fieldArray,
+    });
+    const file = new Blob([fileContent], { type: "application/json" });
+
+    const url = URL.createObjectURL(file); // Step 2: Create a downloadable URL
+    const link = document.createElement("a");
+    link.href = url; // Set the href attribute to the downloadable URL
+    link.download = "data.json"; // Step 4: Specify the desired file name
+
+    document.body.appendChild(link); // Append the <a> element to the DOM
+    link.click(); // Step 5: Programmatically trigger a click event to start the download
+
+    document.body.removeChild(link); // Remove the <a> element from the DOM after the download
+    URL.revokeObjectURL(url); // Revoke the downloadable URL to free up memory
   }
 
   const handleModeChange = (e: any) => {
@@ -432,13 +469,21 @@ function Canvas(props: CanvasProps) {
           <div className="h-[666px] grid grid-rows-[12] gap-4 w-44">
             <div className="row-span-1 flex w-full">
               <Button
+                component="label"
                 fullWidth
                 variant="outlined"
                 className="h-3/4"
                 startIcon={<LoadIcon className=" w-3.5 h-4" />}
-                onClick={onLoadButtonPressed}
+                //onClick={onLoadButtonPressed}
               >
                 LOAD
+                <input
+                  id="select-image"
+                  accept="json"
+                  type="file"
+                  hidden
+                  onChange={onLoadButtonPressed}
+                />
               </Button>
               <Button
                 fullWidth

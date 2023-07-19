@@ -2,8 +2,30 @@ import Canvas from "./Canvas";
 import "../index.css";
 import FieldType from "../enums/FieldType";
 import GraphNode from "../classes/GraphNode";
+import { useRef } from "react";
 
 function MainCanvasElement() {
+  const numRows = 110;
+  const numColumns = 110;
+  const fieldArray = useRef<FieldType[][]>([]);
+
+  // function initPopulation() {
+  // Populate the array with a certain enum value
+  const desiredFieldType = FieldType.Empty;
+
+  for (let i = 0; i < numRows; i++) {
+    fieldArray.current[i] = [];
+
+    for (let j = 0; j < numColumns; j++) {
+      fieldArray.current[i][j] = desiredFieldType;
+    }
+  }
+  // dots to see if it works properly
+  fieldArray.current[2][2] = FieldType.Road1;
+  fieldArray.current[9][9] = FieldType.Industrial;
+  // setStateFieldArray(fieldArray);
+  // }
+
   function placePerpendicularLineBetween(
     ax: number,
     ay: number,
@@ -14,29 +36,29 @@ function MainCanvasElement() {
     if (Math.abs(bx - ax) > Math.abs(by - ay) && bx - ax >= 0) {
       //heading east
       for (let x = ax; x <= bx; x++) {
-        if (fieldArray[x][ay] != FieldType.Road1) {
-          fieldArray[x][ay] = fieldType;
+        if (fieldArray.current[x][ay] != FieldType.Road1) {
+          fieldArray.current[x][ay] = fieldType;
         }
       }
     } else if (Math.abs(bx - ax) > Math.abs(by - ay) && bx - ax < 0) {
       //heading west
       for (let x = ax; x >= bx; x--) {
-        if (fieldArray[x][ay] != FieldType.Road1) {
-          fieldArray[x][ay] = fieldType;
+        if (fieldArray.current[x][ay] != FieldType.Road1) {
+          fieldArray.current[x][ay] = fieldType;
         }
       }
     } else if (Math.abs(bx - ax) < Math.abs(by - ay) && by - ay < 0) {
       //heading south
       for (let y = ay; y >= by; y--) {
-        if (fieldArray[ax][y] != FieldType.Road1) {
-          fieldArray[ax][y] = fieldType;
+        if (fieldArray.current[ax][y] != FieldType.Road1) {
+          fieldArray.current[ax][y] = fieldType;
         }
       }
     } else if (Math.abs(bx - ax) < Math.abs(by - ay) && by - ay >= 0) {
       //heading north
       for (let y = ay; y <= by; y++) {
-        if (fieldArray[ax][y] != FieldType.Road1) {
-          fieldArray[ax][y] = fieldType;
+        if (fieldArray.current[ax][y] != FieldType.Road1) {
+          fieldArray.current[ax][y] = fieldType;
         }
       }
     }
@@ -70,11 +92,12 @@ function MainCanvasElement() {
             x += signumDeltaX
           ) {
             if (
-              fieldArray[x + signumDeltaX][y + signumDeltaY] !=
+              fieldArray.current[x + signumDeltaX][y + signumDeltaY] !=
                 FieldType.Road1 ||
               fieldType == FieldType.Empty
             ) {
-              fieldArray[x + signumDeltaX][y + signumDeltaY] = fieldType;
+              fieldArray.current[x + signumDeltaX][y + signumDeltaY] =
+                fieldType;
             }
           }
         }
@@ -86,10 +109,11 @@ function MainCanvasElement() {
           x += signumDeltaX
         ) {
           if (
-            fieldArray[x + signumDeltaX][y + signumDeltaY] != FieldType.Road1 ||
+            fieldArray.current[x + signumDeltaX][y + signumDeltaY] !=
+              FieldType.Road1 ||
             fieldType == FieldType.Empty
           ) {
-            fieldArray[x + signumDeltaX][y + signumDeltaY] = fieldType;
+            fieldArray.current[x + signumDeltaX][y + signumDeltaY] = fieldType;
           }
         }
       } else if (deltaX == 0) {
@@ -100,44 +124,22 @@ function MainCanvasElement() {
           y += signumDeltaY
         ) {
           if (
-            fieldArray[x + signumDeltaX][y + signumDeltaY] != FieldType.Road1 ||
+            fieldArray.current[x + signumDeltaX][y + signumDeltaY] !=
+              FieldType.Road1 ||
             fieldType == FieldType.Empty
           ) {
-            fieldArray[x + signumDeltaX][y + signumDeltaY] = fieldType;
+            fieldArray.current[x + signumDeltaX][y + signumDeltaY] = fieldType;
           }
         }
       }
     }
   }
 
-  const numRows = 110;
-  const numColumns = 110;
-  let fieldArray: FieldType[][] = [];
-  // const [stateFieldArray, setStateFieldArray] = useState<FieldType[][]>();
-
-  // function initPopulation() {
-  // Populate the array with a certain enum value
-  const desiredFieldType = FieldType.Empty;
-
-  for (let i = 0; i < numRows; i++) {
-    fieldArray[i] = [];
-
-    for (let j = 0; j < numColumns; j++) {
-      fieldArray[i][j] = desiredFieldType;
-    }
-  }
-  // dots to see if it works properly
-  fieldArray[2][2] = FieldType.Road1;
-  fieldArray[9][9] = FieldType.Industrial;
-  // setStateFieldArray(fieldArray);
-  // }
-
   function setFieldValue(x: number, y: number, value: FieldType) {
-    console.log("field ", x, " ", y, " set to ", value);
+    //console.log("field ", x, " ", y, " set to ", value);
     if (x >= 0 && x < numRows && y >= 0 && y < numColumns) {
-      fieldArray[x][y] = value;
+      fieldArray.current[x][y] = value;
     }
-    // setStateFieldArray(fieldArray);
   }
 
   function generateGraph() {
@@ -147,10 +149,10 @@ function MainCanvasElement() {
     let graphNodes: GraphNode[] = new Array();
 
     let data: FieldType[] = new Array();
-    console.log(fieldArray.toString());
+    console.log(fieldArray.current.toString());
     for (let i = 0; i < height; i++) {
       if (width >= 0) {
-        data = [...data, ...fieldArray[i]];
+        data = [...data, ...fieldArray.current[i]];
       }
     }
     console.log(data.toString());
@@ -285,6 +287,16 @@ function MainCanvasElement() {
     return graphNodes;
   }
 
+  function setFieldArray(array: FieldType[][]) {
+    console.log(JSON.stringify(array));
+
+    for (let i = 0; i < array.length; i++) {
+      for (let j = 0; j < array[i].length; j++) {
+        setFieldValue(i, j, array[i][j]);
+      }
+    }
+  }
+
   //initPopulation();
 
   return (
@@ -293,10 +305,11 @@ function MainCanvasElement() {
         <Canvas
           numRows={numRows}
           numColumns={numColumns}
-          fieldArray={fieldArray}
+          fieldArray={fieldArray.current}
           setFieldValue={setFieldValue}
           placeRectangleBetween={placeRectangleBetween}
           generateGraph={generateGraph}
+          setFieldArray={setFieldArray}
         />
       </div>
     </>
