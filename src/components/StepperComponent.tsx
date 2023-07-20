@@ -51,12 +51,28 @@ export default function StepperComponent(props: StepperComponentProps) {
   };
 
   return (
-    <>
+    <div className="absolute top-0  grid grid-rows-6 ">
+      <div className="row-span-1">
+        <div className="mt-2">
+          <Typography className=" ">
+            Urban segments: <span>{66}</span>
+          </Typography>
+          <Typography className=" border-y-0 border-b-2 border-x-0 border-solid border-slate-300 ">
+            Industry segments: <span>{48}</span>
+          </Typography>
+          <Typography className=" font-bold">
+            Total distance: <span>{props.distanceToTarget}</span>
+          </Typography>
+          <Typography className=" text-sm">
+            with {props.positionPath.length} steps.
+          </Typography>
+        </div>
+      </div>
       <Stepper
         nonLinear
         activeStep={activeStep}
         orientation="vertical"
-        className=" pt-0"
+        className=" pt-0 flex-shrink-0 row-span-5"
         sx={{ maxHeight: 666 }}
       >
         {steps.map((step, index) => (
@@ -95,15 +111,12 @@ export default function StepperComponent(props: StepperComponentProps) {
             </StepContent>
           </Step>
         ))}
-        <Typography className="pt-2 font-bold">
-          Total distance: <span>{props.distanceToTarget}</span>
-        </Typography>
       </Stepper>
       {activeStep === steps.length && (
         <>
           <Typography>All steps completed - you&apos;re finished</Typography>
         </>
       )}
-    </>
+    </div>
   );
 }

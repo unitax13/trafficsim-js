@@ -646,7 +646,7 @@ function Canvas(props: CanvasProps) {
           {/* start of stepper section */}
           {positionPathToDrawRef.current &&
           positionPathToDrawRef.current.length > 0 ? (
-            <div className="">
+            <div className="flex flex-col">
               <StepperComponent
                 positionPath={positionPathToDrawRef.current}
                 distanceToTarget={distanceToTargetRef.current}
