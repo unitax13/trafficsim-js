@@ -9,6 +9,10 @@ function MainCanvasElement() {
   const numColumns = 110;
   const fieldArray = useRef<FieldType[][]>([]);
 
+  const totalUrbanSegments = useRef<number>(0);
+  const totalIndustrySegments = useRef<number>(0);
+  const totalRoad1Segments = useRef<number>(0);
+
   // function initPopulation() {
   // Populate the array with a certain enum value
   const desiredFieldType = FieldType.Empty;
@@ -23,8 +27,28 @@ function MainCanvasElement() {
   // dots to see if it works properly
   fieldArray.current[2][2] = FieldType.Road1;
   fieldArray.current[9][9] = FieldType.Industrial;
+  updateStatsCount();
   // setStateFieldArray(fieldArray);
   // }
+
+  function updateStatsCount() {
+    totalRoad1Segments.current = 0;
+    totalIndustrySegments.current = 0;
+    totalUrbanSegments.current = 0;
+    for (let i = 0; i < numRows; i++) {
+      for (let j = 0; j < numColumns; j++) {
+        if (fieldArray.current[i][j] === FieldType.Road1) {
+          totalRoad1Segments.current += 1;
+        } else if (fieldArray.current[i][j] === FieldType.Road1) {
+          totalRoad1Segments.current += 1;
+        } else if (fieldArray.current[i][j] === FieldType.Urban) {
+          totalUrbanSegments.current += 1;
+        } else if (fieldArray.current[i][j] === FieldType.Industrial) {
+          totalIndustrySegments.current += 1;
+        }
+      }
+    }
+  }
 
   function placePerpendicularLineBetween(
     ax: number,
@@ -62,6 +86,7 @@ function MainCanvasElement() {
         }
       }
     }
+    updateStatsCount();
   }
 
   function placeRectangleBetween(
@@ -133,6 +158,7 @@ function MainCanvasElement() {
         }
       }
     }
+    updateStatsCount();
   }
 
   function setFieldValue(x: number, y: number, value: FieldType) {
@@ -140,6 +166,7 @@ function MainCanvasElement() {
     if (x >= 0 && x < numRows && y >= 0 && y < numColumns) {
       fieldArray.current[x][y] = value;
     }
+    updateStatsCount();
   }
 
   function generateGraph() {
@@ -310,6 +337,9 @@ function MainCanvasElement() {
           placeRectangleBetween={placeRectangleBetween}
           generateGraph={generateGraph}
           setFieldArray={setFieldArray}
+          totalRoad1Segments={totalRoad1Segments}
+          totalUrbanSegments={totalUrbanSegments}
+          totalIndustrySegments={totalIndustrySegments}
         />
       </div>
     </>

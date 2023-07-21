@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import "../index.css";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import FieldType from "../enums/FieldType";
 import GraphNode from "../classes/GraphNode";
 import Position from "../classes/Position";
@@ -47,6 +47,9 @@ interface CanvasProps {
   ) => void;
   generateGraph: () => GraphNode[] | undefined;
   setFieldArray: (array: FieldType[][]) => void;
+  totalRoad1Segments: React.MutableRefObject<number>;
+  totalUrbanSegments: React.MutableRefObject<number>;
+  totalIndustrySegments: React.MutableRefObject<number>;
 }
 
 function Canvas(props: CanvasProps) {
@@ -694,6 +697,18 @@ function Canvas(props: CanvasProps) {
               Bind randomly
             </Button>
           </div>
+        </div>
+        <div className="my-2">
+          <Typography className=" ">
+            Urban segments: <span>{props.totalUrbanSegments.current}</span>
+          </Typography>
+          <Typography className=" border-y-0 border-b-2 border-x-0 border-solid border-slate-300 ">
+            Industry segments:{" "}
+            <span>{props.totalIndustrySegments.current}</span>
+          </Typography>
+          <Typography>
+            Total roads length: <span>{props.totalRoad1Segments.current}</span>
+          </Typography>
         </div>
       </div>
     </>
