@@ -59,6 +59,27 @@ export function drawNodeNumbers(
   }
 }
 
+export function drawHighlight(
+  ctx: CanvasRenderingContext2D,
+  highlightedSegmentPosition: Position,
+  numRows: number,
+  numColumns: number,
+  fieldSize: number,
+  cameraScale: number,
+  cameraX: number,
+  cameraY: number
+) {
+  let color = colors.highlightColor;
+  ctx!.fillStyle = color;
+
+  ctx!.fillRect(
+    fieldSize * 1 * highlightedSegmentPosition.x - cameraX,
+    fieldSize * cameraScale * highlightedSegmentPosition.y - cameraY,
+    fieldSize * cameraScale,
+    fieldSize * cameraScale
+  );
+}
+
 export function drawPositionPath(
   ctx: CanvasRenderingContext2D,
   positionPathToDrawRef: React.MutableRefObject<Position[]>,
@@ -69,7 +90,7 @@ export function drawPositionPath(
   cameraX: number,
   cameraY: number
 ) {
-  let color = "#d946ef";
+  let color = colors.pathColor;
   ctx!.fillStyle = color;
 
   for (let i = 1; i < positionPathToDrawRef.current.length; i++) {

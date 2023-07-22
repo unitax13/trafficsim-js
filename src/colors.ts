@@ -16,6 +16,9 @@ const colors = {
 
   //fuchsia-600
   pathColor: "#d946ef",
+
+  //sky-600
+  highlightColor: "#0284c7",
 };
 
 export default colors;

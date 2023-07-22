@@ -19,6 +19,7 @@ import {
   drawNodeNumbers,
   drawPositionPath,
   drawRectangularSelection,
+  drawHighlight,
 } from "../logic/drawingFunctions";
 import DijkstraIcon from "../icons/DijkstraIcon";
 import viewModes from "../enums/ViewModes";
@@ -32,6 +33,7 @@ import SaveIcon from "../icons/SaveIcon";
 import SegmentsContainer from "../classes/SegmentsContainer";
 import ConnectionIcon from "../icons/ConnectionIcon";
 import ExaminationClass from "../classes/ExaminationClass";
+import QuestionMark from "../icons/QuestionMark";
 
 interface CanvasProps {
   numRows: number;
@@ -65,6 +67,7 @@ function Canvas(props: CanvasProps) {
   const examinationInstance = useRef<ExaminationClass | null>(null);
 
   const positionPathToDrawRef = useRef<Position[]>([]);
+  const highlightedSegmentPosition = useRef<Position | null>(null);
   const distanceToTargetRef = useRef<number>(0);
   const segmentsContainerClassInstance = useRef<SegmentsContainer | null>(null);
 
@@ -193,6 +196,18 @@ function Canvas(props: CanvasProps) {
       );
     }
 
+    if (highlightedSegmentPosition.current) {
+      drawHighlight(
+        ctx,
+        highlightedSegmentPosition.current,
+        props.numRows,
+        props.numColumns,
+        fieldSize,
+        cameraScale,
+        cameraX,
+        cameraY
+      );
+    }
     nodeNumbersAreOn
       ? drawNodeNumbers(ctx, graphNodesRef, fieldSize, cameraScale)
       : null;
@@ -477,6 +492,8 @@ function Canvas(props: CanvasProps) {
           props.fieldArray,
           segmentsContainerClassInstance,
           positionPathToDrawRef,
+          highlightedSegmentPosition,
+          distanceToTargetRef,
           redraw
         );
       }
@@ -508,6 +525,24 @@ function Canvas(props: CanvasProps) {
   const handleFieldTypeChosen = (e: FieldType) => {
     fieldTypeChosen.current = e;
     viewMode.current = viewModes.NORMAL;
+    redraw();
+  };
+
+  const examineButtonPressed = () => {
+    if (viewMode.current !== viewModes.EXAMINATION) {
+      viewMode.current = viewModes.EXAMINATION;
+    }
+    if (graphNodesRef.current && segmentsContainerClassInstance.current) {
+      examinationInstance.current = new ExaminationClass(
+        props.fieldArray,
+        segmentsContainerClassInstance,
+        positionPathToDrawRef,
+        highlightedSegmentPosition,
+        distanceToTargetRef,
+        redraw
+      );
+    }
+    redraw();
   };
 
   const bindButtonPressed = () => {
@@ -697,16 +732,24 @@ function Canvas(props: CanvasProps) {
               Bind randomly
             </Button>
           </div>
+          <Button
+            className="h-full bg-gray-500 hover:bg-gray-600"
+            variant="contained"
+            startIcon={<QuestionMark className="w-6 h-6" />}
+            onClick={examineButtonPressed}
+          >
+            Examine
+          </Button>
         </div>
-        <div className="my-2">
-          <Typography className=" ">
+        <div className="my-2 text-slate-700">
+          <Typography className="text-sm ">
             Urban segments: <span>{props.totalUrbanSegments.current}</span>
           </Typography>
-          <Typography className=" border-y-0 border-b-2 border-x-0 border-solid border-slate-300 ">
+          <Typography className=" border-y-0 border-b-2 border-x-0 border-solid border-slate-300  text-sm">
             Industry segments:{" "}
             <span>{props.totalIndustrySegments.current}</span>
           </Typography>
-          <Typography>
+          <Typography className=" text-sm">
             Total roads length: <span>{props.totalRoad1Segments.current}</span>
           </Typography>
         </div>

@@ -57,9 +57,6 @@ export default function StepperComponent(props: StepperComponentProps) {
           <Typography className=" ">
             Total distance: <span>{props.distanceToTarget}</span>
           </Typography>
-          <Typography className=" border-y-0 border-b-2 border-x-0 border-solid border-slate-300 ">
-            Industry segments: <span>{48}</span>
-          </Typography>
         </div>
       </div>
       <Stepper
