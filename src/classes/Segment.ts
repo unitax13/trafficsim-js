@@ -28,17 +28,17 @@ class Segment {
     let pos: Position | null = null;
 
     for (let i = 1; i < radius; i++) {
-      pos = this.crossSearchAtRange(
-        fieldArray,
-        FieldType.Road1,
-        startX,
-        startY,
-        i
-      );
-      if (pos) {
-        this.closestRoadSegmentPosition = pos;
-        return;
-      }
+      // pos = this.crossSearchAtRange(
+      //   fieldArray,
+      //   FieldType.Road1,
+      //   startX,
+      //   startY,
+      //   i
+      // );
+      // if (pos) {
+      //   this.closestRoadSegmentPosition = pos;
+      //   return;
+      // }
 
       pos = this.spiralSearchAtRange(
         fieldArray,
@@ -56,6 +56,10 @@ class Segment {
     return;
   }
 
+  private isInBounds(x: number, y: number, matrix: FieldType[][]): boolean {
+    return x >= 0 && y >= 0 && x < matrix.length && y < matrix[0].length;
+  }
+
   private spiralSearchAtRange(
     matrix: FieldType[][],
     targetType: FieldType,
@@ -63,68 +67,116 @@ class Segment {
     startY: number,
     radius: number
   ): Position | null {
-    const directions = [
-      [1, 0], // Right
-      [1, 1], // Diagonal down-right
-      [0, 1], // Down
-      [-1, 1], // Diagonal down-left
-      [-1, 0], // Left
-      [-1, -1], // Diagonal up-left
-      [0, -1], // Up
-      [1, -1], // Diagonal up-right
-    ];
+    let j = 1;
+    for (let i = 1; i <= radius; i++) {
+      //start with the top, so
+      let y = startY - i;
+      let x = startX;
 
-    let x = startX;
-    let y = startY;
-    let step = 1;
-    let stepsCount = 0;
-    let directionIndex = 0;
-
-    //console.log("okay so starting with position ", startX, startY);
-
-    while (step <= radius) {
-      for (let i = 0; i < step; i++) {
-        //console.log("Checkiong position ", x, ",", y);
-        if (
-          x >= 0 &&
-          x < matrix.length &&
-          y >= 0 &&
-          y < matrix[0].length &&
-          matrix[x][y] === targetType
-        ) {
-          // console.log("FOUND IT");
-          return new Position(x, y);
+      // move left
+      while (x >= startX - i) {
+        if (this.isInBounds(x, y, matrix)) {
+          if (matrix[x][y] === targetType) {
+            console.log("found at ", x, ";", y);
+            return new Position(x, y);
+          }
         }
+        x -= 1;
+      }
+      x = startX;
 
-        x += directions[directionIndex][0];
-        y += directions[directionIndex][1];
-        // console.log(
-        //   "now position is " +
-        //     x +
-        //     ", " +
-        //     y +
-        //     " with directions " +
-        //     directions[directionIndex]
-        // );
-        stepsCount++;
-
-        if (stepsCount === matrix.length * matrix[0].length) {
-          // The search has covered the entire matrix without finding the target value
-          console.log(
-            "The search has covered the entire matrix without finding the target value"
-          );
-          return null;
+      // move right
+      while (x <= startX + i) {
+        if (this.isInBounds(x, y, matrix)) {
+          if (matrix[x][y] === targetType) {
+            console.log("found at ", x, ";", y);
+            return new Position(x, y);
+          }
         }
+        x += 1;
       }
 
-      directionIndex = (directionIndex + 1) % 8; // Move to the next direction
-      if (directionIndex % 2 === 0) {
-        // Increase the step size every two directions
-        step++;
+      // start with the right, then go up and down
+      y = startY;
+      x = startX + i;
+
+      // move up
+      while (y >= startY - i) {
+        if (this.isInBounds(x, y, matrix)) {
+          if (matrix[x][y] === targetType) {
+            console.log("found at ", x, ";", y);
+            return new Position(x, y);
+          }
+        }
+        y -= 1;
+      }
+
+      //now move down
+      y = startY;
+
+      while (y <= startY + i) {
+        if (this.isInBounds(x, y, matrix)) {
+          if (matrix[x][y] === targetType) {
+            console.log("found at ", x, ";", y);
+            return new Position(x, y);
+          }
+        }
+        y += 1;
+      }
+
+      //start with down, then go right and left
+      y = startY + i;
+      x = startX;
+      // move right
+      while (x <= startX + i) {
+        if (this.isInBounds(x, y, matrix)) {
+          if (matrix[x][y] === targetType) {
+            console.log("found at ", x, ";", y);
+            return new Position(x, y);
+          }
+        }
+        x += 1;
+      }
+      //now move left
+      x = startX;
+      while (x >= startX - i) {
+        if (this.isInBounds(x, y, matrix)) {
+          if (matrix[x][y] === targetType) {
+            console.log("found at ", x, ";", y);
+            return new Position(x, y);
+          }
+        }
+        x -= 1;
+      }
+
+      //start with left, then go down and up
+      x = startX - i;
+      y = startY;
+      //move down
+      while (y <= startY + i) {
+        if (this.isInBounds(x, y, matrix)) {
+          if (matrix[x][y] === targetType) {
+            console.log("found at ", x, ";", y);
+            return new Position(x, y);
+          }
+        }
+        y += 1;
+      }
+      y = startY;
+      // now move up
+      while (y >= startY - i) {
+        if (this.isInBounds(x, y, matrix)) {
+          if (matrix[x][y] === targetType) {
+            console.log("found at ", x, ";", y);
+            return new Position(x, y);
+          }
+        }
+        y -= 1;
       }
     }
+
     console.log("The target value was not found within the specified radius");
-    return null; // The target value was not found within the specified radius
+    return null;
   }
 
   private crossSearchAtRange(
