@@ -2,6 +2,7 @@ import GraphNode from "../classes/GraphNode";
 import Position from "../classes/Position";
 import colors from "../colors";
 import FieldType from "../enums/FieldType";
+import viewModes from "../enums/ViewModes";
 
 export function drawGridOverlay(
   /// change that to use the alpha rather than line width
@@ -359,9 +360,16 @@ export function drawCursorSingleSelection(
   fieldSize: number,
   cameraX: number,
   cameraY: number,
-  cameraScale: number
+  cameraScale: number,
+  viewMode: viewModes
 ) {
   let color = "black";
+
+  if (viewMode === viewModes.SHORTEST_PATHING) {
+    color = colors.pathColor;
+  } else if (viewMode === viewModes.EXAMINATION) {
+    color = colors.highlightColor;
+  } else color = "black";
 
   if (leftIsPressed.current === false) {
     if (

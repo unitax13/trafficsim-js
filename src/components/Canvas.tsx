@@ -162,7 +162,8 @@ function Canvas(props: CanvasProps) {
       fieldSize,
       cameraX,
       cameraY,
-      cameraScale
+      cameraScale,
+      viewMode.current
     );
     if (
       viewMode.current === viewModes.NORMAL &&
@@ -733,7 +734,7 @@ function Canvas(props: CanvasProps) {
             </Button>
           </div>
           <Button
-            className="h-full bg-gray-500 hover:bg-gray-600"
+            className="h-full bg-blue-600 hover:bg-blue-700"
             variant="contained"
             startIcon={<QuestionMark className="w-6 h-6" />}
             onClick={examineButtonPressed}
