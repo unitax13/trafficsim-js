@@ -10,6 +10,7 @@ class ShortestPathingClass {
   graphNodes: GraphNode[];
   positionPathToDrawRef: React.MutableRefObject<Position[]>;
   distanceToTargetRef: React.MutableRefObject<number>;
+  highlightedSegmentPositions: React.MutableRefObject<Position[] | null>;
   redraw: () => void;
 
   public constructor(
@@ -17,6 +18,7 @@ class ShortestPathingClass {
     graphNodes: GraphNode[],
     positionPathToDrawRef: React.MutableRefObject<Position[]>,
     distanceToTargetRef: React.MutableRefObject<number>,
+    highlightedSegmentPositions: React.MutableRefObject<Position[] | null>,
     redraw: () => void
   ) {
     this.fieldArray = fieldArray;
@@ -24,10 +26,18 @@ class ShortestPathingClass {
     this.positionArrayList = new Array<Position>();
     this.positionPathToDrawRef = positionPathToDrawRef;
     this.distanceToTargetRef = distanceToTargetRef;
+    this.highlightedSegmentPositions = highlightedSegmentPositions;
     this.redraw = redraw;
+
+    this.highlightedSegmentPositions.current = null;
   }
 
   public add(position: Position) {
+    if (!this.highlightedSegmentPositions.current) {
+      this.highlightedSegmentPositions.current = new Array<Position>();
+    } else {
+      this.highlightedSegmentPositions.current = this.positionArrayList;
+    }
     if (this.positionArrayList.length <= 1) {
       this.positionArrayList.push(position);
     } else if (this.positionArrayList.length == 2) {

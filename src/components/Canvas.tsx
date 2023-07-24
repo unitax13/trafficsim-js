@@ -473,6 +473,21 @@ function Canvas(props: CanvasProps) {
     URL.revokeObjectURL(url); // Revoke the downloadable URL to free up memory
   }
 
+  const initShortestPathing = () => {
+    if (graphNodesRef.current != null) {
+      shortestPathingClassInstance.current = new ShortestPathingClass(
+        props.fieldArray,
+        graphNodesRef.current,
+        positionPathToDrawRef,
+        distanceToTargetRef,
+        highlightedSegmentPositions,
+        redraw
+      );
+    } else {
+      console.log("Graph not yet generated. Generate it!");
+    }
+  };
+
   const handleModeChange = (e: any) => {
     viewMode.current = e.target.value;
 
@@ -481,17 +496,7 @@ function Canvas(props: CanvasProps) {
     }
 
     if (viewMode.current === viewModes.SHORTEST_PATHING) {
-      if (graphNodesRef.current != null) {
-        shortestPathingClassInstance.current = new ShortestPathingClass(
-          props.fieldArray,
-          graphNodesRef.current,
-          positionPathToDrawRef,
-          distanceToTargetRef,
-          redraw
-        );
-      } else {
-        console.log("Graph not yet generated. Generate it!");
-      }
+      initShortestPathing();
     }
 
     if (viewMode.current === viewModes.EXAMINATION) {
@@ -515,17 +520,7 @@ function Canvas(props: CanvasProps) {
       viewMode.current = viewModes.SHORTEST_PATHING;
     }
 
-    if (graphNodesRef.current != null) {
-      shortestPathingClassInstance.current = new ShortestPathingClass(
-        props.fieldArray,
-        graphNodesRef.current,
-        positionPathToDrawRef,
-        distanceToTargetRef,
-        redraw
-      );
-    } else {
-      console.log("Graph not yet generated. Generate it!");
-    }
+    initShortestPathing();
 
     redraw();
   };
