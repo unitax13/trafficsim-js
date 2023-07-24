@@ -67,7 +67,7 @@ function Canvas(props: CanvasProps) {
   const examinationInstance = useRef<ExaminationClass | null>(null);
 
   const positionPathToDrawRef = useRef<Position[]>([]);
-  const highlightedSegmentPosition = useRef<Position | null>(null);
+  const highlightedSegmentPositions = useRef<Position[] | null>(null);
   const distanceToTargetRef = useRef<number>(0);
   const segmentsContainerClassInstance = useRef<SegmentsContainer | null>(null);
 
@@ -197,10 +197,13 @@ function Canvas(props: CanvasProps) {
       );
     }
 
-    if (highlightedSegmentPosition.current) {
+    if (
+      highlightedSegmentPositions.current &&
+      highlightedSegmentPositions.current.length > 0
+    ) {
       drawHighlight(
         ctx,
-        highlightedSegmentPosition.current,
+        highlightedSegmentPositions.current,
         props.numRows,
         props.numColumns,
         fieldSize,
@@ -449,7 +452,7 @@ function Canvas(props: CanvasProps) {
     }
   }
 
-  function onSaveButtonPressed(e) {
+  function onSaveButtonPressed(e: any) {
     console.log("onSaveButtonPressed");
 
     const fileContent = JSON.stringify({
@@ -473,6 +476,10 @@ function Canvas(props: CanvasProps) {
   const handleModeChange = (e: any) => {
     viewMode.current = e.target.value;
 
+    if (viewMode.current !== viewModes.EXAMINATION) {
+      highlightedSegmentPositions.current = null;
+    }
+
     if (viewMode.current === viewModes.SHORTEST_PATHING) {
       if (graphNodesRef.current != null) {
         shortestPathingClassInstance.current = new ShortestPathingClass(
@@ -493,7 +500,7 @@ function Canvas(props: CanvasProps) {
           props.fieldArray,
           segmentsContainerClassInstance,
           positionPathToDrawRef,
-          highlightedSegmentPosition,
+          highlightedSegmentPositions,
           distanceToTargetRef,
           redraw
         );
@@ -538,7 +545,7 @@ function Canvas(props: CanvasProps) {
         props.fieldArray,
         segmentsContainerClassInstance,
         positionPathToDrawRef,
-        highlightedSegmentPosition,
+        highlightedSegmentPositions,
         distanceToTargetRef,
         redraw
       );

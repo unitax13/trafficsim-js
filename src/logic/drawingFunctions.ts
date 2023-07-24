@@ -62,7 +62,7 @@ export function drawNodeNumbers(
 
 export function drawHighlight(
   ctx: CanvasRenderingContext2D,
-  highlightedSegmentPosition: Position,
+  highlightedSegmentPositions: Position[],
   numRows: number,
   numColumns: number,
   fieldSize: number,
@@ -73,12 +73,14 @@ export function drawHighlight(
   let color = colors.highlightColor;
   ctx!.fillStyle = color;
 
-  ctx!.fillRect(
-    fieldSize * 1 * highlightedSegmentPosition.x - cameraX,
-    fieldSize * cameraScale * highlightedSegmentPosition.y - cameraY,
-    fieldSize * cameraScale,
-    fieldSize * cameraScale
-  );
+  for (const pos of highlightedSegmentPositions) {
+    ctx!.fillRect(
+      fieldSize * 1 * pos.x - cameraX,
+      fieldSize * cameraScale * pos.y - cameraY,
+      fieldSize * cameraScale,
+      fieldSize * cameraScale
+    );
+  }
 }
 
 export function drawPositionPath(
