@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import Position from "../classes/Position";
+import ExamineStatsComponent from "./ExamineStatsComponent";
 
 interface StepperComponentProps {
   positionPath: Position[];
@@ -15,7 +16,6 @@ interface StepperComponentProps {
 }
 
 export default function StepperComponent(props: StepperComponentProps) {
-  // there's a weird bug
   useEffect(() => {
     setSteps(
       props.positionPath.map((pos) => {
@@ -52,13 +52,11 @@ export default function StepperComponent(props: StepperComponentProps) {
 
   return (
     <div className="absolute top-0  grid grid-rows-6 ">
-      <div className="row-span-1">
-        <div className="mt-2">
-          <Typography className=" ">
-            Total distance: <span>{props.distanceToTarget}</span>
-          </Typography>
-        </div>
-      </div>
+      <ExamineStatsComponent
+        distanceToTarget={props.distanceToTarget}
+        turns={props.positionPath.length}
+      />
+
       <Stepper
         nonLinear
         activeStep={activeStep}

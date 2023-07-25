@@ -19,7 +19,7 @@ import {
   drawNodeNumbers,
   drawPositionPath,
   drawRectangularSelection,
-  drawHighlight,
+  drawSegmentHighlight,
 } from "../logic/drawingFunctions";
 import DijkstraIcon from "../icons/DijkstraIcon";
 import viewModes from "../enums/ViewModes";
@@ -104,6 +104,8 @@ function Canvas(props: CanvasProps) {
   const [nodeNumbersAreOn, setNodeNumbersAreOn] = useState<boolean>(true);
   const [gridIsOn, setGridIsOn] = useState<boolean>(true);
   const [pathIsOn, setPathIsOn] = useState<boolean>(true);
+  const [segmentHighlightIsOn, setSegmentHighlightIsOn] =
+    useState<boolean>(true);
   const roadHeatmapIsOn = false;
 
   const canvasRef = useRef(null);
@@ -198,10 +200,11 @@ function Canvas(props: CanvasProps) {
     }
 
     if (
+      segmentHighlightIsOn &&
       highlightedSegmentPositions.current &&
       highlightedSegmentPositions.current.length > 0
     ) {
-      drawHighlight(
+      drawSegmentHighlight(
         ctx,
         highlightedSegmentPositions.current,
         props.numRows,
@@ -648,6 +651,8 @@ function Canvas(props: CanvasProps) {
                 setGridIsOn={setGridIsOn}
                 pathIsOn={pathIsOn}
                 setPathIsOn={setPathIsOn}
+                segmentHighlightIsOn={segmentHighlightIsOn}
+                setSegmentHighlightIsOn={setSegmentHighlightIsOn}
                 redraw={redraw}
               />
             </div>
@@ -688,6 +693,13 @@ function Canvas(props: CanvasProps) {
           {positionPathToDrawRef.current &&
           positionPathToDrawRef.current.length > 0 ? (
             <div className="flex flex-col">
+              <div className="row-span-1">
+                <div className="mt-2">
+                  <Typography className=" ">
+                    Total distance: <span>{props.distanceToTarget}</span>
+                  </Typography>
+                </div>
+              </div>
               <StepperComponent
                 positionPath={positionPathToDrawRef.current}
                 distanceToTarget={distanceToTargetRef.current}
@@ -736,7 +748,7 @@ function Canvas(props: CanvasProps) {
             </Button>
           </div>
           <Button
-            className="h-full bg-blue-600 hover:bg-blue-700"
+            className="h-full bg-sky-600 hover:bg-sky-700"
             variant="contained"
             startIcon={<QuestionMark className="w-6 h-6" />}
             onClick={examineButtonPressed}

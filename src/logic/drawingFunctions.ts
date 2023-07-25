@@ -60,7 +60,7 @@ export function drawNodeNumbers(
   }
 }
 
-export function drawHighlight(
+export function drawSegmentHighlight(
   ctx: CanvasRenderingContext2D,
   highlightedSegmentPositions: Position[],
   numRows: number,

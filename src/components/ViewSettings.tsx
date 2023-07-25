@@ -16,6 +16,8 @@ interface ViewSettingsProps {
   setGridIsOn: React.Dispatch<React.SetStateAction<boolean>>;
   pathIsOn: boolean;
   setPathIsOn: React.Dispatch<React.SetStateAction<boolean>>;
+  segmentHighlightIsOn: boolean;
+  setSegmentHighlightIsOn: React.Dispatch<React.SetStateAction<boolean>>;
   redraw: () => void;
 }
 
@@ -32,6 +34,8 @@ const ViewSettings: React.FC<ViewSettingsProps> = ({
   setGridIsOn,
   pathIsOn,
   setPathIsOn,
+  segmentHighlightIsOn,
+  setSegmentHighlightIsOn,
   redraw,
 }) => {
   return (
@@ -124,6 +128,20 @@ const ViewSettings: React.FC<ViewSettingsProps> = ({
             />
           }
           label="Path"
+        />
+        <FormControlLabel
+          control={
+            <ColoredMuiSwitch
+              colorhex={colors.highlightColor}
+              color="primary"
+              checked={segmentHighlightIsOn}
+              onChange={() => {
+                setSegmentHighlightIsOn(!segmentHighlightIsOn);
+                redraw();
+              }}
+            />
+          }
+          label="Segment highlight"
         />
       </FormGroup>
     </>
