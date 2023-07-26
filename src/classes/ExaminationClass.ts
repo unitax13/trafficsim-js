@@ -11,6 +11,7 @@ class ExaminationClass {
   positionPathToDrawRef: React.MutableRefObject<Position[]>;
   highlightedSegmentPositions: React.MutableRefObject<Position[] | null>;
   distanceToTargetRef: React.MutableRefObject<number>;
+  messagesRef: React.MutableRefObject<string[]>;
   redraw: () => void;
 
   public constructor(
@@ -19,6 +20,7 @@ class ExaminationClass {
     positionPathToDrawRef: React.MutableRefObject<Position[]>,
     highlightedSegmentPositions: React.MutableRefObject<Position[] | null>,
     distanceToTargetRef: React.MutableRefObject<number>,
+    messagesRef: React.MutableRefObject<string[]>,
     redraw: () => void
   ) {
     this.fieldArray = fieldArray;
@@ -26,12 +28,14 @@ class ExaminationClass {
     this.positionPathToDrawRef = positionPathToDrawRef;
     this.highlightedSegmentPositions = highlightedSegmentPositions;
     this.distanceToTargetRef = distanceToTargetRef;
+    this.messagesRef = messagesRef;
 
     this.redraw = redraw;
   }
 
   public showPath(x: number, y: number) {
     if (this.segmentsContainer.current) {
+      this.messagesRef.current = [];
       let segment: UrbanSegment | IndustrySegment | null =
         this.segmentsContainer.current.getSegmentAt(x, y);
       if (segment) {
@@ -39,6 +43,7 @@ class ExaminationClass {
         this.highlightedSegmentPositions.current?.push(segment.position);
         if (segment instanceof UrbanSegment) {
           console.log("Segment is Urban");
+          this.messagesRef.current.push("Selected segment is urban.");
           this.positionPathToDrawRef.current = segment.positionPathToIndustry;
           this.distanceToTargetRef.current = segment.distanceToIndustry;
 
@@ -46,11 +51,19 @@ class ExaminationClass {
             this.highlightedSegmentPositions.current?.push(
               segment.boundIndustrySegment.position
             );
+            this.messagesRef.current.push(
+              "Bound to industry segment at [" +
+                segment.boundIndustrySegment.position.x +
+                ";" +
+                segment.boundIndustrySegment.position.y +
+                "]."
+            );
           } else {
             // this.highlightedSegmentPositions.current.push(null);
           }
         } else if (segment instanceof IndustrySegment) {
           console.log("Segment is industrial");
+          this.messagesRef.current.push("Selected segment is industrial");
           if (segment.boundUrbanSegment !== null) {
             this.positionPathToDrawRef.current =
               segment.boundUrbanSegment.positionPathToIndustry;
@@ -60,6 +73,14 @@ class ExaminationClass {
             );
             this.distanceToTargetRef.current =
               segment.boundUrbanSegment.distanceToIndustry;
+
+            this.messagesRef.current.push(
+              "Bound to urban segment at [" +
+                segment.boundUrbanSegment.position.x +
+                ";" +
+                segment.boundUrbanSegment.position.y +
+                "]."
+            );
           } else {
             //this.highlightedSegmentPosition.current = null;
           }
@@ -71,6 +92,7 @@ class ExaminationClass {
         );
       } else {
         console.log("Segment is inull");
+        this.messagesRef.current.push("Selected segment is empty.");
       }
     } else {
       console.log("Segments container is null");

@@ -13,6 +13,7 @@ import ExamineStatsComponent from "./ExamineStatsComponent";
 interface StepperComponentProps {
   positionPath: Position[];
   distanceToTarget: number;
+  messages: React.MutableRefObject<string[]>;
 }
 
 export default function StepperComponent(props: StepperComponentProps) {
@@ -55,6 +56,7 @@ export default function StepperComponent(props: StepperComponentProps) {
       <ExamineStatsComponent
         distanceToTarget={props.distanceToTarget}
         turns={props.positionPath.length}
+        messages={props.messages.current}
       />
 
       <Stepper

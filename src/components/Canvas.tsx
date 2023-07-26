@@ -65,6 +65,7 @@ function Canvas(props: CanvasProps) {
   );
 
   const examinationInstance = useRef<ExaminationClass | null>(null);
+  const messagesRef = useRef<string[]>([]);
 
   const positionPathToDrawRef = useRef<Position[]>([]);
   const highlightedSegmentPositions = useRef<Position[] | null>(null);
@@ -510,6 +511,7 @@ function Canvas(props: CanvasProps) {
           positionPathToDrawRef,
           highlightedSegmentPositions,
           distanceToTargetRef,
+          messagesRef,
           redraw
         );
       }
@@ -545,6 +547,7 @@ function Canvas(props: CanvasProps) {
         positionPathToDrawRef,
         highlightedSegmentPositions,
         distanceToTargetRef,
+        messagesRef,
         redraw
       );
     }
@@ -693,16 +696,10 @@ function Canvas(props: CanvasProps) {
           {positionPathToDrawRef.current &&
           positionPathToDrawRef.current.length > 0 ? (
             <div className="flex flex-col">
-              <div className="row-span-1">
-                <div className="mt-2">
-                  <Typography className=" ">
-                    Total distance: <span>{props.distanceToTarget}</span>
-                  </Typography>
-                </div>
-              </div>
               <StepperComponent
                 positionPath={positionPathToDrawRef.current}
                 distanceToTarget={distanceToTargetRef.current}
+                messages={messagesRef}
               />
             </div>
           ) : (

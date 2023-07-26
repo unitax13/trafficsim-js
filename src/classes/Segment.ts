@@ -3,6 +3,13 @@ import getNodeAt from "../utils/getNodeAt";
 import getNodeIndex from "../utils/getNodeIndex";
 import GraphNode from "./GraphNode";
 import Position from "./Position";
+// import { closestRoadNodesToFind } from "./closestRoadNodesToFind";
+
+interface closestRoadNodesToFind {
+  closestRoadNodesPositions: Position[] | null;
+  closestRoadNodes: GraphNode[] | null;
+  distancesToClosestRoadNodes: number[] | null;
+}
 
 class Segment {
   public position: Position;
@@ -233,7 +240,7 @@ class Segment {
   public findClosestRoadNodes(
     fieldArray: FieldType[][],
     graphNodes: GraphNode[]
-  ): void {
+  ): closestRoadNodesToFind {
     this.closestRoadNodes = new Array();
     this.closestRoadNodesPositions = new Array();
 
@@ -249,7 +256,11 @@ class Segment {
         this.closestRoadNodesPositions.push(new Position(gn.x, gn.y));
         this.distancesToClosestRoadNodes.push(0);
         this.closestRoadNodes.push(gn);
-        return;
+        return {
+          closestRoadNodesPositions: null,
+          closestRoadNodes: null,
+          distancesToClosestRoadNodes: null,
+        };
       }
 
       //if it's not the node
@@ -306,8 +317,18 @@ class Segment {
           }
         }
       }
+      return {
+        closestRoadNodesPositions: this.closestRoadNodesPositions,
+        closestRoadNodes: this.closestRoadNodes,
+        distancesToClosestRoadNodes: this.distancesToClosestRoadNodes,
+      };
     } else {
       console.log("Closest road segment is null.");
+      return {
+        closestRoadNodesPositions: null,
+        closestRoadNodes: null,
+        distancesToClosestRoadNodes: null,
+      };
     }
   }
 
