@@ -17,15 +17,15 @@ export function drawGridOverlay(
 ) {
   ctx!.strokeStyle = "#111111";
   ctx.globalAlpha = 0.1;
+  ctx.beginPath();
   for (let i = 0; i <= numRows; i++) {
-    ctx.beginPath();
     //ctx!.strokeStyle = "#111111";
     ctx.lineWidth = 1;
-    if (i % 10 === 0) {
-      ctx.globalAlpha = 0.2;
-    } else {
-      ctx.globalAlpha = 0.1;
-    }
+    // if (i % 10 === 0) {
+    //   ctx.globalAlpha = 0.2;
+    // } else {
+    //   ctx.globalAlpha = 0.1;
+    // }
 
     ctx.moveTo(i * fieldSize * cameraScale - cameraX, -1 - cameraY);
     ctx.lineTo(
@@ -38,8 +38,8 @@ export function drawGridOverlay(
       canvasWidth * cameraScale - cameraX,
       i * fieldSize * cameraScale - cameraY
     );
-    ctx.stroke();
   }
+  ctx.stroke();
   //ctx.stroke();
   ctx.globalAlpha = 1;
 }
