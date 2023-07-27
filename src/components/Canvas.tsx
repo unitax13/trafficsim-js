@@ -133,7 +133,6 @@ function Canvas(props: CanvasProps) {
       cameraX,
       cameraY
     );
-    // drawGridOverlay(ctx);
   }, []);
 
   useEffect(() => {
