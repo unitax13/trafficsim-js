@@ -64,6 +64,8 @@ function Canvas(props: CanvasProps) {
     null
   );
 
+  const intervalId = useRef<any>(null);
+
   const examinationInstance = useRef<ExaminationClass | null>(null);
   const messagesRef = useRef<string[]>([]);
 
@@ -596,6 +598,28 @@ function Canvas(props: CanvasProps) {
     }
   };
 
+  const testButtonPressed = () => {
+    // const timer = setTimeout(() => {
+    //   // This code will run after the specified time (in milliseconds)
+    //   props.setFieldValue(20, 20, FieldType.Road1);
+    //   redraw();
+    // }, 3000); // 3000 milliseconds (3 seconds)
+
+    // // Clear the timer if the component unmounts or if you want to cancel it early
+    // return () => clearTimeout(timer);
+
+    intervalId.current = setInterval(() => {
+      // Code to execute
+      console.log("This code runs every 1 second.");
+      props.setFieldValue(20, 20, FieldType.Road1);
+      redraw();
+    }, 1000);
+  };
+
+  const stopButtonPressed = () => {
+    clearInterval(intervalId.current);
+  };
+
   return (
     <>
       <div className=" font-roboto">
@@ -750,6 +774,22 @@ function Canvas(props: CanvasProps) {
             onClick={examineButtonPressed}
           >
             Examine
+          </Button>
+          <Button
+            className="h-full bg-red-600 hover:bg-red-700"
+            variant="contained"
+            startIcon={<QuestionMark className="w-6 h-6" />}
+            onClick={testButtonPressed}
+          >
+            TEST
+          </Button>
+          <Button
+            className="h-full bg-red-600 hover:bg-red-700"
+            variant="contained"
+            startIcon={<QuestionMark className="w-6 h-6" />}
+            onClick={stopButtonPressed}
+          >
+            STOP
           </Button>
         </div>
         <div className="my-2 text-slate-700">
