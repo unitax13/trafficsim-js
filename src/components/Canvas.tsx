@@ -109,7 +109,9 @@ function Canvas(props: CanvasProps) {
   const [pathIsOn, setPathIsOn] = useState<boolean>(true);
   const [segmentHighlightIsOn, setSegmentHighlightIsOn] =
     useState<boolean>(true);
-  const roadHeatmapIsOn = false;
+  const [heatmapIsOn, setHeatmapIsOn] = useState<boolean>(true);
+
+  const heatmapColorArray = useRef<string[][]>([]);
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -131,10 +133,18 @@ function Canvas(props: CanvasProps) {
       industryIsOn,
       roadsIsOn,
       fieldSize,
+      heatmapIsOn,
+      heatmapColorArray.current,
       cameraScale,
       cameraX,
       cameraY
     );
+
+    // init the heatmap color array
+    for (let i = 0; i < props.numRows; i++) {
+      heatmapColorArray.current[i] = new Array(props.numColumns).fill("");
+    }
+    //heatmapColorArray.current[32][30] = "#eeeeee";
   }, []);
 
   useEffect(() => {
@@ -151,6 +161,8 @@ function Canvas(props: CanvasProps) {
       industryIsOn,
       roadsIsOn,
       fieldSize,
+      heatmapIsOn,
+      heatmapColorArray.current,
       cameraScale,
       cameraX,
       cameraY
@@ -680,6 +692,8 @@ function Canvas(props: CanvasProps) {
                 segmentHighlightIsOn={segmentHighlightIsOn}
                 setSegmentHighlightIsOn={setSegmentHighlightIsOn}
                 redraw={redraw}
+                heatmapIsOn={heatmapIsOn}
+                setHeatmapIsOn={setHeatmapIsOn}
               />
             </div>
             <div className="row-span-2 flex flex-col">

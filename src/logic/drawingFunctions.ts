@@ -212,11 +212,14 @@ export function drawMainGrid(
   roadsIsOn: boolean,
   fieldSize: number,
 
+  heatmapIsOn: boolean,
+  heatmapColorArray: string[][],
+
   cameraScale: number,
   cameraX: number,
   cameraY: number
 ) {
-  //console.log("drawing");
+  // console.log(JSON.stringify(heatmapColorArray));
   let color = "";
   for (let x = 0; x < numRows; x++) {
     for (let y = 0; y < numColumns; y++) {
@@ -225,8 +228,15 @@ export function drawMainGrid(
         color = colors.urban;
       } else if (type == FieldType.Industrial && industryIsOn) {
         color = colors.industry;
-      } else if (type == FieldType.Road1 && roadsIsOn) {
-        color = colors.roads;
+      } else if (type == FieldType.Road1) {
+        if (roadsIsOn) {
+          color = colors.roads;
+        }
+        if (heatmapIsOn) {
+          if (heatmapColorArray[x][y] !== "") {
+            color = heatmapColorArray[x][y];
+          }
+        }
       } else {
         // EMPTY
         color = colors.empty;

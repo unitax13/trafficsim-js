@@ -19,6 +19,9 @@ const colors = {
 
   //sky-600
   highlightColor: "#0284c7",
+
+  //orange-600
+  heatColor: "#ea580c",
 };
 
 export default colors;

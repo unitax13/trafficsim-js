@@ -19,6 +19,8 @@ interface ViewSettingsProps {
   segmentHighlightIsOn: boolean;
   setSegmentHighlightIsOn: React.Dispatch<React.SetStateAction<boolean>>;
   redraw: () => void;
+  heatmapIsOn: boolean;
+  setHeatmapIsOn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ViewSettings: React.FC<ViewSettingsProps> = ({
@@ -37,6 +39,8 @@ const ViewSettings: React.FC<ViewSettingsProps> = ({
   segmentHighlightIsOn,
   setSegmentHighlightIsOn,
   redraw,
+  heatmapIsOn,
+  setHeatmapIsOn,
 }) => {
   return (
     <>
@@ -142,6 +146,20 @@ const ViewSettings: React.FC<ViewSettingsProps> = ({
             />
           }
           label="Segment highlight"
+        />
+        <FormControlLabel
+          control={
+            <ColoredMuiSwitch
+              colorhex={colors.heatColor}
+              color="primary"
+              checked={heatmapIsOn}
+              onChange={() => {
+                setHeatmapIsOn(!heatmapIsOn);
+                redraw();
+              }}
+            />
+          }
+          label="Heatmap"
         />
       </FormGroup>
     </>
