@@ -48,7 +48,7 @@ const ViewSettings: React.FC<ViewSettingsProps> = ({
         <p className="text-xs font-roboto text-slate-500">▼ VIEW</p>
         <ViewIcon className="w-5 text-slate-500" />
       </div>
-      <FormGroup className="border border-2 border-solid border-slate-200">
+      <FormGroup className="border-2 border-solid border-slate-200">
         <FormControlLabel
           control={
             <ColoredMuiSwitch

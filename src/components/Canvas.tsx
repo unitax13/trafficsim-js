@@ -112,6 +112,9 @@ function Canvas(props: CanvasProps) {
   const [heatmapIsOn, setHeatmapIsOn] = useState<boolean>(true);
 
   const heatmapColorArray = useRef<string[][]>([]);
+  for (let i = 0; i < props.numRows; i++) {
+    heatmapColorArray.current[i] = new Array(props.numColumns).fill("");
+  }
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
@@ -179,7 +182,8 @@ function Canvas(props: CanvasProps) {
       cameraX,
       cameraY,
       cameraScale,
-      viewMode.current
+      viewMode.current,
+      fieldTypeChosen.current
     );
     if (
       viewMode.current === viewModes.NORMAL &&

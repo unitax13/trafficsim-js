@@ -378,7 +378,8 @@ export function drawCursorSingleSelection(
   cameraX: number,
   cameraY: number,
   cameraScale: number,
-  viewMode: viewModes
+  viewMode: viewModes,
+  fieldTypeChosen: FieldType
 ) {
   let color = "black";
 
@@ -386,6 +387,10 @@ export function drawCursorSingleSelection(
     color = colors.pathColor;
   } else if (viewMode === viewModes.EXAMINATION) {
     color = colors.highlightColor;
+  } else if (fieldTypeChosen === FieldType.Industrial) {
+    color = colors.industry;
+  } else if (fieldTypeChosen === FieldType.Urban) {
+    color = colors.urban;
   } else color = "black";
 
   if (leftIsPressed.current === false) {
