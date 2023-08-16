@@ -156,7 +156,9 @@ class UrbanSegment extends Segment {
               singlePositionPath.push(this.closestRoadSegmentPosition);
             }
 
-            positionPathsToIndustry.push(singlePositionPath);
+            if (checkValidityOfPath(singlePositionPath)) {
+              positionPathsToIndustry.push(singlePositionPath);
+            }
           }
         }
       }
@@ -178,6 +180,25 @@ class UrbanSegment extends Segment {
       console.log(positionPathsToIndustry[whichOne]);
     }
   }
+}
+
+function checkValidityOfPath(path: Position[]) {
+  // let valid: boolean = true;
+
+  if (path.length < 2) {
+    return false;
+  }
+
+  for (let i = 1; i < path.length; i++) {
+    let prevPos = path[i - 1];
+    let currPos = path[i];
+
+    if (prevPos.x !== currPos.x && prevPos.y !== currPos.y) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export default UrbanSegment;
