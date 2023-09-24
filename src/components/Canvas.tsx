@@ -793,7 +793,7 @@ function Canvas(props: CanvasProps) {
           >
             Examine
           </Button>
-          <Button
+          {/* <Button
             className="h-full bg-red-600 hover:bg-red-700"
             variant="contained"
             startIcon={<QuestionMark className="w-6 h-6" />}
@@ -808,7 +808,7 @@ function Canvas(props: CanvasProps) {
             onClick={stopButtonPressed}
           >
             STOP
-          </Button>
+          </Button> */}
         </div>
         <div className="my-2 text-slate-700">
           <Typography className="text-sm ">
