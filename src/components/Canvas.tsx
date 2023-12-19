@@ -679,27 +679,27 @@ function Canvas(props: CanvasProps) {
             <div className="outline outline-slate-50 outline-solid outline-2 row-span-1 flex flex-col justify-around w-full">
               <BrushSection onFieldChosen={handleFieldTypeChosen} />
             </div>
-            <div className="mt-4 w-full row-span-2 flex flex-col items-center ">
-              <ViewSettings
-                roadsIsOn={roadsIsOn}
-                setRoadsIsOn={setRoadsIsOn}
-                urbanIsOn={urbanIsOn}
-                setUrbanIsOn={setUrbanIsOn}
-                industryIsOn={industryIsOn}
-                setIndustryIsOn={setIndustryIsOn}
-                nodeNumbersAreOn={nodeNumbersAreOn}
-                setNodeNumbersAreOn={setNodeNumbersAreOn}
-                gridIsOn={gridIsOn}
-                setGridIsOn={setGridIsOn}
-                pathIsOn={pathIsOn}
-                setPathIsOn={setPathIsOn}
-                segmentHighlightIsOn={segmentHighlightIsOn}
-                setSegmentHighlightIsOn={setSegmentHighlightIsOn}
-                redraw={redraw}
-                heatmapIsOn={heatmapIsOn}
-                setHeatmapIsOn={setHeatmapIsOn}
-              />
-            </div>
+
+            <ViewSettings
+              roadsIsOn={roadsIsOn}
+              setRoadsIsOn={setRoadsIsOn}
+              urbanIsOn={urbanIsOn}
+              setUrbanIsOn={setUrbanIsOn}
+              industryIsOn={industryIsOn}
+              setIndustryIsOn={setIndustryIsOn}
+              nodeNumbersAreOn={nodeNumbersAreOn}
+              setNodeNumbersAreOn={setNodeNumbersAreOn}
+              gridIsOn={gridIsOn}
+              setGridIsOn={setGridIsOn}
+              pathIsOn={pathIsOn}
+              setPathIsOn={setPathIsOn}
+              segmentHighlightIsOn={segmentHighlightIsOn}
+              setSegmentHighlightIsOn={setSegmentHighlightIsOn}
+              redraw={redraw}
+              heatmapIsOn={heatmapIsOn}
+              setHeatmapIsOn={setHeatmapIsOn}
+            />
+
             <div className="row-span-2 flex flex-col">
               {/* X,Y text */}
               <div className="flex font-bold font-roboto">
@@ -793,7 +793,7 @@ function Canvas(props: CanvasProps) {
           >
             Examine
           </Button>
-          <Button
+          {/* <Button
             className="h-full bg-red-600 hover:bg-red-700"
             variant="contained"
             startIcon={<QuestionMark className="w-6 h-6" />}
@@ -808,7 +808,7 @@ function Canvas(props: CanvasProps) {
             onClick={stopButtonPressed}
           >
             STOP
-          </Button>
+          </Button> */}
         </div>
         <div className="my-2 text-slate-700">
           <Typography className="text-sm ">
