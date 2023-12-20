@@ -61,20 +61,28 @@ class SegmentsContainer {
 
   public bindRandomly(onlyNotBoundYet: boolean) {
     let ises = this.industrySegments.slice();
+    let randomlyOrderedUrbanSegmentsIds = generateNumbers(
+      this.urbanSegments.length
+    ).sort(() => Math.random() - 0.5);
+
+    console.log(randomlyOrderedUrbanSegmentsIds);
+
     for (
       let i = 0;
-      i < this.urbanSegments.length && i < this.industrySegments.length;
+      i < Math.min(this.urbanSegments.length, this.industrySegments.length);
       i++
     ) {
       if (
         onlyNotBoundYet &&
-        this.urbanSegments[i].boundIndustrySegment === null
+        this.urbanSegments[randomlyOrderedUrbanSegmentsIds[i]]
+          .boundIndustrySegment === null
       ) {
         continue;
       }
       let pickedOne = Math.floor(Math.random() * ises.length);
 
-      let us: UrbanSegment = this.urbanSegments[i];
+      let us: UrbanSegment =
+        this.urbanSegments[randomlyOrderedUrbanSegmentsIds[i]];
       let is = ises[pickedOne];
 
       us.boundIndustrySegment = is;
@@ -106,6 +114,14 @@ class SegmentsContainer {
 
     return segment;
   }
+}
+
+function generateNumbers(limit: number): number[] {
+  const numbers: number[] = [];
+  for (let i = 0; i < limit; i++) {
+    numbers.push(i);
+  }
+  return numbers;
 }
 
 export default SegmentsContainer;
