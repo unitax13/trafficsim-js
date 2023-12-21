@@ -64,6 +64,18 @@ const ModeSelector: React.FC<ModeSelectorProps> = ({
                   <span className="text-left">EXAMINE MODE</span>
                 </span>
               </MenuItem>
+              <MenuItem
+                value={viewModes.CLOSEST_ROAD_SEARCHING_DEBUG}
+                className="focus:border focus:border-solid"
+              >
+                <span className="flex items-center text-xs">
+                  {/* <ListItemIcon sx={{ minWidth: 32 }}>
+                    <QuestionMark className="w-6 h-6" />
+                  </ListItemIcon> */}
+                  <span className="text-left">SEARCHING ANIMATION</span>
+                </span>
+              </MenuItem>
+
               {/* <MenuItem
                 value={viewModes.HEATMAP}
                 disabled={true}

@@ -61,11 +61,12 @@ class SegmentsContainer {
 
   public bindRandomly(onlyNotBoundYet: boolean) {
     let ises = this.industrySegments.slice();
+    // make a vector of randomly ordered urban segments ids to iterate over them later
     let randomlyOrderedUrbanSegmentsIds = generateNumbers(
       this.urbanSegments.length
     ).sort(() => Math.random() - 0.5);
 
-    console.log(randomlyOrderedUrbanSegmentsIds);
+    // console.log(randomlyOrderedUrbanSegmentsIds);
 
     for (
       let i = 0;
