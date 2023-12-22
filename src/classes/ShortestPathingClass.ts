@@ -1,4 +1,5 @@
 import FieldType from "../enums/FieldType";
+import RoadSearchAnimationResidue from "../enums/RoadSearchAnimationResidueType";
 import GraphNode from "./GraphNode";
 import IndustrySegment from "./IndustrySegment";
 import Position from "./Position";
@@ -12,6 +13,7 @@ class ShortestPathingClass {
   distanceToTargetRef: React.MutableRefObject<number>;
   highlightedSegmentPositions: React.MutableRefObject<Position[] | null>;
   redraw: () => void;
+  addRoadSearchAnimationStep: (props: RoadSearchAnimationResidue) => void;
 
   public constructor(
     fieldArray: FieldType[][],
@@ -19,7 +21,8 @@ class ShortestPathingClass {
     positionPathToDrawRef: React.MutableRefObject<Position[]>,
     distanceToTargetRef: React.MutableRefObject<number>,
     highlightedSegmentPositions: React.MutableRefObject<Position[] | null>,
-    redraw: () => void
+    redraw: () => void,
+    addRoadSearchAnimationStep: (props: RoadSearchAnimationResidue) => void
   ) {
     this.fieldArray = fieldArray;
     this.graphNodes = graphNodes;
@@ -28,6 +31,7 @@ class ShortestPathingClass {
     this.distanceToTargetRef = distanceToTargetRef;
     this.highlightedSegmentPositions = highlightedSegmentPositions;
     this.redraw = redraw;
+    this.addRoadSearchAnimationStep = addRoadSearchAnimationStep;
 
     this.highlightedSegmentPositions.current = null;
   }
@@ -62,9 +66,17 @@ class ShortestPathingClass {
       );
       us.boundIndustrySegment = is;
 
-      us.calculateClosestRoadSegment(this.fieldArray, 10);
+      us.calculateClosestRoadSegment(
+        this.fieldArray,
+        10,
+        this.addRoadSearchAnimationStep
+      );
       us.findClosestRoadNodes(this.fieldArray, this.graphNodes);
-      is.calculateClosestRoadSegment(this.fieldArray, 10);
+      is.calculateClosestRoadSegment(
+        this.fieldArray,
+        10,
+        this.addRoadSearchAnimationStep
+      );
       is.findClosestRoadNodes(this.fieldArray, this.graphNodes);
 
       console.log(

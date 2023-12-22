@@ -1,4 +1,5 @@
 import FieldType from "../enums/FieldType";
+import RoadSearchAnimationResidue from "../enums/RoadSearchAnimationResidueType";
 import getNodeAt from "../utils/getNodeAt";
 import getNodeIndex from "../utils/getNodeIndex";
 import GraphNode from "./GraphNode";
@@ -27,7 +28,8 @@ class Segment {
 
   public calculateClosestRoadSegment(
     fieldArray: FieldType[][],
-    radius: number
+    radius: number,
+    addRoadSearchAnimationStep: (props: RoadSearchAnimationResidue) => void
   ): void {
     let startX = this.position.x;
     let startY = this.position.y;
@@ -52,7 +54,8 @@ class Segment {
         FieldType.Road1,
         startX,
         startY,
-        i
+        i,
+        addRoadSearchAnimationStep
       );
       if (pos) {
         this.closestRoadSegmentPosition = pos;
@@ -72,7 +75,8 @@ class Segment {
     targetType: FieldType,
     startX: number,
     startY: number,
-    radius: number
+    radius: number,
+    addRoadSearchAnimationStep: (props: RoadSearchAnimationResidue) => void
   ): Position | null {
     let j = 1;
     for (let i = 1; i <= radius; i++) {
@@ -83,6 +87,11 @@ class Segment {
       // move left
       while (x >= startX - i) {
         if (this.isInBounds(x, y, matrix)) {
+          addRoadSearchAnimationStep({
+            originatingPos: new Position(startX, startY),
+            currentPos: new Position(x, y),
+            delay: 1 / radius,
+          });
           if (matrix[x][y] === targetType) {
             console.log("found at ", x, ";", y);
             return new Position(x, y);
@@ -95,6 +104,11 @@ class Segment {
       // move right
       while (x <= startX + i) {
         if (this.isInBounds(x, y, matrix)) {
+          addRoadSearchAnimationStep({
+            originatingPos: new Position(startX, startY),
+            currentPos: new Position(x, y),
+            delay: 1 / radius,
+          });
           if (matrix[x][y] === targetType) {
             console.log("found at ", x, ";", y);
             return new Position(x, y);
@@ -110,6 +124,11 @@ class Segment {
       // move up
       while (y >= startY - i) {
         if (this.isInBounds(x, y, matrix)) {
+          addRoadSearchAnimationStep({
+            originatingPos: new Position(startX, startY),
+            currentPos: new Position(x, y),
+            delay: 1 / radius,
+          });
           if (matrix[x][y] === targetType) {
             console.log("found at ", x, ";", y);
             return new Position(x, y);
@@ -123,6 +142,11 @@ class Segment {
 
       while (y <= startY + i) {
         if (this.isInBounds(x, y, matrix)) {
+          addRoadSearchAnimationStep({
+            originatingPos: new Position(startX, startY),
+            currentPos: new Position(x, y),
+            delay: 1 / radius,
+          });
           if (matrix[x][y] === targetType) {
             console.log("found at ", x, ";", y);
             return new Position(x, y);
@@ -137,6 +161,11 @@ class Segment {
       // move right
       while (x <= startX + i) {
         if (this.isInBounds(x, y, matrix)) {
+          addRoadSearchAnimationStep({
+            originatingPos: new Position(startX, startY),
+            currentPos: new Position(x, y),
+            delay: 1 / radius,
+          });
           if (matrix[x][y] === targetType) {
             console.log("found at ", x, ";", y);
             return new Position(x, y);
@@ -148,6 +177,11 @@ class Segment {
       x = startX;
       while (x >= startX - i) {
         if (this.isInBounds(x, y, matrix)) {
+          addRoadSearchAnimationStep({
+            originatingPos: new Position(startX, startY),
+            currentPos: new Position(x, y),
+            delay: 1 / radius,
+          });
           if (matrix[x][y] === targetType) {
             console.log("found at ", x, ";", y);
             return new Position(x, y);
@@ -162,6 +196,11 @@ class Segment {
       //move down
       while (y <= startY + i) {
         if (this.isInBounds(x, y, matrix)) {
+          addRoadSearchAnimationStep({
+            originatingPos: new Position(startX, startY),
+            currentPos: new Position(x, y),
+            delay: 1 / radius,
+          });
           if (matrix[x][y] === targetType) {
             console.log("found at ", x, ";", y);
             return new Position(x, y);
@@ -173,6 +212,11 @@ class Segment {
       // now move up
       while (y >= startY - i) {
         if (this.isInBounds(x, y, matrix)) {
+          addRoadSearchAnimationStep({
+            originatingPos: new Position(startX, startY),
+            currentPos: new Position(x, y),
+            delay: 1 / radius,
+          });
           if (matrix[x][y] === targetType) {
             console.log("found at ", x, ";", y);
             return new Position(x, y);

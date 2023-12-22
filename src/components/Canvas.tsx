@@ -34,6 +34,7 @@ import SegmentsContainer from "../classes/SegmentsContainer";
 import ConnectionIcon from "../icons/ConnectionIcon";
 import ExaminationClass from "../classes/ExaminationClass";
 import QuestionMark from "../icons/QuestionMark";
+import RoadSearchAnimationResidue from "../enums/RoadSearchAnimationResidueType";
 
 interface CanvasProps {
   numRows: number;
@@ -68,6 +69,7 @@ function Canvas(props: CanvasProps) {
 
   const examinationInstance = useRef<ExaminationClass | null>(null);
   const messagesRef = useRef<string[]>([]);
+  const roadSearchAnimationResidues = useRef<RoadSearchAnimationResidue[]>([]);
 
   const positionPathToDrawRef = useRef<Position[]>([]);
   const highlightedSegmentPositions = useRef<Position[] | null>(null);
@@ -514,7 +516,8 @@ function Canvas(props: CanvasProps) {
         positionPathToDrawRef,
         distanceToTargetRef,
         highlightedSegmentPositions,
-        redraw
+        redraw,
+        addRoadSearchAnimationStep
       );
     } else {
       console.log("Graph not yet generated. Generate it!");
@@ -603,12 +606,20 @@ function Canvas(props: CanvasProps) {
       segmentsContainerClassInstance.current.bindRandomly(false);
 
       segmentsContainerClassInstance.current.urbanSegments.forEach((us) => {
-        us.calculateClosestRoadSegment(props.fieldArray, 10);
+        us.calculateClosestRoadSegment(
+          props.fieldArray,
+          10,
+          addRoadSearchAnimationStep
+        );
         us.findClosestRoadNodes(props.fieldArray, graphNodesRef.current!);
       });
 
       segmentsContainerClassInstance.current.industrySegments.forEach((is) => {
-        is.calculateClosestRoadSegment(props.fieldArray, 10);
+        is.calculateClosestRoadSegment(
+          props.fieldArray,
+          10,
+          addRoadSearchAnimationStep
+        );
         is.findClosestRoadNodes(props.fieldArray, graphNodesRef.current!);
       });
 
@@ -644,6 +655,25 @@ function Canvas(props: CanvasProps) {
 
   const stopButtonPressed = () => {
     clearInterval(intervalId.current);
+  };
+
+  const animateButtonPressed = () => {
+    roadSearchAnimationResidues.current.forEach((rsar) => {
+      console.log(
+        rsar.originatingPos.toString() +
+          " checks for position " +
+          rsar.currentPos.toString()
+      );
+    });
+  };
+
+  const addRoadSearchAnimationStep = (props: RoadSearchAnimationResidue) => {
+    let rsar: RoadSearchAnimationResidue = {
+      currentPos: props.currentPos,
+      originatingPos: props.originatingPos,
+      delay: props.delay,
+    };
+    roadSearchAnimationResidues.current.push(rsar);
   };
 
   return (
@@ -803,6 +833,8 @@ function Canvas(props: CanvasProps) {
           >
             Examine
           </Button>
+        </div>
+        <div className="pt-2 flex gap-4 h-10">
           <Button
             className="h-full bg-red-600 hover:bg-red-700"
             variant="contained"
@@ -818,6 +850,15 @@ function Canvas(props: CanvasProps) {
             onClick={stopButtonPressed}
           >
             STOP
+          </Button>
+
+          <Button
+            className="h-full bg-red-600 hover:bg-red-700"
+            variant="contained"
+            startIcon={<QuestionMark className="w-6 h-6" />}
+            onClick={animateButtonPressed}
+          >
+            PRINT ANIMATION STEPS
           </Button>
         </div>
         <div className="my-2 text-slate-700">
