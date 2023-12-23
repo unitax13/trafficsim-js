@@ -278,7 +278,7 @@ function Canvas(props: CanvasProps) {
   }, [isDrawing]);
 
   function redraw() {
-    setIsDrawing(!isDrawing);
+    setIsDrawing((prev) => !prev);
     console.log("redraw is called");
   }
 
