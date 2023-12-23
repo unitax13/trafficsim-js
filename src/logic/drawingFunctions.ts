@@ -68,6 +68,7 @@ export function drawNodeNumbers(
 export function drawSegmentHighlight(
   ctx: CanvasRenderingContext2D,
   highlightedSegmentPositions: Position[],
+  color: string,
   numRows: number,
   numColumns: number,
   fieldSize: number,
@@ -75,7 +76,7 @@ export function drawSegmentHighlight(
   cameraX: number,
   cameraY: number
 ) {
-  let color = colors.highlightColor;
+  // let color = colors.highlightColor;
   ctx!.fillStyle = color;
 
   for (const pos of highlightedSegmentPositions) {

@@ -35,6 +35,7 @@ import ConnectionIcon from "../icons/ConnectionIcon";
 import ExaminationClass from "../classes/ExaminationClass";
 import QuestionMark from "../icons/QuestionMark";
 import RoadSearchAnimationResidue from "../enums/RoadSearchAnimationResidueType";
+import colors from "../colors";
 
 interface CanvasProps {
   numRows: number;
@@ -69,7 +70,9 @@ function Canvas(props: CanvasProps) {
 
   const examinationInstance = useRef<ExaminationClass | null>(null);
   const messagesRef = useRef<string[]>([]);
+
   const roadSearchAnimationResidues = useRef<RoadSearchAnimationResidue[]>([]);
+  const animationPositionResidues = useRef<Position[] | null>(null);
 
   const positionPathToDrawRef = useRef<Position[]>([]);
   const highlightedSegmentPositions = useRef<Position[] | null>(null);
@@ -112,6 +115,8 @@ function Canvas(props: CanvasProps) {
   const [segmentHighlightIsOn, setSegmentHighlightIsOn] =
     useState<boolean>(true);
   const [heatmapIsOn, setHeatmapIsOn] = useState<boolean>(true);
+  const [animationHighlightIsOn, setAnimationHighlightIsOn] =
+    useState<boolean>(true);
 
   const heatmapColorArray = useRef<string[][]>([]);
   for (let i = 0; i < props.numRows; i++) {
@@ -227,6 +232,7 @@ function Canvas(props: CanvasProps) {
       drawSegmentHighlight(
         ctx,
         highlightedSegmentPositions.current,
+        colors.highlightColor,
         props.numRows,
         props.numColumns,
         fieldSize,
@@ -235,6 +241,25 @@ function Canvas(props: CanvasProps) {
         cameraY
       );
     }
+
+    if (
+      animationHighlightIsOn &&
+      animationPositionResidues.current &&
+      animationPositionResidues.current.length > 0
+    ) {
+      drawSegmentHighlight(
+        ctx,
+        animationPositionResidues.current,
+        "red",
+        props.numRows,
+        props.numColumns,
+        fieldSize,
+        cameraScale,
+        cameraX,
+        cameraY
+      );
+    }
+
     nodeNumbersAreOn
       ? drawNodeNumbers(ctx, graphNodesRef, fieldSize, cameraScale)
       : null;
@@ -665,6 +690,25 @@ function Canvas(props: CanvasProps) {
           rsar.currentPos.toString()
       );
     });
+
+    clearInterval(intervalId.current);
+    let i = 0;
+    intervalId.current = setInterval(() => {
+      redraw();
+      if (i < roadSearchAnimationResidues.current.length) {
+        animationPositionResidues.current = [];
+        animationPositionResidues.current.push(
+          roadSearchAnimationResidues.current[i].currentPos
+        );
+        console.log(
+          "Drawing ",
+          roadSearchAnimationResidues.current[i].currentPos
+        );
+        i++;
+      } else {
+        clearInterval(intervalId.current);
+      }
+    }, 1000);
   };
 
   const addRoadSearchAnimationStep = (props: RoadSearchAnimationResidue) => {
