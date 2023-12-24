@@ -103,10 +103,14 @@ export default function StepperComponent(props: StepperComponentProps) {
           </Step>
         ))}
       </Stepper>
-      {activeStep === steps.length && (
+      {props.positionPath &&
+      props.positionPath.length > 0 &&
+      activeStep === steps.length ? (
         <>
           <Typography>All steps completed - you&apos;re finished</Typography>
         </>
+      ) : (
+        ""
       )}
     </div>
   );

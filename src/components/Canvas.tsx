@@ -825,8 +825,7 @@ function Canvas(props: CanvasProps) {
             />
           </div>
           {/* start of stepper section */}
-          {positionPathToDrawRef.current &&
-          positionPathToDrawRef.current.length > 0 ? (
+          {
             <div className="flex flex-col">
               <StepperComponent
                 positionPath={positionPathToDrawRef.current}
@@ -834,9 +833,7 @@ function Canvas(props: CanvasProps) {
                 messages={messagesRef}
               />
             </div>
-          ) : (
-            ""
-          )}
+          }
           {/* end of stepper section */}
         </div>
 

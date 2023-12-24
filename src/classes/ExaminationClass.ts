@@ -92,6 +92,8 @@ class ExaminationClass {
         );
       } else {
         console.log("Segment is inull");
+        this.positionPathToDrawRef.current = [];
+        this.distanceToTargetRef.current = 0;
         this.messagesRef.current.push("Selected segment is empty.");
       }
     } else {
