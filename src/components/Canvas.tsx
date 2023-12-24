@@ -211,7 +211,11 @@ function Canvas(props: CanvasProps) {
       );
     }
 
-    if (pathIsOn && positionPathToDrawRef.current) {
+    if (
+      pathIsOn &&
+      positionPathToDrawRef.current &&
+      positionPathToDrawRef.current.length > 0
+    ) {
       drawPositionPath(
         ctx,
         positionPathToDrawRef,
@@ -494,8 +498,11 @@ function Canvas(props: CanvasProps) {
           // Access the data and version from the uploaded file
           const { data, version } = parsedData;
 
-          // Perform any necessary processing with the data
-          // Set the uploadedData variable based on the contents of the file
+          // RESET THE STUFF
+          positionPathToDrawRef.current = [];
+          graphNodesRef.current = []; // reset the graphnodes ref
+          highlightedSegmentPositions.current = [];
+
           props.setFieldArray(data);
 
           console.log("File version:", version);
@@ -708,7 +715,7 @@ function Canvas(props: CanvasProps) {
       } else {
         clearInterval(intervalId.current);
       }
-    }, 1000);
+    }, 400);
   };
 
   const addRoadSearchAnimationStep = (props: RoadSearchAnimationResidue) => {
