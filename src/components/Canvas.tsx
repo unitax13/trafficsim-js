@@ -377,14 +377,6 @@ function Canvas(props: CanvasProps) {
           fieldPressedY.current
         );
       }
-    } else if (viewMode.current === viewModes.CLOSEST_ROAD_SEARCHING_DEBUG) {
-      if (examinationInstance.current) {
-        console.log("showing path");
-        examinationInstance.current.showPath(
-          fieldPressedX.current,
-          fieldPressedY.current
-        );
-      }
     }
   };
 
@@ -581,11 +573,6 @@ function Canvas(props: CanvasProps) {
       }
     }
 
-    if (viewMode.current === viewModes.CLOSEST_ROAD_SEARCHING_DEBUG) {
-      if (graphNodesRef.current && segmentsContainerClassInstance.current) {
-        // closestRoadSearchingDebugInstance.current = new ClosestRoadSearchingDebugClass( )
-      }
-    }
     console.log(e.target);
     redraw();
   };

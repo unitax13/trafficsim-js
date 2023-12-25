@@ -1,5 +1,3 @@
-import { Typography } from "@mui/material";
-
 interface ExamineStatsComponentProps {
   messages: string[];
   distanceToTarget: number;
