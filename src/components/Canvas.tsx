@@ -372,7 +372,7 @@ function Canvas(props: CanvasProps) {
     } else if (viewMode.current === viewModes.EXAMINATION) {
       if (examinationInstance.current) {
         console.log("showing path");
-        examinationInstance.current.showPath(
+        examinationInstance.current.examineField(
           fieldPressedX.current,
           fieldPressedY.current
         );

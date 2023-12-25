@@ -17,8 +17,10 @@ interface StepperComponentProps {
 }
 
 export default function StepperComponent(props: StepperComponentProps) {
+  const [steps, setSteps] = useState([]);
+
   useEffect(() => {
-    props.positionPath &&
+    if (props.positionPath && props.positionPath.length > 0) {
       setSteps(
         props.positionPath.map((pos) => {
           return {
@@ -27,18 +29,19 @@ export default function StepperComponent(props: StepperComponentProps) {
           };
         })
       );
+    }
   }, [props.positionPath]);
 
-  const [steps, setSteps] = useState(
-    props.positionPath
-      ? props.positionPath.map((pos) => {
-          return {
-            label: "Go to [" + pos.x + ";" + pos.y + "]",
-            description: "well, go!",
-          };
-        })
-      : 0
-  );
+  useEffect(() => {
+    if (props.positionPath && props.positionPath.length > 0) {
+      props.positionPath.map((pos) => {
+        return {
+          label: "Go to [" + pos.x + ";" + pos.y + "]",
+          description: "well, go!",
+        };
+      });
+    }
+  }, []);
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -54,15 +57,14 @@ export default function StepperComponent(props: StepperComponentProps) {
     setActiveStep(0);
   };
 
-  if (props.positionPath && props.positionPath.length > 0) {
-    return (
-      <div className="absolute top-0  grid grid-rows-6 ">
-        <ExamineStatsComponent
-          distanceToTarget={props.distanceToTarget}
-          turns={props.positionPath.length}
-          messages={props.messages.current}
-        />
-
+  return (
+    <div className="absolute top-0  grid grid-rows-6 ">
+      <ExamineStatsComponent
+        distanceToTarget={props.distanceToTarget}
+        turns={props.positionPath.length}
+        messages={props.messages.current}
+      />
+      {props.positionPath && props.positionPath.length > 0 ? (
         <Stepper
           nonLinear
           activeStep={activeStep}
@@ -107,16 +109,18 @@ export default function StepperComponent(props: StepperComponentProps) {
             </Step>
           ))}
         </Stepper>
-        {props.positionPath &&
-        props.positionPath.length > 0 &&
-        activeStep === steps.length ? (
-          <>
-            <Typography>All steps completed - you&apos;re finished</Typography>
-          </>
-        ) : (
-          ""
-        )}
-      </div>
-    );
-  } else return <></>;
+      ) : (
+        <></>
+      )}
+      {props.positionPath &&
+      props.positionPath.length > 0 &&
+      activeStep === steps.length ? (
+        <>
+          <Typography>All steps completed - you&apos;re finished</Typography>
+        </>
+      ) : (
+        ""
+      )}
+    </div>
+  );
 }

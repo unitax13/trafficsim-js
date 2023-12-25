@@ -33,9 +33,29 @@ class ExaminationClass {
     this.redraw = redraw;
   }
 
-  public showPath(x: number, y: number) {
+  public examineField(x: number, y: number): void {
     if (this.segmentsContainer.current) {
       this.messagesRef.current = [];
+      let segment: UrbanSegment | IndustrySegment | null =
+        this.segmentsContainer.current.getSegmentAt(x, y);
+      if (
+        segment &&
+        (segment instanceof UrbanSegment || segment instanceof IndustrySegment)
+      ) {
+        this.showPath(x, y);
+      } else {
+        //check the field array, to check if that's a road or empty
+        if (this.fieldArray[x][y] === FieldType.Road1) {
+          this.messagesRef.current.push("Road segment.");
+        } else if (this.fieldArray[x][y] === FieldType.Empty) {
+          this.messagesRef.current.push("Empty field.");
+        }
+      }
+    }
+  }
+
+  public showPath(x: number, y: number) {
+    if (this.segmentsContainer.current) {
       let segment: UrbanSegment | IndustrySegment | null =
         this.segmentsContainer.current.getSegmentAt(x, y);
       if (segment) {
