@@ -56,6 +56,7 @@ class ExaminationClass {
   private simpleFieldTypeCheck(x: number, y: number): void {
     if (this.fieldArray[x][y] === FieldType.Road1) {
       this.messagesRef.current.push("Road segment.");
+      // then find the nodes, to which this thing is attached
     } else if (this.fieldArray[x][y] === FieldType.Empty) {
       this.messagesRef.current.push("Empty field.");
     }
