@@ -34,8 +34,8 @@ class ExaminationClass {
   }
 
   public examineField(x: number, y: number): void {
+    this.messagesRef.current = [];
     if (this.segmentsContainer.current) {
-      this.messagesRef.current = [];
       let segment: UrbanSegment | IndustrySegment | null =
         this.segmentsContainer.current.getSegmentAt(x, y);
       if (
@@ -45,12 +45,19 @@ class ExaminationClass {
         this.showPath(x, y);
       } else {
         //check the field array, to check if that's a road or empty
-        if (this.fieldArray[x][y] === FieldType.Road1) {
-          this.messagesRef.current.push("Road segment.");
-        } else if (this.fieldArray[x][y] === FieldType.Empty) {
-          this.messagesRef.current.push("Empty field.");
-        }
+        this.simpleFieldTypeCheck(x, y);
       }
+    } else {
+      this.simpleFieldTypeCheck(x, y);
+    }
+    this.redraw();
+  }
+
+  private simpleFieldTypeCheck(x: number, y: number): void {
+    if (this.fieldArray[x][y] === FieldType.Road1) {
+      this.messagesRef.current.push("Road segment.");
+    } else if (this.fieldArray[x][y] === FieldType.Empty) {
+      this.messagesRef.current.push("Empty field.");
     }
   }
 
