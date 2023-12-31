@@ -14,8 +14,11 @@ const colors = {
   //bg-slate-500
   graphColor: "#64748b",
 
-  //fuchsia-600
+  //fuchsia-500
   pathColor: "#d946ef",
+
+  //fuchsia-400
+  pathHighlightColor: "#e879f9",
 
   //sky-600
   highlightColor: "#0284c7",

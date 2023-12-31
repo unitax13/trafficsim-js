@@ -560,7 +560,7 @@ function Canvas(props: CanvasProps) {
     }
 
     if (viewMode.current === viewModes.EXAMINATION) {
-      if (segmentsContainerClassInstance.current === null) {
+      if (!segmentsContainerClassInstance.current) {
         segmentsContainerClassInstance.current = new SegmentsContainer(
           props.fieldArray,
           graphNodesRef.current
@@ -603,10 +603,13 @@ function Canvas(props: CanvasProps) {
     if (viewMode.current !== viewModes.EXAMINATION) {
       viewMode.current = viewModes.EXAMINATION;
     }
-    segmentsContainerClassInstance.current = new SegmentsContainer(
-      props.fieldArray,
-      graphNodesRef.current
-    );
+
+    if (!segmentsContainerClassInstance.current) {
+      segmentsContainerClassInstance.current = new SegmentsContainer(
+        props.fieldArray,
+        graphNodesRef.current
+      );
+    }
     if (true) {
       examinationInstance.current = new ExaminationClass(
         props.fieldArray,

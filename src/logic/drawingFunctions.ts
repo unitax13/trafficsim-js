@@ -201,6 +201,26 @@ export function drawPositionPath(
       );
     }
   }
+  // after the for, highlight the ends
+  color = colors.pathHighlightColor;
+  ctx!.fillStyle = colors.pathHighlightColor;
+
+  let pos1 = positionPathToDrawRef.current[0];
+  let pos2 =
+    positionPathToDrawRef.current[positionPathToDrawRef.current.length - 1];
+
+  ctx.fillRect(
+    pos1.x * fieldSize * cameraScale,
+    pos1.y * fieldSize * cameraScale,
+    fieldSize * cameraScale,
+    fieldSize * cameraScale
+  );
+  ctx.fillRect(
+    pos2.x * fieldSize * cameraScale,
+    pos2.y * fieldSize * cameraScale,
+    fieldSize * cameraScale,
+    fieldSize * cameraScale
+  );
 }
 
 export function drawMainGrid(
