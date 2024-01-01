@@ -34,6 +34,7 @@ class ExaminationClass {
   }
 
   public examineField(x: number, y: number): void {
+    this.positionPathToDrawRef.current = [];
     this.messagesRef.current = [];
     if (this.segmentsContainer.current) {
       let segment: UrbanSegment | IndustrySegment | null =

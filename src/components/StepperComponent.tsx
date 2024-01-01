@@ -59,11 +59,13 @@ export default function StepperComponent(props: StepperComponentProps) {
 
   return (
     <div className="absolute top-0  grid grid-rows-6 ">
-      <ExamineStatsComponent
-        distanceToTarget={props.distanceToTarget}
-        turns={props.positionPath.length}
-        messages={props.messages.current}
-      />
+      {props.positionPath ? (
+        <ExamineStatsComponent
+          distanceToTarget={props.distanceToTarget}
+          turns={props.positionPath.length}
+          messages={props.messages.current}
+        />
+      ) : null}
       {props.positionPath && props.positionPath.length > 0 ? (
         <Stepper
           nonLinear
